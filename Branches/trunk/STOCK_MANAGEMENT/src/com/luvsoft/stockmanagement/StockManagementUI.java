@@ -1,16 +1,10 @@
 package com.luvsoft.stockmanagement;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.vaadin.viritin.fields.MTable;
-
-import com.luvsoft.entities.Stocktype;
+import com.luvsoft.model.StockTypeModel;
+import com.luvsoft.presenter.StockTypePresenter;
+import com.luvsoft.view.dummy.StockTypeView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -24,21 +18,12 @@ public class StockManagementUI extends UI {
         layout.setMargin(true);
         setContent(layout);
 
-        List<Stocktype> data = new ArrayList<Stocktype>();
-        for (int i = 0; i < 20; i++) {
-            Stocktype entity = new Stocktype();
-            entity.setId(i);
-            entity.setName("Name " + i);
-            entity.setDescription("Description " + i);
+        StockTypeView view = new StockTypeView();
+        StockTypeModel model = new StockTypeModel();
+        StockTypePresenter presenter = new StockTypePresenter(view, model);
+        presenter.generateTable();
 
-            data.add(entity);
-        }
-
-        MTable<Stocktype> table = new MTable<Stocktype>(data).withProperties("id", "name", "description")
-                .withColumnHeaders("Id", "Name", "Description").withFullHeight().withFullWidth();
-        table.setEditable(true);
-
-        layout.addComponent(table);
+        layout.addComponent(view);
     }
 
 }
