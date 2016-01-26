@@ -3,7 +3,6 @@ package com.luvsoft.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Stocktype;
 
 public class StockTypeModel {

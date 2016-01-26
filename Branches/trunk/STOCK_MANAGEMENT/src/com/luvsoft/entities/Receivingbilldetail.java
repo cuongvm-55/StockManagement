@@ -20,6 +20,10 @@ import javax.persistence.Table;
 @Table(name = "receivingbilldetail", catalog = "stockmanagement")
 public class Receivingbilldetail implements java.io.Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7569307280337331448L;
     private Integer id;
     private Receivingbill receivingbill;
     private String category;

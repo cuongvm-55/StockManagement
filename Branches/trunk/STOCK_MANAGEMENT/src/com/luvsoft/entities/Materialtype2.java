@@ -20,6 +20,10 @@ import javax.persistence.Table;
 @Table(name = "materialtype2", catalog = "stockmanagement")
 public class Materialtype2 implements java.io.Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4941489863565924224L;
     private Integer id;
     private String name;
     private String description;

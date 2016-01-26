@@ -40,5 +40,8 @@
 		<!-- Compiler for custom widget sets. Should not be deployed -->
 		<dependency org="com.vaadin" name="vaadin-client-compiler"
 			rev="&vaadin.version;" conf="widgetset-compile->default" />
+		<dependency org="org.hibernate" name="ejb3-persistence" rev="1.0.2.GA"/>
+        <dependency org="org.hibernate" name="hibernate-annotations" rev="3.4.0.GA"/>
+        <dependency org="org.hibernate" name="hibernate-core" rev="3.3.2.GA"/>
 	</dependencies>
 </ivy-module>
