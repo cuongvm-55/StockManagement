@@ -2,6 +2,9 @@ package com.luvsoft.stockmanagement;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.luvsoft.model.DummyModel;
+import com.luvsoft.presenter.DummyPresenter;
+import com.luvsoft.view.dummy.DummyView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
@@ -16,24 +19,23 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("stockmanagement")
 public class StockmanagementUI extends UI {
 
-	@WebServlet(value = "/*", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = StockmanagementUI.class)
-	public static class Servlet extends VaadinServlet {
-	}
+    @WebServlet(value = "/*", asyncSupported = true)
+    @VaadinServletConfiguration(productionMode = false, ui = StockmanagementUI.class)
+    public static class Servlet extends VaadinServlet {
+    }
 
-	@Override
-	protected void init(VaadinRequest request) {
-		final VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
-		setContent(layout);
+    @Override
+    protected void init(VaadinRequest request) {
+        final VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(true);
+        setContent(layout);
 
-		Button button = new Button("Click Me");
-		button.addClickListener(new Button.ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				layout.addComponent(new Label("Thank you for clicking"));
-			}
-		});
-		layout.addComponent(button);
-	}
+        DummyView view = new DummyView();
+        DummyModel model = new DummyModel();
+        DummyPresenter presenter = new DummyPresenter(view, model);
+        presenter.generateTable();
+
+        layout.addComponent(view);
+    }
 
 }
