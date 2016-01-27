@@ -1,5 +1,11 @@
 package com.luvsoft.stockmanagement;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+import com.luvsoft.entities.Stock;
+import com.luvsoft.entities.Stocktype;
 import com.luvsoft.model.StockTypeModel;
 import com.luvsoft.presenter.StockTypePresenter;
 import com.luvsoft.view.dummy.StockTypeView;
@@ -18,6 +24,30 @@ public class StockManagementUI extends UI {
         layout.setMargin(true);
         setContent(layout);
 
+        EntityManagerFactory emfactory = Persistence.
+                createEntityManagerFactory( "STOCK_MANAGEMENT" );
+        EntityManager entitymanager = emfactory.createEntityManager( );
+        entitymanager.getTransaction( ).begin( );
+        
+        Stocktype stkType = new Stocktype();
+        stkType.setName("Hàng lỗi");
+        stkType.setDescription("Loại kho chứa các vật tư lỗi");
+        
+        entitymanager.persist( stkType );
+        entitymanager.getTransaction( ).commit( );
+        
+        Stock stock = new Stock();
+        stock.setName("Kho 1");
+        stock.setCode("KHO1");
+        stock.setDescription("Kho hàng bán");
+        stock.setStocktype(stkType);
+
+        //entitymanager.persist( stock );
+        //entitymanager.getTransaction( ).commit( );
+        
+        entitymanager.close( );
+        emfactory.close( );
+        
         StockTypeView view = new StockTypeView();
         StockTypeModel model = new StockTypeModel();
         StockTypePresenter presenter = new StockTypePresenter(view, model);
