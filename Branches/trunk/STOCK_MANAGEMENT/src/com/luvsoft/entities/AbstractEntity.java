@@ -1,5 +1,4 @@
 package com.luvsoft.entities;
 
-public class AbstractEntity {
-
+public abstract class AbstractEntity {
 }

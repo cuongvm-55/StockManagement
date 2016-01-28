@@ -5,11 +5,14 @@ package com.luvsoft.entities;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,7 +24,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "customer", catalog = "stockmanagement")
-public class Customer implements java.io.Serializable {
+public class Customer extends AbstractEntity implements java.io.Serializable {
 
     /**
      * 
@@ -220,6 +223,18 @@ public class Customer implements java.io.Serializable {
 
     public void setReceivingbills(Set<Receivingbill> receivingbills) {
         this.receivingbills = receivingbills;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer [id=" + id + ", area=" + area + ", customertype1="
+                + customertype1 + ", customertype2=" + customertype2
+                + ", code=" + code + ", name=" + name + ", address=" + address
+                + ", phoneNumber=" + phoneNumber + ", email=" + email
+                + ", bankName=" + bankName + ", bankAccount=" + bankAccount
+                + ", debt=" + debt + ", orders=" + orders + ", spendingbills="
+                + spendingbills + ", coupons=" + coupons + ", receivingbills="
+                + receivingbills + "]";
     }
 
 }

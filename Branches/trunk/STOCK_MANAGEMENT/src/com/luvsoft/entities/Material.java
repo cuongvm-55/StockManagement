@@ -5,11 +5,14 @@ package com.luvsoft.entities;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,7 +24,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "material", catalog = "stockmanagement")
-public class Material implements java.io.Serializable {
+public class Material extends AbstractEntity implements java.io.Serializable {
 
     /**
      * 
@@ -180,6 +183,16 @@ public class Material implements java.io.Serializable {
 
     public void setOrderdetails(Set<Orderdetail> orderdetails) {
         this.orderdetails = orderdetails;
+    }
+
+    @Override
+    public String toString() {
+        return "Material [id=" + id + ", materialtype1=" + materialtype1
+                + ", materialtype2=" + materialtype2 + ", stock=" + stock
+                + ", unit=" + unit + ", code=" + code + ", name=" + name
+                + ", price=" + price + ", quantity=" + quantity
+                + ", description=" + description + ", coupondetails="
+                + coupondetails + ", orderdetails=" + orderdetails + "]";
     }
 
 }

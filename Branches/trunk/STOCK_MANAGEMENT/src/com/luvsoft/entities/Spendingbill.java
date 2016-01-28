@@ -5,11 +5,14 @@ package com.luvsoft.entities;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,7 +26,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "spendingbill", catalog = "stockmanagement")
-public class Spendingbill implements java.io.Serializable {
+public class Spendingbill extends AbstractEntity implements java.io.Serializable {
 
     /**
      * 
@@ -133,6 +136,14 @@ public class Spendingbill implements java.io.Serializable {
 
     public void setSpendingbilldetails(Set<Spendingbilldetail> spendingbilldetails) {
         this.spendingbilldetails = spendingbilldetails;
+    }
+
+    @Override
+    public String toString() {
+        return "Spendingbill [id=" + id + ", coupon=" + coupon + ", customer="
+                + customer + ", code=" + code + ", content=" + content
+                + ", date=" + date + ", note=" + note
+                + ", spendingbilldetails=" + spendingbilldetails + "]";
     }
 
 }

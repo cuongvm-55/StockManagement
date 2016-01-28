@@ -4,11 +4,14 @@ package com.luvsoft.entities;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -18,7 +21,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ordertype", catalog = "stockmanagement")
-public class Ordertype implements java.io.Serializable {
+public class Ordertype extends AbstractEntity implements java.io.Serializable {
 
     /**
      * 
@@ -78,6 +81,12 @@ public class Ordertype implements java.io.Serializable {
 
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
+    }
+
+    @Override
+    public String toString() {
+        return "Ordertype [id=" + id + ", name=" + name + ", description="
+                + description + ", orders=" + orders + "]";
     }
 
 }

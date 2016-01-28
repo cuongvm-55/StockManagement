@@ -1,12 +1,10 @@
 package com.luvsoft.stockmanagement;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import java.util.List;
 
-import com.luvsoft.entities.Stock;
-import com.luvsoft.entities.Stocktype;
-import com.luvsoft.model.StockTypeModel;
+import com.luvsoft.DAO.AreaDAO;
+import com.luvsoft.DAO.StockTypeModel;
+import com.luvsoft.entities.Area;
 import com.luvsoft.presenter.StockTypePresenter;
 import com.luvsoft.view.dummy.StockTypeView;
 import com.vaadin.annotations.Theme;
@@ -27,29 +25,19 @@ public class StockManagementUI extends UI {
         layout.setMargin(true);
         setContent(layout);
 
-        EntityManagerFactory emfactory = Persistence.
-                createEntityManagerFactory( "STOCK_MANAGEMENT" );
-        EntityManager entitymanager = emfactory.createEntityManager( );
-        entitymanager.getTransaction( ).begin( );
+        AreaDAO areaDAO = new AreaDAO();
         
-        Stocktype stkType = new Stocktype();
-        stkType.setName("Hàng lỗi");
-        stkType.setDescription("Loại kho chứa các vật tư lỗi");
+        /*Area area = new Area();
+        area.setName("Ba Đình");
+        area.setDescription("Quận Ba Đình");
         
-        entitymanager.persist( stkType );
-        entitymanager.getTransaction( ).commit( );
+        areaDAO.addNew(area);
+        */
         
-        Stock stock = new Stock();
-        stock.setName("Kho 1");
-        stock.setCode("KHO1");
-        stock.setDescription("Kho hàng bán");
-        stock.setStocktype(stkType);
-
-        //entitymanager.persist( stock );
-        //entitymanager.getTransaction( ).commit( );
-        
-        entitymanager.close( );
-        emfactory.close( );
+        List<Area> areas = areaDAO.findAll();
+        for( Area area : areas ){
+            System.out.println(area.toString());
+        }
         
         StockTypeView view = new StockTypeView();
         StockTypeModel model = new StockTypeModel();

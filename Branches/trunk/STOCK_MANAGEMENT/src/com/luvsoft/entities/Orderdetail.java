@@ -3,11 +3,14 @@ package com.luvsoft.entities;
 // Generated Jan 26, 2016 10:06:12 PM by Hibernate Tools 4.3.1
 
 import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,7 +21,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "orderdetail", catalog = "stockmanagement")
-public class Orderdetail implements java.io.Serializable {
+public class Orderdetail extends AbstractEntity implements java.io.Serializable {
 
     /**
      * 
@@ -117,6 +120,14 @@ public class Orderdetail implements java.io.Serializable {
 
     public void setSaleOff(Integer saleOff) {
         this.saleOff = saleOff;
+    }
+
+    @Override
+    public String toString() {
+        return "Orderdetail [id=" + id + ", material=" + material + ", order="
+                + order + ", quantityNeeded=" + quantityNeeded
+                + ", quantityDelivered=" + quantityDelivered + ", price="
+                + price + ", saleOff=" + saleOff + "]";
     }
 
 }

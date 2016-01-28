@@ -18,7 +18,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "area", catalog = "stockmanagement")
-public class Area implements java.io.Serializable {
+public class Area extends AbstractEntity implements java.io.Serializable {
 
     /**
      * 
@@ -80,4 +80,9 @@ public class Area implements java.io.Serializable {
         this.customers = customers;
     }
 
+    @Override
+    public String toString() {
+        return "Area [id=" + id + ", name=" + name + ", description="
+                + description + ", customers=" + customers + "]";
+    }
 }
