@@ -20,6 +20,10 @@ import javax.persistence.TemporalType;
 @Table(name = "money", catalog = "stockmanagement")
 public class Money implements java.io.Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7060179423211748775L;
     private Integer id;
     private BigDecimal amount;
     private Date date;

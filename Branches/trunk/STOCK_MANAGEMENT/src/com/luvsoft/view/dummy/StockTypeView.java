@@ -8,6 +8,10 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
 import com.luvsoft.entities.Stocktype;
 
 public class StockTypeView extends MVerticalLayout implements StockTypeViewInterface{
+
+    /**
+     * 
+     */
     private static final long serialVersionUID = 5987085927023029095L;
     private MTable<Stocktype> table = new MTable<Stocktype>(Stocktype.class)
             .withProperties("id", "name", "description")

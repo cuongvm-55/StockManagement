@@ -25,6 +25,10 @@ import javax.persistence.TemporalType;
 @Table(name = "order", catalog = "stockmanagement")
 public class Order implements java.io.Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7702163142598168598L;
     private Integer id;
     private Customer customer;
     private Ordertype ordertype;

@@ -40,5 +40,10 @@
 		<!-- Compiler for custom widget sets. Should not be deployed -->
 		<dependency org="com.vaadin" name="vaadin-client-compiler"
 			rev="&vaadin.version;" conf="widgetset-compile->default" />
+			
+		<!-- Hibernate -->
+        <dependency org="org.hibernate" name="hibernate-core" rev="3.3.2.GA"/>
+        <dependency org="org.hibernate" name="hibernate-entitymanager" rev="4.2.6.Final"/>
+        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.6"/>	
 	</dependencies>
 </ivy-module>

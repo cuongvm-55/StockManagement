@@ -1,11 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="STOCK_MANAGEMENT">
+	    <class>com.luvsoft.entities.Area</class>
+	    <class>com.luvsoft.entities.Coupon</class>
+	    <class>com.luvsoft.entities.Coupondetail</class>
+	    <class>com.luvsoft.entities.Coupontype</class>
+	    <class>com.luvsoft.entities.Customer</class>
+	    <class>com.luvsoft.entities.Customertype1</class>
+	    <class>com.luvsoft.entities.Customertype2</class>
+	    <class>com.luvsoft.entities.Material</class>
+	    <class>com.luvsoft.entities.Materialtype1</class>
+	    <class>com.luvsoft.entities.Materialtype2</class>
+	    <class>com.luvsoft.entities.Money</class>
+	    <class>com.luvsoft.entities.Order</class>
+	    <class>com.luvsoft.entities.Orderdetail</class>
+	    <class>com.luvsoft.entities.Ordertype</class>
+	    <class>com.luvsoft.entities.Receivingbill</class>
+	    <class>com.luvsoft.entities.Receivingbilldetail</class>
+	    <class>com.luvsoft.entities.Spendingbill</class>
+	    <class>com.luvsoft.entities.Spendingbilldetail</class>
+	    <class>com.luvsoft.entities.Stock</class>
+	    <class>com.luvsoft.entities.Stocktype</class>
+	    <class>com.luvsoft.entities.Unit</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
             <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/stockmanagement"/>
             <property name="hibernate.connection.username" value="root"/>
+            <property name="hibernate.connection.password" value="root"/>
         </properties>
 	</persistence-unit>
 </persistence>
