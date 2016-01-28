@@ -10,7 +10,10 @@ import com.luvsoft.model.StockTypeModel;
 import com.luvsoft.presenter.StockTypePresenter;
 import com.luvsoft.view.dummy.StockTypeView;
 import com.vaadin.annotations.Theme;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -53,7 +56,7 @@ public class StockManagementUI extends UI {
         StockTypePresenter presenter = new StockTypePresenter(view, model);
         presenter.generateTable();
 
-        layout.addComponent(buildMenu(), view);
+        layout.addComponents(buildMenu(), view);
     }
 
     private MenuBar buildMenu() {
