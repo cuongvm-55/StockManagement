@@ -237,4 +237,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
                 + receivingbills + "]";
     }
 
+    public static String getEntityname() {
+        return "Customer";
+    }
 }

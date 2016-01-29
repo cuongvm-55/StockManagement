@@ -103,4 +103,7 @@ public class Receivingbilldetail extends AbstractEntity implements java.io.Seria
                 + reason + ", amount=" + amount + "]";
     }
 
+    public static String getEntityname() {
+        return "Receivingbilldetail";
+    }
 }

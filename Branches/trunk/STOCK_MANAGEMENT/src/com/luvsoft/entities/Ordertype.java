@@ -89,4 +89,7 @@ public class Ordertype extends AbstractEntity implements java.io.Serializable {
                 + description + ", orders=" + orders + "]";
     }
 
+    public static String getEntityname() {
+        return "Ordertype";
+    }
 }

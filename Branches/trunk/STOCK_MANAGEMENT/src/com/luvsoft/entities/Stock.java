@@ -117,4 +117,7 @@ public class Stock extends AbstractEntity implements java.io.Serializable {
                 + ", materials=" + materials + "]";
     }
 
+    public static String getEntityname() {
+        return "Stock";
+    }
 }

@@ -103,4 +103,7 @@ public class Spendingbilldetail extends AbstractEntity implements java.io.Serial
                 + reason + ", amount=" + amount + "]";
     }
 
+    public static String getEntityname() {
+        return "Spendingbilldetail";
+    }
 }

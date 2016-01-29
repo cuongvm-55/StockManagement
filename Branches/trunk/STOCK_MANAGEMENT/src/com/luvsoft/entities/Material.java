@@ -195,4 +195,7 @@ public class Material extends AbstractEntity implements java.io.Serializable {
                 + coupondetails + ", orderdetails=" + orderdetails + "]";
     }
 
+    public static String getEntityname() {
+        return "Material";
+    }
 }

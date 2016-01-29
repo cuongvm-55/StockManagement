@@ -117,4 +117,8 @@ public class Coupondetail extends AbstractEntity implements java.io.Serializable
                 + ", saleOff=" + saleOff + "]";
     }
 
+    public static String getEntityname() {
+        return "Coupondetail";
+    }
+
 }

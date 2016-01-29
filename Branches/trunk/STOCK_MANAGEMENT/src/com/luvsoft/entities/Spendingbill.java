@@ -146,4 +146,7 @@ public class Spendingbill extends AbstractEntity implements java.io.Serializable
                 + ", spendingbilldetails=" + spendingbilldetails + "]";
     }
 
+    public static String getEntityname() {
+        return "Spendingbill";
+    }
 }

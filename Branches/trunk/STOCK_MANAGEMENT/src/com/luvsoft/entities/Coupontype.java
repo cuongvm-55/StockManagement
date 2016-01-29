@@ -89,4 +89,7 @@ public class Coupontype extends AbstractEntity implements java.io.Serializable {
                 + description + ", coupons=" + coupons + "]";
     }
 
+    public static String getEntityname() {
+        return "Coupontype";
+    }
 }

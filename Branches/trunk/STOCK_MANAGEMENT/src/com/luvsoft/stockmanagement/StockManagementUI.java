@@ -2,9 +2,12 @@ package com.luvsoft.stockmanagement;
 
 import java.util.List;
 
-import com.luvsoft.DAO.AreaDAO;
+import com.luvsoft.DAO.EntityManagerDAO;
 import com.luvsoft.DAO.StockTypeModel;
 import com.luvsoft.entities.Area;
+import com.luvsoft.entities.Customer;
+import com.luvsoft.entities.Stock;
+import com.luvsoft.entities.Stocktype;
 import com.luvsoft.presenter.StockTypePresenter;
 import com.luvsoft.view.dummy.StockTypeView;
 import com.vaadin.annotations.Theme;
@@ -25,20 +28,6 @@ public class StockManagementUI extends UI {
         layout.setMargin(true);
         setContent(layout);
 
-        AreaDAO areaDAO = new AreaDAO();
-        
-        /*Area area = new Area();
-        area.setName("Ba Đình");
-        area.setDescription("Quận Ba Đình");
-        
-        areaDAO.addNew(area);
-        */
-        
-        List<Area> areas = areaDAO.findAll();
-        for( Area area : areas ){
-            System.out.println(area.toString());
-        }
-        
         StockTypeView view = new StockTypeView();
         StockTypeModel model = new StockTypeModel();
         StockTypePresenter presenter = new StockTypePresenter(view, model);
@@ -50,7 +39,6 @@ public class StockManagementUI extends UI {
     private MenuBar buildMenu() {
         MenuBar menu = new MenuBar();
         MenuBar.Command command = new MenuBar.Command() {
-            
             @Override
             public void menuSelected(MenuItem selectedItem) {
                 if(selectedItem.getText().equals("Chức Năng")) {

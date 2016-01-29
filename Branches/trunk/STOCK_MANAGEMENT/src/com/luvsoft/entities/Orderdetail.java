@@ -130,4 +130,7 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
                 + price + ", saleOff=" + saleOff + "]";
     }
 
+    public static String getEntityname() {
+        return "Orderdetail";
+    }
 }

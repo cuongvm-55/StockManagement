@@ -89,4 +89,7 @@ public class Customertype1 extends AbstractEntity implements java.io.Serializabl
                 + description + ", customers=" + customers + "]";
     }
 
+    public static String getEntityname() {
+        return "Customertype1";
+    }
 }

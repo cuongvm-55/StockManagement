@@ -1,6 +1,5 @@
 package com.luvsoft.DAO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -11,7 +10,7 @@ import javax.persistence.Query;
 
 import com.luvsoft.entities.AbstractEntity;
 
-public abstract class EntityManagerDAO {
+public class EntityManagerDAO {
     private EntityManagerFactory emfactory;
 
     @PersistenceContext
@@ -49,28 +48,22 @@ public abstract class EntityManagerDAO {
      * @param id
      * @param object
      */
-    public <T extends AbstractEntity> void remove(int id){
+    public <T extends AbstractEntity> void remove(String entityName, int id){
         entitymanager.getTransaction( ).begin( );
-        T entity = findById(id);
+        T entity = findById(entityName, id);
         entitymanager.remove(entity);
         entitymanager.getTransaction( ).commit( );
     }
 
+    /**
+     * Find all entities
+     * We use JPQL (JPA query language) so we will create query to entity not table
+     * @param entityName
+     * @return
+     */
     @SuppressWarnings("unchecked")
-    public <T extends AbstractEntity> List<T> findAll(){
-        /*Query query = entitymanager.createQuery("Select id from " + getEntityName());
-        List<Integer> idList = query.getResultList();
-        List<T> entities = new ArrayList<T>();
-        for( int id : idList ){
-            T entity = findById(id);
-            if( entity != null ){
-                entities.add(entity);
-            }
-        }
-        
-        return entities;
-        */
-        Query query = entitymanager.createQuery("Select e from " + getEntityName() + " e");
+    public <T extends AbstractEntity> List<T> findAll(String entityName){
+        Query query = entitymanager.createQuery("SELECT e FROM "+entityName+" e");
         return query.getResultList();
     }
 
@@ -80,14 +73,18 @@ public abstract class EntityManagerDAO {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T extends AbstractEntity> T findById(int id){
-        Query query = entitymanager.createQuery("Select e from " + getEntityName() + " e WHERE id="+id);
+    public <T extends AbstractEntity> T findById(String entityName, int id){
+        Query query = entitymanager.createQuery("SELECT e FROM " + entityName + " e WHERE id="+id);
         return (T)query.getSingleResult();
     }
 
     /**
-     * We use JPQL (JPA query language) so we will create query to entity not table
-     * @return
+     * Remove all entities
      */
-    public abstract String getEntityName();
+    public void removeAll(String entityName){
+        entitymanager.getTransaction( ).begin( );
+        Query query = entitymanager.createQuery("DELETE FROM "+ entityName);
+        query.executeUpdate();
+        entitymanager.getTransaction( ).commit( );
+    }
 }

@@ -182,4 +182,8 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
                 + spendingbills + "]";
     }
 
+    public static String getEntityname() {
+        return "Coupon";
+    }
+
 }

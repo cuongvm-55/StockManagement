@@ -91,4 +91,7 @@ public class Money extends AbstractEntity implements java.io.Serializable {
                 + ", description=" + description + "]";
     }
 
+    public static String getEntityname() {
+        return "Money";
+    }
 }

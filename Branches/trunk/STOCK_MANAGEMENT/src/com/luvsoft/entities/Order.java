@@ -169,4 +169,7 @@ public class Order extends AbstractEntity implements java.io.Serializable {
                 + orderdetails + "]";
     }
 
+    public static String getEntityname() {
+        return "Order";
+    }
 }

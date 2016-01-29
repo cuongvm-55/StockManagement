@@ -159,4 +159,7 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
                 + ", receivingbilldetails=" + receivingbilldetails + "]";
     }
 
+    public static String getEntityname() {
+        return "Receivingbill";
+    }
 }

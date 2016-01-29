@@ -89,4 +89,7 @@ public class Materialtype2 extends AbstractEntity implements java.io.Serializabl
                 + description + ", materials=" + materials + "]";
     }
 
+    public static String getEntityname() {
+        return "Materialtype2";
+    }
 }
