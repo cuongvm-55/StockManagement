@@ -68,6 +68,22 @@ public class EntityManagerDAO {
     }
 
     /**
+     * Retrieve records of entity according to pagination
+     * @param entityName
+     * @param numberOfRecordPerPage
+     * @param pageIndex
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends AbstractEntity> List<T> findAllWithPagination(String entityName, int pageIndex, int numberOfRecordPerPage){
+        Query query = entitymanager.createQuery("SELECT e FROM "+entityName+" e");
+        return query
+                .setMaxResults(numberOfRecordPerPage)
+                .setFirstResult(pageIndex * numberOfRecordPerPage)
+                .getResultList();
+    }
+
+    /**
      * Find entity by its id
      * @param id
      * @return
@@ -86,5 +102,16 @@ public class EntityManagerDAO {
         Query query = entitymanager.createQuery("DELETE FROM "+ entityName);
         query.executeUpdate();
         entitymanager.getTransaction( ).commit( );
+    }
+
+    /**
+     * Count number of records
+     * @param entityName
+     * @return
+     */
+    public long countData(String entityName) {
+        Query queryTotal = entitymanager.createQuery("SELECT count(e.id) FROM " + entityName + " e");
+        long countResult = (long) queryTotal.getSingleResult();
+        return countResult;
     }
 }

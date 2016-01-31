@@ -6,6 +6,7 @@ import com.luvsoft.DAO.StockTypeModel;
 import com.luvsoft.entities.Stocktype;
 import com.luvsoft.presenter.StockTypePresenter;
 import com.luvsoft.view.component.GenericTabCategory;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
@@ -32,6 +33,10 @@ public class StockTypeView extends GenericTabCategory<Stocktype> implements Stoc
         this.btnImportExcel.addClickListener(this);
         this.btnExportExcel.addClickListener(this);
         this.btnRefresh.addClickListener(this);
+        this.btnFirstPage.addClickListener(this);
+        this.btnLastPage.addClickListener(this);
+        this.btnPreviousPage.addClickListener(this);
+        this.btnNextPage.addClickListener(this);
     }
 
     @Override
@@ -53,6 +58,21 @@ public class StockTypeView extends GenericTabCategory<Stocktype> implements Stoc
             // TODO implement handle event at there
         } else if(event.getButton().equals(btnRefresh)) {
             // TODO implement handle event at there
+        } else if(event.getButton().equals(btnFirstPage)) {
+            presenter.goToFirstPage();
+        } else if(event.getButton().equals(btnLastPage)) {
+            presenter.goToLastPage();
+        } else if(event.getButton().equals(btnNextPage)) {
+            presenter.goToNextPage();
+        } else if(event.getButton().equals(btnPreviousPage)) {
+            presenter.goToPreviousPage();
+        } else {
+            for(int i=0; i<this.paginationNumberWrapper.getComponentCount(); i++) {
+                Button btnNumber = (Button) this.paginationNumberWrapper.getComponent(i);
+                if(btnNumber.getData().equals(event.getButton().getData())) {
+                    presenter.goToPage(i);
+                }
+            }
         }
     }
 
