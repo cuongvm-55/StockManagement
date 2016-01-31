@@ -5,11 +5,14 @@ package com.luvsoft.entities;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,7 +26,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "coupon", catalog = "stockmanagement")
-public class Coupon implements java.io.Serializable {
+public class Coupon extends AbstractEntity implements java.io.Serializable {
 
     /**
      * 
@@ -167,6 +170,20 @@ public class Coupon implements java.io.Serializable {
 
     public void setSpendingbills(Set<Spendingbill> spendingbills) {
         this.spendingbills = spendingbills;
+    }
+
+    @Override
+    public String toString() {
+        return "Coupon [id=" + id + ", coupontype=" + coupontype
+                + ", customer=" + customer + ", code=" + code + ", buyer="
+                + buyer + ", content=" + content + ", date=" + date + ", note="
+                + note + ", coupondetails=" + coupondetails
+                + ", receivingbills=" + receivingbills + ", spendingbills="
+                + spendingbills + "]";
+    }
+
+    public static String getEntityname() {
+        return "Coupon";
     }
 
 }

@@ -4,11 +4,14 @@ package com.luvsoft.entities;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -18,7 +21,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "unit", catalog = "stockmanagement")
-public class Unit implements java.io.Serializable {
+public class Unit extends AbstractEntity implements java.io.Serializable {
 
     /**
      * 
@@ -67,6 +70,15 @@ public class Unit implements java.io.Serializable {
 
     public void setMaterials(Set<Material> materials) {
         this.materials = materials;
+    }
+
+    @Override
+    public String toString() {
+        return "Unit [id=" + id + ", name=" + name + ", materials=" + materials
+                + "]";
+    }
+    public static String getEntityname() {
+        return "Unit";
     }
 
 }

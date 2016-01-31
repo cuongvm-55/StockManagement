@@ -2,8 +2,8 @@ package com.luvsoft.view.StockType;
 
 import java.util.List;
 
+import com.luvsoft.DAO.StockTypeModel;
 import com.luvsoft.entities.Stocktype;
-import com.luvsoft.model.StockTypeModel;
 import com.luvsoft.presenter.StockTypePresenter;
 import com.luvsoft.view.component.GenericTabCategory;
 import com.vaadin.ui.Button.ClickEvent;

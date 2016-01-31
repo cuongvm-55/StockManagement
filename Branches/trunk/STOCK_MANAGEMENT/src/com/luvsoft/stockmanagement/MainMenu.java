@@ -23,6 +23,7 @@ public class MainMenu extends TabSheet {
 
     public void init() {
         addStyleName(ValoTheme.TABSHEET_COMPACT_TABBAR);
+        setSizeFull();
 
         initViews();
 

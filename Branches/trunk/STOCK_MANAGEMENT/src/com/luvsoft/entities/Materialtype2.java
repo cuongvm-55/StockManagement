@@ -4,11 +4,14 @@ package com.luvsoft.entities;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -18,7 +21,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "materialtype2", catalog = "stockmanagement")
-public class Materialtype2 implements java.io.Serializable {
+public class Materialtype2 extends AbstractEntity implements java.io.Serializable {
 
     /**
      * 
@@ -80,4 +83,13 @@ public class Materialtype2 implements java.io.Serializable {
         this.materials = materials;
     }
 
+    @Override
+    public String toString() {
+        return "Materialtype2 [id=" + id + ", name=" + name + ", description="
+                + description + ", materials=" + materials + "]";
+    }
+
+    public static String getEntityname() {
+        return "Materialtype2";
+    }
 }

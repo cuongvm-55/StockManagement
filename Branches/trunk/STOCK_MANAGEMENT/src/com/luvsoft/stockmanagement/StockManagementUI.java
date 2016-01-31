@@ -1,90 +1,49 @@
 package com.luvsoft.stockmanagement;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import com.luvsoft.entities.Stock;
-import com.luvsoft.entities.Stocktype;
-import com.luvsoft.model.StockTypeModel;
-import com.luvsoft.presenter.StockTypePresenter;
-import com.luvsoft.view.dummy.StockTypeView;
+import org.vaadin.viritin.layouts.MHorizontalLayout;
+
 import com.vaadin.annotations.Theme;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 @Theme("stockmanagement")
 public class StockManagementUI extends UI {
 
+    private VerticalLayout layout;
     @Override
     protected void init(VaadinRequest request) {
-        final VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
+        layout = new VerticalLayout();
+        layout.setSpacing(true);
+        layout.setSizeFull();
         setContent(layout);
 
-        EntityManagerFactory emfactory = Persistence.
-                createEntityManagerFactory( "STOCK_MANAGEMENT" );
-        EntityManager entitymanager = emfactory.createEntityManager( );
-        entitymanager.getTransaction( ).begin( );
-        
-        Stocktype stkType = new Stocktype();
-        stkType.setName("Hàng lỗi");
-        stkType.setDescription("Loại kho chứa các vật tư lỗi");
-        
-        entitymanager.persist( stkType );
-        entitymanager.getTransaction( ).commit( );
-        
-        Stock stock = new Stock();
-        stock.setName("Kho 1");
-        stock.setCode("KHO1");
-        stock.setDescription("Kho hàng bán");
-        stock.setStocktype(stkType);
+        MainMenu menu = new MainMenu();
+        layout.addComponent(menu);
+        layout.setExpandRatio(menu, 2.0f);
 
-        //entitymanager.persist( stock );
-        //entitymanager.getTransaction( ).commit( );
-        
-        entitymanager.close( );
-        emfactory.close( );
-        
-        StockTypeView view = new StockTypeView();
-        StockTypeModel model = new StockTypeModel();
-        StockTypePresenter presenter = new StockTypePresenter(view, model);
-        presenter.generateTable();
-
-        layout.addComponents(buildMenu(), view);
+        buildFooter();
     }
 
-    private MenuBar buildMenu() {
-        MenuBar menu = new MenuBar();
-        MenuBar.Command command = new MenuBar.Command() {
-            
-            @Override
-            public void menuSelected(MenuItem selectedItem) {
-                if(selectedItem.getText().equals("Chức Năng")) {
-                    
-                }
-            }
-        };
+    private void buildFooter() {
+        MHorizontalLayout wrapper = new MHorizontalLayout();
+        layout.addComponent(wrapper);
+        layout.setExpandRatio(wrapper, 0.07f);
 
-        MenuItem sysItem = menu.addItem("Hệ Thống", FontAwesome.COGS, null);
-        sysItem.addItem("Đăng Nhập", FontAwesome.USER, command);
-        sysItem.addItem("Đăng Xuất", FontAwesome.KEY, command);
+        Label version = new Label("Công Ty TNHH Luvsoft - Phần Mềm Quản Lý Kho Phụ Tùng Xe Máy - Phiên Bản 1.0");
+        version.addStyleName(ValoTheme.LABEL_BOLD + " " + ValoTheme.LABEL_SMALL);
 
-        final MenuItem funcItem = menu.addItem("Chức Năng", FontAwesome.FOLDER_OPEN, command);
-        
-        menu.addItem("Báo Cáo", FontAwesome.FILE_EXCEL_O, command);
-        menu.addItem("Danh Mục", FontAwesome.BOOK, command);
-        menu.addItem("Trợ Giúp", FontAwesome.INFO, command);
+        SimpleDateFormat format = new SimpleDateFormat("dd/mm/yyyy");
+        Date currentDate = new Date();
+        Label date = new Label(format.format(currentDate));
+        date.addStyleName(ValoTheme.LABEL_BOLD + " " + ValoTheme.LABEL_SMALL);
 
-        // Submenu
-        MenuBar subMenu = new MenuBar();
-        subMenu.addItem("Bán Hàng", FontAwesome.GLOBE,null);
-
-        return menu;
+        wrapper.addComponents(version, date);
     }
 }
