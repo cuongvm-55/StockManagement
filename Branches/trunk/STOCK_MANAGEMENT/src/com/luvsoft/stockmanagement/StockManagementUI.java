@@ -34,7 +34,7 @@ public class StockManagementUI extends UI {
     private void buildFooter() {
         MHorizontalLayout wrapper = new MHorizontalLayout();
         layout.addComponent(wrapper);
-        layout.setExpandRatio(wrapper, 0.07f);
+        layout.setExpandRatio(wrapper, 0.06f);
 
         Label version = new Label("Công Ty TNHH Luvsoft - Phần Mềm Quản Lý Kho Phụ Tùng Xe Máy - Phiên Bản 1.0");
         version.addStyleName(ValoTheme.LABEL_BOLD + " " + ValoTheme.LABEL_SMALL);
