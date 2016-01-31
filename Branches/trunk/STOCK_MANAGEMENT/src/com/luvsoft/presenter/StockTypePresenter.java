@@ -1,7 +1,7 @@
 package com.luvsoft.presenter;
 
 import com.luvsoft.model.StockTypeModel;
-import com.luvsoft.view.dummy.StockTypeView;
+import com.luvsoft.view.StockType.StockTypeView;
 
 public class StockTypePresenter implements StockTypeListener {
     private StockTypeView view;
