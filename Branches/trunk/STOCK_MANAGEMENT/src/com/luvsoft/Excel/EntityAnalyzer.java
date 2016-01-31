@@ -23,7 +23,7 @@ public class EntityAnalyzer {
         fieldList = new ArrayList<Field>();
 
         getFields(entityFullName);
-        System.out.println(fieldList.toString());
+        //System.out.println(fieldList.toString());
 /*
         Stocktype type = new Stocktype();
         type.setId(100);
@@ -98,13 +98,13 @@ public class EntityAnalyzer {
      * @param object
      * @return
      */
-    public static Object getFieldValue(Field field, Class<?> o, Object object){
-        // MZ: Find the correct method
-        for (Method method : o.getMethods()){
+    public static Object getFieldValue(Object object, Field field){
+        // Find the correct method
+        for (Method method : object.getClass().getMethods()){
             if( (method.getName().startsWith("get"))
                     && (method.getName().length() == (field.getName().length() + 3))){
                 if (method.getName().toLowerCase().endsWith(field.getName().toLowerCase())){
-                    // MZ: Method found, run it
+                    // Method found, run it
                     try{
                         return method.invoke(object);
                     }
