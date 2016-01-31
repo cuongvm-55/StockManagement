@@ -43,8 +43,8 @@ public class GenericTabCategory<T> {
         btnEdit = new Button("Sửa", FontAwesome.PENCIL);
         btnDelete = new Button("Xóa", FontAwesome.BAN);
         btnRefresh = new Button("Làm Mới", FontAwesome.REFRESH);
-        btnImportExcel = new Button("Nhập Vào Từ Excel", FontAwesome.ARROW_UP);
-        btnExportExcel = new Button("Xuất Ra Excel", FontAwesome.ARROW_DOWN);
+        btnImportExcel = new Button("Nhập Vào Từ Excel", FontAwesome.ARROW_DOWN);
+        btnExportExcel = new Button("Xuất Ra Excel", FontAwesome.ARROW_UP);
 
         content = new MGrid<T>();
         content.setSizeFull();

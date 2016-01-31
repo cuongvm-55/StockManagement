@@ -62,7 +62,8 @@ public class EntityManagerDAO {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T extends AbstractEntity> List<T> findAll(String entityName){
+    //public <T extends AbstractEntity> List<T> findAll(String entityName){
+    public List<Object> findAll(String entityName){
         Query query = entitymanager.createQuery("SELECT e FROM "+entityName+" e");
         return query.getResultList();
     }

@@ -2,13 +2,16 @@ package com.luvsoft.view.StockType;
 
 import java.util.List;
 
-import com.luvsoft.entities.Stocktype;
+import com.luvsoft.Excel.StockTypeExporter;
 import com.luvsoft.presenter.StockTypePresenter;
 import com.luvsoft.view.component.GenericTabCategory;
+import com.vaadin.server.Page;
+import com.vaadin.shared.Position;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
-public class StockTypeView extends GenericTabCategory<Stocktype> implements StockTypeViewInterface, ClickListener{
+public class StockTypeView extends GenericTabCategory<Object> implements StockTypeViewInterface, ClickListener{
     private static final long serialVersionUID = -7975276654447059817L;
     private StockTypePresenter presenter;
 
@@ -32,7 +35,7 @@ public class StockTypeView extends GenericTabCategory<Stocktype> implements Stoc
     }
 
     @Override
-    public void setTable(List<Stocktype> listData) {
+    public void setTable(List<Object> listData) {
         this.withContentData(listData);
     }
 
@@ -45,11 +48,18 @@ public class StockTypeView extends GenericTabCategory<Stocktype> implements Stoc
         } else if(event.getButton().equals(btnDelete)) {
             // TODO implement handle event at there
         } else if(event.getButton().equals(btnExportExcel)) {
-            // TODO implement handle event at there
+            StockTypeExporter stockTypeExporter = new StockTypeExporter();
+            if( stockTypeExporter.export() ){
+                Notification notify = new Notification("<b>Thông báo</b>",
+                        "Excel đã xuất thành công!",
+                        Notification.Type.TRAY_NOTIFICATION  , true);
+                notify.setPosition(Position.BOTTOM_RIGHT);
+                notify.show(Page.getCurrent());
+            }
         } else if(event.getButton().equals(btnImportExcel)) {
             // TODO implement handle event at there
         } else if(event.getButton().equals(btnRefresh)) {
-            // TODO implement handle event at there
+            presenter.refreshView();
         }
     }
 

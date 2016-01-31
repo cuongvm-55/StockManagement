@@ -17,4 +17,11 @@ public class StockTypePresenter implements StockTypeListener {
         view.setTable(model.getData());
     }
 
+    /**
+     * Refresh view
+     */
+    public void refreshView(){
+        generateTable();
+    }
+
 }

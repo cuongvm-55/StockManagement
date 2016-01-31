@@ -6,7 +6,7 @@ import com.luvsoft.entities.Stocktype;
 
 public class StockTypeModel {
     EntityManagerDAO entityManager = new EntityManagerDAO();
-    public List<Stocktype> getData() {
+    public List<Object> getData() {
         return entityManager.findAll(Stocktype.getEntityname());
     }
 }
