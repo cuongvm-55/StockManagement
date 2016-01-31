@@ -20,7 +20,9 @@ public class StockTypeView extends GenericTabCategory<Stocktype> implements Stoc
 
         super.init("Danh Sách Các Loại Kho")
                                     .withGeneralFuntionsList()
-                                    .withTableProperties("id", "name", "description");
+                                    .withTableProperties("name", "description")
+                                    .withHeaderNames("name", "<b>Tên</b>")
+                                    .withHeaderNames("description", "<b>Mô Tả</b>");
         presenter.generateTable();
 
         // Handle events

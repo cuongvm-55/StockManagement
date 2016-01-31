@@ -79,6 +79,17 @@ public class GenericTabCategory<T> {
     }
 
     /**
+     * Function is used to set name for each column
+     * @param propertyId
+     * @param text
+     * @return
+     */
+    public GenericTabCategory<T> withHeaderNames(String propertyId, String text) {
+        content.getDefaultHeaderRow().getCell(propertyId).setHtml(text);
+        return this;
+    }
+
+    /**
      * Function is used to set data for table content
      * @param listData
      * @return
