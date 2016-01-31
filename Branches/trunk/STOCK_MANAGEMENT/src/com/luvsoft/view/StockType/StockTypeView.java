@@ -2,7 +2,6 @@ package com.luvsoft.view.StockType;
 
 import java.util.List;
 
-import com.luvsoft.DAO.StockTypeModel;
 import com.luvsoft.entities.Stocktype;
 import com.luvsoft.presenter.StockTypePresenter;
 import com.luvsoft.view.component.GenericTabCategory;
@@ -12,11 +11,9 @@ import com.vaadin.ui.Button.ClickListener;
 public class StockTypeView extends GenericTabCategory<Stocktype> implements StockTypeViewInterface, ClickListener{
     private static final long serialVersionUID = -7975276654447059817L;
     private StockTypePresenter presenter;
-    private StockTypeModel model;
 
     public StockTypeView() {
-        model = new StockTypeModel();
-        presenter = new StockTypePresenter(this, model);
+        presenter = new StockTypePresenter(this);
 
         super.init("Danh Sách Các Loại Kho")
                                     .withGeneralFuntionsList()

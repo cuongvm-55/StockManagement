@@ -7,10 +7,9 @@ public class StockTypePresenter implements StockTypeListener {
     private StockTypeView view;
     private StockTypeModel model;
 
-    
-    public StockTypePresenter(StockTypeView view, StockTypeModel model) {
+    public StockTypePresenter(StockTypeView view) {
         this.view = view;
-        this.model = model;
+        model = new StockTypeModel();
     }
 
     @Override

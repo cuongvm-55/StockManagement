@@ -39,7 +39,7 @@ public class StockManagementUI extends UI {
         Label version = new Label("Công Ty TNHH Luvsoft - Phần Mềm Quản Lý Kho Phụ Tùng Xe Máy - Phiên Bản 1.0");
         version.addStyleName(ValoTheme.LABEL_BOLD + " " + ValoTheme.LABEL_SMALL);
 
-        SimpleDateFormat format = new SimpleDateFormat("dd/mm/yyyy");
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         Date currentDate = new Date();
         Label date = new Label(format.format(currentDate));
         date.addStyleName(ValoTheme.LABEL_BOLD + " " + ValoTheme.LABEL_SMALL);
