@@ -24,7 +24,8 @@ public class EntityManagerDAO {
      * Add new entity
      * @param object
      */
-    public <T extends AbstractEntity> void addNew(T object){
+    //public <T extends AbstractEntity> void addNew(T object){
+    public void addNew(Object object){
         entitymanager.getTransaction( ).begin( );
         entitymanager.persist( object );
         entitymanager.getTransaction( ).commit( );
@@ -114,5 +115,17 @@ public class EntityManagerDAO {
         Query queryTotal = entitymanager.createQuery("SELECT count(e.id) FROM " + entityName + " e");
         long countResult = (long) queryTotal.getSingleResult();
         return countResult;
+    }
+
+    /**
+     * Get entity by its name
+     * Remark: Only use this method for entity that has unique name
+     * @param entityName
+     * @param name
+     * @return
+     */
+    public Object findByName(String entityName, String name){
+        Query query = entitymanager.createQuery("SELECT e FROM " + entityName + " e WHERE name="+name);
+        return query.getSingleResult();
     }
 }

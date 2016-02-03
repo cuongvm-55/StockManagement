@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 
+import com.luvsoft.view.component.FileUploader;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Label;
@@ -28,6 +29,10 @@ public class StockManagementUI extends UI {
         layout.addComponent(menu);
         layout.setExpandRatio(menu, 2.0f);
 
+        FileUploader uploadField = new FileUploader();
+        uploadField.setButtonCaption("Nhập vào từ excel");
+
+        layout.addComponents(uploadField);
         buildFooter();
     }
 

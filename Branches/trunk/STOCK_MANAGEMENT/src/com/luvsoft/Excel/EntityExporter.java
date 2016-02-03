@@ -13,6 +13,13 @@ import jxl.write.WritableCell;
 import com.luvsoft.DAO.EntityManagerDAO;
 
 public abstract class EntityExporter extends ExcelExporter{
+    public EntityExporter(){
+        entityAnalyzer = new EntityAnalyzer(getEntityFullPathName());
+        currentColumn = 0;
+        currentRow = 0;
+    }
+
+    public abstract String getEntityFullPathName();
 
     protected boolean buildHeader(List<WritableCell> headers){
         List<Field> fields = entityAnalyzer.getFieldList();
@@ -60,28 +67,28 @@ public abstract class EntityExporter extends ExcelExporter{
                     contents.add(date);
                 }
                 // Object generated from foreign key
-                // Export only its id
+                // Export only its name
                 else if( field.getType().getPackage().getName()
                         .equals("com.luvsoft.entities") ){
                     Object object = EntityAnalyzer.getFieldValue(entity, field);
                     Method method = null;
 
-                    // Get method getId()
+                    // Get method getName()
                     try {
-                        method = object.getClass().getDeclaredMethod ("getId");
+                        method = object.getClass().getDeclaredMethod ("getName");
                     } catch (NoSuchMethodException e) {
-                        System.out.println("No method getId() in class " + object.getClass().getSimpleName());
+                        System.out.println("No method getName() in class " + object.getClass().getSimpleName());
                     } catch (SecurityException e) {
-                        System.out.println("Access denied for method getId() in class " + object.getClass().getSimpleName());
+                        System.out.println("Access denied for method getName() in class " + object.getClass().getSimpleName());
                     }
 
-                    // Get the desired id
+                    // Get the desired name
                     try {
-                        // Id's always an interger value
-                        jxl.write.Number nbr = createNumberCell(
+                        // Name's always a string value
+                        jxl.write.Label nbr = createLabelCell(
                                 currentColumn,
                                 currentRow,
-                                Float.parseFloat(method.invoke(object).toString()));
+                                method.invoke(object).toString());
                         contents.add(nbr);
                     } catch (IllegalAccessException e) {
                         System.out.println("IllegalAccessException method " + method.getName());
