@@ -152,7 +152,9 @@ public class FileChooser extends Window implements Tree.ExpandListener {
     private void populateNode(String file, Object parent) {
         final File subdir = new File(file);
         final File[] files = subdir.listFiles();
-        Arrays.sort(files);
+        if( files != null ){
+            Arrays.sort(files);
+        }
         for (int x = 0; x < files.length; x++) {
             if( !files[x].getName().toString().startsWith(".") ) {
                 try {
