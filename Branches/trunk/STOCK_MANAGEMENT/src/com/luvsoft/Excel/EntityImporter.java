@@ -8,12 +8,10 @@ import java.util.List;
 import com.luvsoft.DAO.EntityManagerDAO;
 
 public abstract class EntityImporter extends ExcelImporter{
-    private InputStream inputStream;
     private EntityAnalyzer entityAnalyzer;
     private EntityManagerDAO entityDao;
 
-    public EntityImporter(InputStream inputStream){
-        this.inputStream = inputStream;
+    public EntityImporter(){
         entityAnalyzer = new EntityAnalyzer(getEntityFullPathName());
         entityDao = new EntityManagerDAO();
     }
@@ -24,9 +22,15 @@ public abstract class EntityImporter extends ExcelImporter{
      */
     public abstract String getEntityFullPathName();
 
-    public boolean process(){
+    public boolean process(InputStream inputStream){
+        System.out.println("Process input stream.");
+        if( inputStream == null ){
+            return false;
+        }
+
         // parse file to get headers and records
         if( !super.parse(inputStream) ){
+            System.out.println("Fail to parse the input stream.");
             return false;
         }
 
@@ -36,9 +40,17 @@ public abstract class EntityImporter extends ExcelImporter{
         if( records != null ){
             System.out.println(records.toString());
         }
+        
+        // Check if we do not have so many headers than the entity
+        if( headers.size() > entityAnalyzer.getFieldList().size() )
+        {
+            System.out.println("Invalid number of headers in excel file!");
+            return false;
+        }
 
         // save the records to db
         for( List<Object> record : records ){
+            System.out.println(record);
             // Instantiate object
             Object entityInstance = EntityAnalyzer.instantiateObjectFromClassName(getEntityFullPathName());
 

@@ -61,7 +61,7 @@ public abstract class ExcelImporter {
                 records = new ArrayList<List<Object>>();
                 for(int row = 1; row < sheet.getRows(); row++){
                     List<Object> record = new ArrayList<Object>();
-                    for( int col = 0; col < sheet.getColumns(); col++ ){
+                    for( int col = 0; col < headers.size(); col++ ){ // we want all the record has the same elements than headers
                         Cell cell = sheet.getCell(col, row);
                         if (cell.getType() == CellType.LABEL) 
                         {
@@ -77,6 +77,9 @@ public abstract class ExcelImporter {
                         { 
                             DateCell dc = (DateCell) cell; 
                             record.add(dc.getDate());
+                        }
+                        else{
+                            record.add(""); // default is empty value
                         }
                     }
                     // add record to the list

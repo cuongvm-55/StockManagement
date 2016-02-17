@@ -5,4 +5,7 @@ public class StockTypeExporter extends EntityExporter{
     public String getEntityFullPathName() {
         return "com.luvsoft.entities.Stocktype";
     }
+    public StockTypeExporter(String destFolder){
+        this.destFolder = destFolder;
+    }
 }

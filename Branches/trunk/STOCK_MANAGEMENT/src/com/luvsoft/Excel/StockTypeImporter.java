@@ -1,11 +1,9 @@
 package com.luvsoft.Excel;
 
-import java.io.InputStream;
 
 public class StockTypeImporter extends EntityImporter{
 
-    public StockTypeImporter(InputStream inputStream) {
-        super(inputStream);
+    public StockTypeImporter() {
     }
 
     @Override

@@ -45,6 +45,9 @@ public abstract class ExcelExporter {
     // returns title
     protected abstract String getTitle();
 
+    // folder to save the output excel file
+    protected abstract String getDestFolder();
+    
     public Label createLabelCell(int col, int row, String str){
         return new Label(col, row, str);
     }
@@ -68,7 +71,7 @@ public abstract class ExcelExporter {
                 // Create work book
                 // File name + current date
                 SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss"); // it's not depend on the current language
-                String fileName = "D:\\"+entityAnalyzer.getEntityName()+"_" + formatter.format(new Date()) + ".xls";
+                String fileName = getDestFolder()+"/"+entityAnalyzer.getEntityName()+"_" + formatter.format(new Date()) + ".xls";
                 WorkbookSettings wbSettings = new WorkbookSettings();
                 wbSettings.setRationalization(false);
                 WritableWorkbook workBook = Workbook.createWorkbook(new File( fileName ), wbSettings);
