@@ -115,4 +115,16 @@ public class EntityManagerDAO {
         long countResult = (long) queryTotal.getSingleResult();
         return countResult;
     }
+
+    /**
+     * Check the name is duplicated or not
+     * @param entityName
+     * @param name
+     * @return true if the name is existing in database
+     */
+    @SuppressWarnings("unchecked")
+    public List<Object> findEntityByName(String entityName, String name) {
+        Query query = entitymanager.createQuery("SELECT e FROM " + entityName + " e WHERE e.name=:name");
+        return query.setParameter("name", name.trim()).getResultList();
+    }
 }

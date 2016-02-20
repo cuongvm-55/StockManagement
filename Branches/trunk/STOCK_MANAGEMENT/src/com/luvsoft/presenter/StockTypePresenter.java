@@ -1,13 +1,18 @@
 package com.luvsoft.presenter;
 
 import com.luvsoft.DAO.StockTypeModel;
+import com.luvsoft.entities.AbstractEntity;
+import com.luvsoft.entities.Stocktype;
+import com.luvsoft.utils.ACTION;
+import com.luvsoft.utils.NemErrorList;
 import com.luvsoft.view.StockType.StockTypeView;
 
 public class StockTypePresenter implements StockTypeListener {
     private StockTypeView view;
     private StockTypeModel model;
-    private final int DEFAULT_NUMBER_OF_RECORDS_PER_PAGE = 5;
-
+    private final int DEFAULT_NUMBER_OF_RECORDS_PER_PAGE = 8;
+    private ACTION action;
+    private int currentPage = 0;
 
     public StockTypePresenter(StockTypeView view) {
         this.view = view;
@@ -16,8 +21,7 @@ public class StockTypePresenter implements StockTypeListener {
 
     @Override
     public void generateTable() {
-        view.setTable(model.getData(0, DEFAULT_NUMBER_OF_RECORDS_PER_PAGE));
-        view.setNumberOfPages(0, (int) Math.ceil((double) model.getCountData()/DEFAULT_NUMBER_OF_RECORDS_PER_PAGE));
+        goToPage(currentPage);
     }
 
     @Override
@@ -32,6 +36,7 @@ public class StockTypePresenter implements StockTypeListener {
 
         view.setTable(model.getData(number, DEFAULT_NUMBER_OF_RECORDS_PER_PAGE));
         view.setNumberOfPages(number, pageTotal);
+        currentPage = number;
     }
 
     @Override
@@ -41,7 +46,7 @@ public class StockTypePresenter implements StockTypeListener {
 
     @Override
     public void goToLastPage() {
-        goToPage(view.getPaginationNumberWrapper().getComponentCount()-1);
+        goToPage(view.getPaginationNumberWrapper().getComponentCount());
     }
 
     @Override
@@ -59,6 +64,46 @@ public class StockTypePresenter implements StockTypeListener {
      */
     public void refreshView(){
         generateTable();
+    }
+
+    @Override
+    public void updateEntity(AbstractEntity entity) {
+        if(action.equals(ACTION.CREATE)) {
+            model.addNew((Stocktype) entity);
+            goToLastPage();
+        }
+        else if(action.equals(ACTION.UPDATE)) {
+            model.update((Stocktype) entity);
+            // refresh table
+            generateTable();
+        }
+    }
+
+    @Override
+    public boolean validateForm(AbstractEntity entity) {
+        Stocktype stocktype = (Stocktype) entity;
+        if(model.isDuplicatedName(stocktype)) {
+            NemErrorList.raiseErrorFieldExisted("Tên");
+            return false;
+        }
+
+        if(stocktype.getName().trim().isEmpty()) {
+            System.out.println("EMPTY " + stocktype.getName());
+            NemErrorList.raiseErrorFieldEmpty("Tên");
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void deleteEntity(AbstractEntity entity) {
+        model.deleteEntity((Stocktype) entity);
+        generateTable();
+    }
+
+    @Override
+    public void setAction(ACTION action) {
+        this.action = action;
     }
 
 }
