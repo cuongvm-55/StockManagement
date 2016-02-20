@@ -13,6 +13,14 @@ import jxl.write.WritableCell;
 import com.luvsoft.DAO.EntityManagerDAO;
 
 public abstract class EntityExporter extends ExcelExporter{
+    protected  String destFolder;
+    public EntityExporter(){
+        entityAnalyzer = new EntityAnalyzer(getEntityFullPathName());
+        currentColumn = 0;
+        currentRow = 0;
+    }
+
+    public abstract String getEntityFullPathName();
 
     protected boolean buildHeader(List<WritableCell> headers){
         List<Field> fields = entityAnalyzer.getFieldList();
@@ -38,50 +46,59 @@ public abstract class EntityExporter extends ExcelExporter{
         for( Object entity : entities){
             currentColumn = 0; // from the first column
             for( Field field : entityAnalyzer.getFieldList() ){
+                Object val = EntityAnalyzer.getFieldValue(entity, field);
+                if( val == null )
+                {
+                    currentColumn++;
+                    continue; // ignore null value
+                }
                 if( field.getType().equals(String.class) ){
                     Label lbl = createLabelCell(currentColumn,
                             currentRow,
-                            EntityAnalyzer.getFieldValue(entity, field).toString());
+                            val.toString());
                     contents.add(lbl);
                 }
                 else if( field.getType().equals(Integer.class) ||
                             field.getType().equals(BigDecimal.class)){
                     jxl.write.Number nbr = createNumberCell(currentColumn,
                             currentRow,
-                            Float.parseFloat(EntityAnalyzer.getFieldValue(entity, field).toString()));
+                            Float.parseFloat(val.toString()));
                     contents.add(nbr);
                 }
                 else if( field.getType().equals(Date.class) ){
                     jxl.write.DateTime date = createDateCell(
                             currentColumn,
                             currentRow,
-                            (Date)(EntityAnalyzer.getFieldValue(entity, field)),
+                            (Date)(val),
                             false);
                     contents.add(date);
                 }
                 // Object generated from foreign key
-                // Export only its id
+                // Export only its name
                 else if( field.getType().getPackage().getName()
                         .equals("com.luvsoft.entities") ){
-                    Object object = EntityAnalyzer.getFieldValue(entity, field);
                     Method method = null;
 
-                    // Get method getId()
+                    // Get method getName()
                     try {
-                        method = object.getClass().getDeclaredMethod ("getId");
+                        method = val.getClass().getDeclaredMethod ("getName");
+                        if( method == null ){
+                            currentColumn++;
+                            continue;
+                        }
                     } catch (NoSuchMethodException e) {
-                        System.out.println("No method getId() in class " + object.getClass().getSimpleName());
+                        System.out.println("No method getName() in class " + val.getClass().getSimpleName());
                     } catch (SecurityException e) {
-                        System.out.println("Access denied for method getId() in class " + object.getClass().getSimpleName());
+                        System.out.println("Access denied for method getName() in class " + val.getClass().getSimpleName());
                     }
 
-                    // Get the desired id
+                    // Get the desired name
                     try {
-                        // Id's always an interger value
-                        jxl.write.Number nbr = createNumberCell(
+                        // Name's always a string value
+                        jxl.write.Label nbr = createLabelCell(
                                 currentColumn,
                                 currentRow,
-                                Float.parseFloat(method.invoke(object).toString()));
+                                method.invoke(val).toString());
                         contents.add(nbr);
                     } catch (IllegalAccessException e) {
                         System.out.println("IllegalAccessException method " + method.getName());
@@ -114,5 +131,10 @@ public abstract class EntityExporter extends ExcelExporter{
     protected String getReportName() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    protected String getDestFolder(){
+        return destFolder;
     }
 }

@@ -1,7 +1,10 @@
 package com.luvsoft.DAO;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -24,10 +27,26 @@ public class EntityManagerDAO {
      * Add new entity
      * @param object
      */
-    public <T extends AbstractEntity> void addNew(T object){
-        entitymanager.getTransaction( ).begin( );
-        entitymanager.persist( object );
-        entitymanager.getTransaction( ).commit( );
+    //public <T extends AbstractEntity> void addNew(T object){
+    public boolean addNew(Object object){
+        try{
+            entitymanager.getTransaction( ).begin( );
+            try{
+                entitymanager.persist( object );
+            }catch(EntityExistsException eee){
+                System.out.println("Entity existed!");
+                return false;
+            }
+            catch(IllegalArgumentException eiae){
+                System.out.println("Illegal argument!");
+                return false;
+            }
+            entitymanager.getTransaction( ).commit( );
+            return true;
+        }catch(IllegalStateException e){
+            System.out.println("Illegal state!");
+            return false;
+        }
     }
 
     /**
@@ -62,26 +81,20 @@ public class EntityManagerDAO {
      * @return
      */
     @SuppressWarnings("unchecked")
-    //public <T extends AbstractEntity> List<T> findAll(String entityName){
     public List<Object> findAll(String entityName){
         Query query = entitymanager.createQuery("SELECT e FROM "+entityName+" e");
         return query.getResultList();
     }
 
     /**
-     * Retrieve records of entity according to pagination
+     * Search all records that match filter object with pagination
      * @param entityName
-     * @param numberOfRecordPerPage
-     * @param pageIndex
+     * @param filterObject
      * @return
      */
     @SuppressWarnings("unchecked")
-    public List<Object> findAllWithPagination(String entityName, int pageIndex, int numberOfRecordPerPage){
-        Query query = entitymanager.createQuery("SELECT e FROM "+entityName+" e");
-        return query
-                .setMaxResults(numberOfRecordPerPage)
-                .setFirstResult(pageIndex * numberOfRecordPerPage)
-                .getResultList();
+    public List<Object> searchWithCriteriaWithPagination( String entityName, FilterObject filterObject ){
+        return convertFilterObjectToSQLQuery(entityName, filterObject).getResultList();
     }
 
     /**
@@ -110,10 +123,64 @@ public class EntityManagerDAO {
      * @param entityName
      * @return
      */
-    public long countData(String entityName) {
-        Query queryTotal = entitymanager.createQuery("SELECT count(e.id) FROM " + entityName + " e");
-        long countResult = (long) queryTotal.getSingleResult();
-        return countResult;
+    public long countData(String entityName, FilterObject filterObject) {
+        Query queryTotal = convertFilterObjectToSQLQuery(entityName, filterObject);//entitymanager.createQuery(sqlStr);//"SELECT count(e.id) FROM " + entityName + " e");
+        return queryTotal.getResultList().size();
+    }
+
+    /**
+     * Get entity by its name
+     * Remark: Only use this method for entity that has unique name
+     * @param entityName
+     * @param name
+     * @return
+     */
+    public Object findByName(String entityName, String name){
+        Query query = entitymanager.createQuery("SELECT e FROM " + entityName + " e WHERE name="+name);
+        return query.getSingleResult();
+    }
+
+    /**
+     * Convert entity name & filterObject to hibernate sql query
+     * @param entityName
+     * @param filterObject
+     * @return
+     */
+    private Query convertFilterObjectToSQLQuery(String entityName, FilterObject filterObject){
+        String sqlStr = "SELECT e FROM "+entityName+" e";
+        // Because of some issue when hibernate process keyword "LIKE"
+        // We need to create query and then set parameters for it
+        // Create query
+        Map<String, String> criteria = filterObject.getCriteria();
+        int numberOfRecordPerPage = filterObject.getNumberOfRecordsPerPage();
+        int pageIndex = filterObject.getPageIndex();
+
+        Query query = entitymanager.createQuery(sqlStr);
+        if( criteria != null ){
+            List<String> fields = new ArrayList<String>();
+            fields.addAll(criteria.keySet());
+            if( !fields.isEmpty() ){
+                int index = 0;
+                sqlStr += " WHERE ";
+                while( index < fields.size() ){
+                    sqlStr+= fields.get(index) + " LIKE :var"+fields.get(index);
+                    if( fields.size() > 1  && index < fields.size()-1 ){
+                        sqlStr+=" AND "; // we combine the condition to get field value that closely matches the criteria
+                    }
+                    index++;
+                }
+                query = entitymanager.createQuery(sqlStr);
+                // Set parameter
+                for( String field : fields ){
+                    query.setParameter("var"+field, "%"+ criteria.get(field) +"%");
+                }
+            }
+        }
+        System.out.println(sqlStr);
+
+        query.setMaxResults(numberOfRecordPerPage);
+        query.setFirstResult(pageIndex * numberOfRecordPerPage);
+        return query;
     }
 
     /**

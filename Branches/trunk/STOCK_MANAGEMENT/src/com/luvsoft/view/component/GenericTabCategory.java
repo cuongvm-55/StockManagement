@@ -1,7 +1,10 @@
 package com.luvsoft.view.component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.vaadin.resetbuttonfortextfield.ResetButtonForTextField;
 import org.vaadin.viritin.grid.MGrid;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
@@ -10,9 +13,11 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Grid.HeaderRow;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -39,6 +44,10 @@ public class GenericTabCategory<T> implements ClickListener {
     protected Button btnImportExcel;
     protected Button btnExportExcel;
 
+    List<TextField> filterFields;
+    protected HeaderRow filteringHeader;
+    protected List<String> tableProperties;
+    
     protected MGrid<T> content;
     protected int currentPage;
 
@@ -66,6 +75,9 @@ public class GenericTabCategory<T> implements ClickListener {
         content.setSizeFull();
         content.setEditorEnabled(true);
         content.setSelectionMode(SelectionMode.MULTI);
+        tableProperties = new ArrayList<String>();
+
+        filterFields = new ArrayList<TextField>();
 
         paginationWrapper = new HorizontalLayout();
         paginationWrapper.setSpacing(true);
@@ -95,6 +107,38 @@ public class GenericTabCategory<T> implements ClickListener {
         return this;
     }
 
+    private void setColumnFiltering(boolean filtered) {
+        if (filtered && filteringHeader == null) {
+            filteringHeader = content.appendHeaderRow();
+            for( String property : tableProperties ){
+                //filteringHeader = content.addHeaderRowAt(0);
+     
+                // Add new TextFields to each column which filters the data from
+                // that column
+                String columnId = property;
+                TextField filter = getColumnFilter(columnId);
+                ResetButtonForTextField.extend(filter);
+                filter.setImmediate(true);
+                filteringHeader.getCell(columnId).setComponent(filter);
+                filteringHeader.getCell(columnId).setStyleName("filter-header");
+    
+                // save to handle filter box
+                filterFields.add(filter);
+            }
+        } else if (!filtered && filteringHeader != null) {
+            content.removeHeaderRow(filteringHeader);
+            filteringHeader = null;
+        }
+    }
+
+    private TextField getColumnFilter(final Object columnId) {
+        TextField filter = new TextField();
+        filter.setWidth("100%");
+        filter.addStyleName(ValoTheme.TEXTFIELD_TINY);
+        filter.setInputPrompt("Tìm kiếm...");
+        return filter;
+    }
+
     /**
      * Function is used to set properties for table content
      * @param properties
@@ -102,6 +146,8 @@ public class GenericTabCategory<T> implements ClickListener {
      */
     public GenericTabCategory<T> withTableProperties(String... properties) {
         content.withProperties(properties);
+        tableProperties.clear();
+        tableProperties.addAll(Arrays.asList(properties));
         return this;
     }
 
@@ -122,7 +168,13 @@ public class GenericTabCategory<T> implements ClickListener {
      * @return
      */
     public GenericTabCategory<T> withContentData(List<T> listData) {
-        content.setRows(listData);
+        try{
+            content.setRows(listData);
+        }catch(Exception e)
+        {
+            System.out.println("No record found.");
+        }
+        setColumnFiltering(true);
         return this;
     }
 
@@ -291,5 +343,17 @@ public class GenericTabCategory<T> implements ClickListener {
     public void buttonClick(ClickEvent event) {
         // TODO Auto-generated method stub
         
+    }
+    
+    public List<String> getTableProperties(){
+        return tableProperties;
+    }
+
+    public List<TextField> getFilterFields() {
+        return filterFields;
+    }
+
+    public void setFilterFields(List<TextField> filterFields) {
+        this.filterFields = filterFields;
     }
 }

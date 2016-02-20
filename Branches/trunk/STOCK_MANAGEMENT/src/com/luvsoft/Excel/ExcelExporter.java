@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.luvsoft.Excel.ErrorManager.ErrorId;
+
 import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.write.DateFormat;
@@ -45,6 +47,9 @@ public abstract class ExcelExporter {
     // returns title
     protected abstract String getTitle();
 
+    // folder to save the output excel file
+    protected abstract String getDestFolder();
+    
     public Label createLabelCell(int col, int row, String str){
         return new Label(col, row, str);
     }
@@ -62,13 +67,13 @@ public abstract class ExcelExporter {
         return new DateTime(col, row, date, dateFormat);
     }
 
-    public boolean export(){
+    public ErrorId export(){
         try{
             try{
                 // Create work book
                 // File name + current date
                 SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss"); // it's not depend on the current language
-                String fileName = "D:\\"+entityAnalyzer.getEntityName()+"_" + formatter.format(new Date()) + ".xls";
+                String fileName = getDestFolder()+"/"+entityAnalyzer.getEntityName()+"_" + formatter.format(new Date()) + ".xls";
                 WorkbookSettings wbSettings = new WorkbookSettings();
                 wbSettings.setRationalization(false);
                 WritableWorkbook workBook = Workbook.createWorkbook(new File( fileName ), wbSettings);
@@ -91,7 +96,7 @@ public abstract class ExcelExporter {
                     }
                 }
                 else{
-                    return false;
+                    return ErrorId.EXCEL_EXPORT_FAIL;
                 }
 
                 // Build contents
@@ -102,7 +107,7 @@ public abstract class ExcelExporter {
                     }
                 }
                 else{
-                    return false;
+                    return ErrorId.EXCEL_EXPORT_FAIL;
                 }
 
                 // Build footers
@@ -119,14 +124,14 @@ public abstract class ExcelExporter {
                 // All sheets and cells added. Now write out the workbook 
                 workBook.write();
                 workBook.close();
-                return true;
+                return ErrorId.EXCEL_EXPORT_NOERROR;
             }catch(WriteException wE){
                 wE.printStackTrace();
-                return false;
+                return ErrorId.EXCEL_EXPORT_FAIL;
             }
         }catch(IOException ioE){
             ioE.printStackTrace();
-            return false;
+            return ErrorId.EXCEL_EXPORT_FAIL;
         }
     }
 }
