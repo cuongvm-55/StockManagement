@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 01, 2016 at 05:33 PM
+-- Generation Time: Feb 20, 2016 at 07:46 AM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -314,16 +314,29 @@ CREATE TABLE IF NOT EXISTS `stocktype` (
   `id` int(11) NOT NULL COMMENT 'id của kho',
   `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL COMMENT 'tên loại kho',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `stocktype`
 --
 
 INSERT INTO `stocktype` (`id`, `name`, `description`) VALUES
-(1, 'Kho 1', 'Cầu giấy'),
-(2, 'Kho 2', NULL),
-(3, 'Hàng Lỗi', 'Loại kho chứa các hàng lỗi');
+(2, 'Kho 2sdfsdf', 'sdfsdf'),
+(19, 'wqwrq', 'afadf'),
+(20, 'qwrqwf', 'dfsdf'),
+(21, 'qfqefq', 'dfsdf'),
+(26, 'adalsdj', '\nasd1312413414'),
+(27, 'qf2234234', ''),
+(29, '3423jlkjwklerjklwr', '`t2t34twt'),
+(30, '14432adf', '3r232r32'),
+(31, '23r23wdatnq3', 'wfwef32f'),
+(32, 'weff23f', 'wef23f2f'),
+(33, '32fwef3', ''),
+(39, 'wqrf', '2342e23e'),
+(42, 'Nguy?n Qu?c ??t', '12344'),
+(43, 'Vy m?nh C??ng', 'C??ng vm4'),
+(44, 'dlfjldfj', 'aldfjlkdf'),
+(45, 'aflsjdfl', 'ldfjwlkejfklw');
 
 -- --------------------------------------------------------
 
@@ -466,7 +479,7 @@ ALTER TABLE `stock`
 -- Indexes for table `stocktype`
 --
 ALTER TABLE `stocktype`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `name` (`name`);
 
 --
 -- Indexes for table `unit`
@@ -577,7 +590,7 @@ ALTER TABLE `stock`
 -- AUTO_INCREMENT for table `stocktype`
 --
 ALTER TABLE `stocktype`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của kho',AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của kho',AUTO_INCREMENT=46;
 --
 -- AUTO_INCREMENT for table `unit`
 --
