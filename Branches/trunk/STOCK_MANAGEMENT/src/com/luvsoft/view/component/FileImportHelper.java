@@ -1,12 +1,16 @@
 package com.luvsoft.view.component;
 
 import com.luvsoft.Excel.EntityImporter;
+import com.luvsoft.Excel.ErrorManager;
+import com.luvsoft.Excel.ErrorManager.ErrorId;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validatable;
 import com.vaadin.data.Validator;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
+import com.vaadin.shared.Position;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Upload.FailedEvent;
@@ -264,7 +268,15 @@ public class FileImportHelper extends Window implements Field, StartedListener, 
         fireValueChange();
 
         System.out.println("upload finished!!");
-        importer.process(receiver.getContentAsStream());
+        int nbrOfImportedRecords = 0;
+        ErrorId error = importer.process(receiver.getContentAsStream()); 
+        if( error == ErrorId.EXCEL_IMPORT_NOERROR ){
+            ErrorManager.getInstance().notifyWarning(error, "Số lượng bản ghi đã nhập: "+importer.getNbrOfImportedRecords());
+        }
+        else{
+            ErrorManager.getInstance().raiseError(error, "Số lượng bản ghi đã nhập: "+importer.getNbrOfImportedRecords());
+        }
+
         clear(); // clear processed data
         close();
         upload.removeFinishedListener(this); // unregister the event

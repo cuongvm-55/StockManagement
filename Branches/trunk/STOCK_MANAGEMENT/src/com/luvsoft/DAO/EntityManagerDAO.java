@@ -1,7 +1,10 @@
 package com.luvsoft.DAO;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -25,10 +28,25 @@ public class EntityManagerDAO {
      * @param object
      */
     //public <T extends AbstractEntity> void addNew(T object){
-    public void addNew(Object object){
-        entitymanager.getTransaction( ).begin( );
-        entitymanager.persist( object );
-        entitymanager.getTransaction( ).commit( );
+    public boolean addNew(Object object){
+        try{
+            entitymanager.getTransaction( ).begin( );
+            try{
+                entitymanager.persist( object );
+            }catch(EntityExistsException eee){
+                System.out.println("Entity existed!");
+                return false;
+            }
+            catch(IllegalArgumentException eiae){
+                System.out.println("Illegal argument!");
+                return false;
+            }
+            entitymanager.getTransaction( ).commit( );
+            return true;
+        }catch(IllegalStateException e){
+            System.out.println("Illegal state!");
+            return false;
+        }
     }
 
     /**
@@ -133,29 +151,32 @@ public class EntityManagerDAO {
         // Because of some issue when hibernate process keyword "LIKE"
         // We need to create query and then set parameters for it
         // Create query
-        List<String> fields = filterObject.getFieldList();
-        String criteria = filterObject.getCriteria();
+        Map<String, String> criteria = filterObject.getCriteria();
         int numberOfRecordPerPage = filterObject.getNumberOfRecordsPerPage();
         int pageIndex = filterObject.getPageIndex();
 
         Query query = entitymanager.createQuery(sqlStr);
-        if( fields != null ){
-            int index = 0;
+        if( criteria != null ){
+            List<String> fields = new ArrayList<String>();
+            fields.addAll(criteria.keySet());
             if( !fields.isEmpty() ){
+                int index = 0;
                 sqlStr += " WHERE ";
-            }
-            while( index < fields.size() ){
-                sqlStr+= fields.get(index)+" LIKE :criteria";
-                if( fields.size() > 1  && index < fields.size()-1 ){
-                    sqlStr+=" OR "; // we want at least one field value matches the criteria
+                while( index < fields.size() ){
+                    sqlStr+= fields.get(index) + " LIKE :var"+fields.get(index);
+                    if( fields.size() > 1  && index < fields.size()-1 ){
+                        sqlStr+=" AND "; // we combine the condition to get field value that closely matches the criteria
+                    }
+                    index++;
                 }
-                index++;
+                query = entitymanager.createQuery(sqlStr);
+                // Set parameter
+                for( String field : fields ){
+                    query.setParameter("var"+field, "%"+ criteria.get(field) +"%");
+                }
             }
-
-            query = entitymanager.createQuery(sqlStr);
-            // Set parameter
-            query.setParameter("criteria", "%"+ criteria +"%");
         }
+        System.out.println(sqlStr);
 
         query.setMaxResults(numberOfRecordPerPage);
         query.setFirstResult(pageIndex * numberOfRecordPerPage);

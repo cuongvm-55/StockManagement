@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.luvsoft.Excel.ErrorManager.ErrorId;
+
 import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.write.DateFormat;
@@ -65,7 +67,7 @@ public abstract class ExcelExporter {
         return new DateTime(col, row, date, dateFormat);
     }
 
-    public boolean export(){
+    public ErrorId export(){
         try{
             try{
                 // Create work book
@@ -94,7 +96,7 @@ public abstract class ExcelExporter {
                     }
                 }
                 else{
-                    return false;
+                    return ErrorId.EXCEL_EXPORT_FAIL;
                 }
 
                 // Build contents
@@ -105,7 +107,7 @@ public abstract class ExcelExporter {
                     }
                 }
                 else{
-                    return false;
+                    return ErrorId.EXCEL_EXPORT_FAIL;
                 }
 
                 // Build footers
@@ -122,14 +124,14 @@ public abstract class ExcelExporter {
                 // All sheets and cells added. Now write out the workbook 
                 workBook.write();
                 workBook.close();
-                return true;
+                return ErrorId.EXCEL_EXPORT_NOERROR;
             }catch(WriteException wE){
                 wE.printStackTrace();
-                return false;
+                return ErrorId.EXCEL_EXPORT_FAIL;
             }
         }catch(IOException ioE){
             ioE.printStackTrace();
-            return false;
+            return ErrorId.EXCEL_EXPORT_FAIL;
         }
     }
 }

@@ -148,20 +148,25 @@ public class EntityAnalyzer {
      * @param field
      * @return
      */
-    public static void setFieldValue(Object object, Field field, Object param){
+    public static boolean setFieldValue(Object object, Field field, Object param){
         // Find the correct method
         Method method = getMethod(object.getClass(), field, "set");
         if( method != null )
         {
             try{
                 method.invoke(object, param);
+                return true;
             }
             catch (IllegalAccessException e){
-                System.out.println("IllegalAccessException, invoke method: " + method.getName());}
+                System.out.println("IllegalAccessException, invoke method: " + method.getName());
+                return false;
+            }
             catch (InvocationTargetException e){
                 System.out.println("InvocationTargetException, invoke method: " + method.getName());
+                return false;
             }
         }
+        return false;
     }
 
     /**

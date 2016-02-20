@@ -2,6 +2,8 @@ package com.luvsoft.view.StockType;
 
 import java.util.List;
 
+import com.luvsoft.Excel.ErrorManager;
+import com.luvsoft.Excel.ErrorManager.ErrorId;
 import com.luvsoft.Excel.StockTypeExporter;
 import com.luvsoft.Excel.StockTypeImporter;
 import com.luvsoft.presenter.StockTypePresenter;
@@ -10,12 +12,10 @@ import com.luvsoft.view.component.FileImportHelper;
 import com.luvsoft.view.component.GenericTabCategory;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
-import com.vaadin.server.Page;
-import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Window.CloseListener;
 
@@ -46,12 +46,14 @@ public class StockTypeView extends GenericTabCategory<Object> implements StockTy
         this.btnPreviousPage.addClickListener(this);
         this.btnNextPage.addClickListener(this);
 
-        this.getFilterField().addTextChangeListener(new TextChangeListener() {
-            @Override
-            public void textChange(TextChangeEvent event) {
-                presenter.doFilter(event.getText());
-            }
-        });
+        for(TextField filter : this.getFilterFields()){
+            filter.addTextChangeListener(new TextChangeListener() {
+                @Override
+                public void textChange(TextChangeEvent event) {
+                    presenter.doFilter(getFilterFields().indexOf(filter), event.getText());
+                }
+            });
+        }
 
     }
 
@@ -77,12 +79,12 @@ public class StockTypeView extends GenericTabCategory<Object> implements StockTy
                 public void windowClose(CloseEvent e) {
                     if( fileChooser.getChoosenFile() != null ){
                         StockTypeExporter stockTypeExporter = new StockTypeExporter(fileChooser.getChoosenFile());
-                        if( stockTypeExporter.export() ){
-                            Notification notify = new Notification("<b>Thông báo</b>",
-                                    "Excel đã xuất thành công!",
-                                    Notification.Type.TRAY_NOTIFICATION  , true);
-                            notify.setPosition(Position.BOTTOM_RIGHT);
-                            notify.show(Page.getCurrent());
+                        ErrorId error = stockTypeExporter.export();
+                        if( error == ErrorId.EXCEL_EXPORT_NOERROR){
+                            ErrorManager.getInstance().notifyWarning(error, "");
+                        }
+                        else{
+                            ErrorManager.getInstance().raiseError(error, "");
                         }
                     }
                 }

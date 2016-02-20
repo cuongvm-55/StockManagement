@@ -1,42 +1,27 @@
 package com.luvsoft.DAO;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FilterObject {
-    private List<String> fieldList;
-    private String criteria;
+    private Map<String, String> criteria; //<! <FieldName, FieldValue>
     private int pageIndex;
     private int numberOfRecordsPerPage;
 
     public FilterObject(){
-        fieldList = new ArrayList<String>();
-        criteria = "";
+        criteria = new HashMap<String, String>();
         pageIndex = 0;
         numberOfRecordsPerPage = 0;
     }
 
-    public FilterObject(List<String> fieldList, String criteria, int pageIndex,
+    public FilterObject(Map<String, String> criteria, int pageIndex,
             int numberOfRecordsPerPage) {
         super();
-        this.fieldList = fieldList;
         this.criteria = criteria;
         this.pageIndex = pageIndex;
         this.numberOfRecordsPerPage = numberOfRecordsPerPage;
     }
-    
-    public List<String> getFieldList() {
-        return fieldList;
-    }
-    public void setFieldList(List<String> fieldList) {
-        this.fieldList = fieldList;
-    }
-    public String getCriteria() {
-        return criteria;
-    }
-    public void setCriteria(String criteria) {
-        this.criteria = criteria;
-    }
+
     public int getPageIndex() {
         return pageIndex;
     }
@@ -48,5 +33,13 @@ public class FilterObject {
     }
     public void setNumberOfRecordsPerPage(int numberOfRecordsPerPage) {
         this.numberOfRecordsPerPage = numberOfRecordsPerPage;
+    }
+
+    public Map<String, String> getCriteria() {
+        return criteria;
+    }
+
+    public void setCriteria(Map<String, String> criteria) {
+        this.criteria = criteria;
     }
 }

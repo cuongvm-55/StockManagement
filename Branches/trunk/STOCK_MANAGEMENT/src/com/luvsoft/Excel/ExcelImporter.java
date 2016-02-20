@@ -14,10 +14,12 @@ import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
+import com.luvsoft.Excel.ErrorManager.ErrorId;
+
 public abstract class ExcelImporter {
     protected List<String>   headers;  // headers
     protected List<List<Object>> records; // list of records
-    public boolean parse(InputStream inputStream){
+    public ErrorId parse(InputStream inputStream){
         try {
             Workbook workbook = Workbook.getWorkbook(inputStream);
             for(int index = 0; index < 1/*workbook.getNumberOfSheets()*/; index++){ // accept only the first sheet
@@ -28,8 +30,8 @@ public abstract class ExcelImporter {
                 // sanity check
                 // there must be at least 1 column and 2 rows (1 header row + 1 record)
                 if( sheet.getColumns() < 1 || sheet.getRows() < 2 ){
-                    System.out.println("invalid excel file!!");
-                    return false;
+                    System.out.println("Invalid excel file: Invalid number of records!");
+                    return ErrorId.EXCEL_IMPORT_INVALID_NUMBER_OF_RECORD;
                 }
 
                 // get headers
@@ -42,7 +44,7 @@ public abstract class ExcelImporter {
                     {
                         // invalid header type, return
                         System.out.println("Invalid excel file: Header mus be a string!");
-                        return false;
+                        return ErrorId.EXCEL_IMPORT_INVALID_HEADERS;
                     }
                     LabelCell lc = (LabelCell) cell;
                     String header = lc.getString();
@@ -50,7 +52,7 @@ public abstract class ExcelImporter {
                     if( header.equals("") || headers.contains(header)){
                         // invalid header or duplicate header, return
                         System.out.println("Invalid excel file: Invalid header!");
-                        return false;
+                        return ErrorId.EXCEL_IMPORT_INVALID_HEADERS;
                     }
                     headers.add(header);
                 }
@@ -86,11 +88,11 @@ public abstract class ExcelImporter {
                     records.add(record);
                 }
             }
-            return true;
+            return ErrorId.EXCEL_IMPORT_NOERROR;
         } catch (BiffException e) {
-            return false;
+            return ErrorId.EXCEL_IMPORT_FAIL_TO_READ_FILE;
         } catch (IOException e) {
-            return false;
+            return ErrorId.EXCEL_IMPORT_FAIL_TO_READ_FILE;
         }
     }
 }

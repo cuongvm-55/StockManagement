@@ -44,7 +44,7 @@ public class GenericTabCategory<T> implements ClickListener {
     protected Button btnImportExcel;
     protected Button btnExportExcel;
 
-    TextField filterField;
+    List<TextField> filterFields;
     protected HeaderRow filteringHeader;
     protected List<String> tableProperties;
     
@@ -77,6 +77,8 @@ public class GenericTabCategory<T> implements ClickListener {
         content.setSelectionMode(SelectionMode.MULTI);
         tableProperties = new ArrayList<String>();
 
+        filterFields = new ArrayList<TextField>();
+
         paginationWrapper = new HorizontalLayout();
         paginationWrapper.setSpacing(true);
         paginationNumberWrapper = new HorizontalLayout();
@@ -107,21 +109,22 @@ public class GenericTabCategory<T> implements ClickListener {
 
     private void setColumnFiltering(boolean filtered) {
         if (filtered && filteringHeader == null) {
-            //filteringHeader = content.appendHeaderRow();
-            filteringHeader = content.addHeaderRowAt(0);
- 
-            // Add new TextFields to each column which filters the data from
-            // that column
-            String columnId = tableProperties.get(0);//"name";
-            TextField filter = getColumnFilter(columnId);
-            ResetButtonForTextField.extend(filter);
-            filter.setImmediate(true);
-            filteringHeader.getCell(columnId).setComponent(filter);
-            filteringHeader.getCell(columnId).setStyleName("filter-header");
-
-            // save to handle filter box
-            filterField = filter;
-
+            filteringHeader = content.appendHeaderRow();
+            for( String property : tableProperties ){
+                //filteringHeader = content.addHeaderRowAt(0);
+     
+                // Add new TextFields to each column which filters the data from
+                // that column
+                String columnId = property;
+                TextField filter = getColumnFilter(columnId);
+                ResetButtonForTextField.extend(filter);
+                filter.setImmediate(true);
+                filteringHeader.getCell(columnId).setComponent(filter);
+                filteringHeader.getCell(columnId).setStyleName("filter-header");
+    
+                // save to handle filter box
+                filterFields.add(filter);
+            }
         } else if (!filtered && filteringHeader != null) {
             content.removeHeaderRow(filteringHeader);
             filteringHeader = null;
@@ -346,11 +349,11 @@ public class GenericTabCategory<T> implements ClickListener {
         return tableProperties;
     }
 
-    public TextField getFilterField() {
-        return filterField;
+    public List<TextField> getFilterFields() {
+        return filterFields;
     }
 
-    public void setFilterField(TextField filterField) {
-        this.filterField = filterField;
+    public void setFilterFields(List<TextField> filterFields) {
+        this.filterFields = filterFields;
     }
 }
