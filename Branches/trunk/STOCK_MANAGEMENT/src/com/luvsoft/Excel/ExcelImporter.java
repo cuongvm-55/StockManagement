@@ -14,7 +14,7 @@ import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
-import com.luvsoft.Excel.ErrorManager.ErrorId;
+import com.luvsoft.utils.ErrorManager.ErrorId;
 
 public abstract class ExcelImporter {
     protected List<String>   headers;  // headers

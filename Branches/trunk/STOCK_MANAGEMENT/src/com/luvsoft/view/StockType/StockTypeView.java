@@ -3,14 +3,14 @@ package com.luvsoft.view.StockType;
 import java.util.Collection;
 import java.util.List;
 
-import com.luvsoft.Excel.ErrorManager;
-import com.luvsoft.Excel.ErrorManager.ErrorId;
 import com.luvsoft.Excel.StockTypeExporter;
 import com.luvsoft.Excel.StockTypeImporter;
 import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Stocktype;
 import com.luvsoft.presenter.StockTypePresenter;
 import com.luvsoft.utils.ACTION;
+import com.luvsoft.utils.ErrorManager;
+import com.luvsoft.utils.ErrorManager.ErrorId;
 import com.luvsoft.view.component.FileChooser;
 import com.luvsoft.view.component.FileImportHelper;
 import com.luvsoft.view.component.GenericTabCategory;

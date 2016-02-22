@@ -6,7 +6,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.luvsoft.DAO.EntityManagerDAO;
-import com.luvsoft.Excel.ErrorManager.ErrorId;
+import com.luvsoft.utils.EntityAnalyzer;
+import com.luvsoft.utils.ErrorManager.ErrorId;
 
 public abstract class EntityImporter extends ExcelImporter{
     private EntityAnalyzer entityAnalyzer;

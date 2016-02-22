@@ -1,8 +1,8 @@
 package com.luvsoft.view.component;
 
 import com.luvsoft.Excel.EntityImporter;
-import com.luvsoft.Excel.ErrorManager;
-import com.luvsoft.Excel.ErrorManager.ErrorId;
+import com.luvsoft.utils.ErrorManager;
+import com.luvsoft.utils.ErrorManager.ErrorId;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validatable;

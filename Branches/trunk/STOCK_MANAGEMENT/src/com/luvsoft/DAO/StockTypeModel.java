@@ -15,17 +15,6 @@ public class StockTypeModel {
         return entityManager.countData(Stocktype.getEntityname(), filterObject);
     }
 
-//    public List<Stocktype> getData(int pageIndex, int numberOfRecordPerPage) {
-//        List<Object> objectlist =  entityManager.findAllWithPagination(Stocktype.getEntityname(), pageIndex, numberOfRecordPerPage);
-//        List<Stocktype> stockTypeList = new ArrayList<Stocktype>();
-//        for (Object object : objectlist) {
-//            Stocktype stocktype = (Stocktype) object;
-//            stocktype.verifyObject();
-//            stockTypeList.add(stocktype);
-//        }
-//        return stockTypeList;
-//    }
-
     public List<Stocktype> getFilterData(FilterObject filterObject){
         List<Stocktype> stockTypeList = new ArrayList<Stocktype>();
         List<Object> objectlist = entityManager.searchWithCriteriaWithPagination(Stocktype.getEntityname(), filterObject);
