@@ -3,8 +3,8 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 20, 2016 at 07:46 AM
--- Server version: 5.6.24
+-- Generation Time: Feb 27, 2016 at 06:59 PM
+-- Server version: 5.6.26-log
 -- PHP Version: 5.6.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -19,6 +19,102 @@ SET time_zone = "+00:00";
 --
 -- Database: `stockmanagement`
 --
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `debug_msg`(enabled INTEGER, msg VARCHAR(255))
+BEGIN
+  IF enabled THEN BEGIN
+    select concat("** ", msg) INTO @DEBUG;
+  END; END IF;
+END$$
+
+--
+-- Functions
+--
+CREATE DEFINER=`root`@`localhost` FUNCTION `isFirstLettersMatched`(inputStr VARCHAR(5000), criteria VARCHAR(5000) ) RETURNS tinyint(1)
+BEGIN
+	DECLARE debugMode BOOLEAN;
+
+	DECLARE idx INTEGER DEFAULT 1;            		#<! index to iterate the string
+	DECLARE wordBoundInputIdx INTEGER DEFAULT 1;   	#<! index of the last letter of a word in input string
+	DECLARE currentInputWord VARCHAR(5000);        	#<! input word
+	
+	DECLARE criteriaIdx INTEGER DEFAULT 1;			#<! index to iterate the string
+	DECLARE wordBoundIdxCriteria INTEGER DEFAULT 1; #<! index of the last letter of first word in criteria string
+	DECLARE currentCriteriaWord VARCHAR(5000);      #<! criteria word
+	
+	DECLARE inputIdx INTEGER DEFAULT 1;
+	DECLARE bOk BOOLEAN DEFAULT FALSE;
+	
+	# trim the inputStr and the criteria
+	SET inputStr = TRIM(inputStr);
+	SET criteria = TRIM(criteria);
+	
+	# return TRUE if the criteria's empty
+	IF	(STRCMP(criteria, "") = 0) THEN
+		RETURN TRUE;
+	END IF;
+	
+	# return FALSE if inputStr is emty here
+	IF	( STRCMP(inputStr, "") = 0 || LENGTH(inputStr) < LENGTH(criteria) ) THEN
+		RETURN FALSE;
+	END IF;
+
+	# debug mode active ?
+	SET debugMode = TRUE;
+	
+	WHILE ( idx <= LENGTH(inputStr) ) DO
+		# find the space, if no space, retrieve the index of last letter in input string
+		SET wordBoundInputIdx = IF((LOCATE(" ", inputStr, idx) != 0), (LOCATE(" ", inputStr, idx) - 1), LENGTH(inputStr) );
+		SET currentInputWord = SUBSTRING(inputStr, idx, wordBoundInputIdx - idx + 1);
+		
+		# now check if the current word start with the first word in criteria
+		SET inputIdx = idx;
+		# update the idx here because the wordBoundInputIdx will be change
+		SET idx = wordBoundInputIdx + 2; # +2 because we have 1 delimiter
+		SET criteriaIdx = 1;
+		SET bOk = TRUE;
+		
+		SET wordBoundIdxCriteria = IF((LOCATE(" ", criteria, 1) != 0), (LOCATE(" ", criteria, 1) - 1), LENGTH(criteria) );
+		SET currentCriteriaWord = SUBSTRING(criteria, 1, wordBoundIdxCriteria);
+	
+		CALL debug_msg(debugMode, (select concat_ws('',"inputWord:", currentInputWord)));
+		CALL debug_msg(debugMode, (select concat_ws('',"currentCriteriaWord:", currentCriteriaWord)));
+	checkCriteria: WHILE ( !(inputIdx > LENGTH(inputStr) || criteriaIdx > LENGTH(criteria)) ) DO
+			#IF ( SUBSTRING( currentInputWord, 1, LENGTH(currentCriteriaWord) ) NOT LIKE currentCriteriaWord ) THEN
+			#IF ( SUBSTRING( currentInputWord, 1, LENGTH(currentCriteriaWord) ) NOT LIKE concat('^', currentCriteriaWord, '$') ) THEN
+			IF ( STRCMP(SUBSTRING(currentInputWord, 1, LENGTH(currentCriteriaWord)), currentCriteriaWord) != 0 ) THEN
+				SET bOk = FALSE;
+				LEAVE checkCriteria;
+			END IF;
+			
+			CALL debug_msg(debugMode, "MATCHED DETECTED!!!");
+			SET inputIdx = wordBoundInputIdx + 2;
+			SET criteriaIdx = wordBoundIdxCriteria + 2;
+
+			SET wordBoundIdxCriteria = IF((LOCATE(" ", criteria, criteriaIdx) != 0), (LOCATE(" ", criteria, criteriaIdx) - 1), LENGTH(criteria) );
+			SET currentCriteriaWord = SUBSTRING(criteria, criteriaIdx, wordBoundIdxCriteria - criteriaIdx + 1);
+			
+			SET wordBoundInputIdx = IF((LOCATE(" ", inputStr, inputIdx) != 0), (LOCATE(" ", inputStr, inputIdx) - 1), LENGTH(inputStr) );
+			SET currentInputWord = SUBSTRING(inputStr, inputIdx, wordBoundInputIdx - inputIdx + 1);
+			
+			CALL debug_msg(debugMode, (select concat_ws('',"inputWord:", currentInputWord)));
+			CALL debug_msg(debugMode, (select concat_ws('',"currentCriteriaWord:", currentCriteriaWord)));
+		END WHILE;
+		CALL debug_msg(debugMode, (select concat_ws('',"criteriaIdx:", criteriaIdx)));
+		# check if all the criterias matched
+		IF ( bOk AND criteriaIdx > LENGTH(criteria) ) THEN
+			RETURN TRUE;
+		END IF;
+	END WHILE;	
+
+	RETURN FALSE;
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
