@@ -11,6 +11,7 @@ import jxl.write.Label;
 import jxl.write.WritableCell;
 
 import com.luvsoft.DAO.EntityManagerDAO;
+import com.luvsoft.utils.EntityAnalyzer;
 
 public abstract class EntityExporter extends ExcelExporter{
     protected  String destFolder;

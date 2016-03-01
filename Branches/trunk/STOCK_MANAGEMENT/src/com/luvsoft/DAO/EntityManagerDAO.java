@@ -148,9 +148,6 @@ public class EntityManagerDAO {
      */
     private Query convertFilterObjectToSQLQuery(String entityName, FilterObject filterObject){
         String sqlStr = "SELECT e FROM "+entityName+" e";
-        // Because of some issue when hibernate process keyword "LIKE"
-        // We need to create query and then set parameters for it
-        // Create query
         Map<String, String> criteria = filterObject.getCriteria();
         int numberOfRecordPerPage = filterObject.getNumberOfRecordsPerPage();
         int pageIndex = filterObject.getPageIndex();
@@ -163,7 +160,8 @@ public class EntityManagerDAO {
                 int index = 0;
                 sqlStr += " WHERE ";
                 while( index < fields.size() ){
-                    sqlStr+= fields.get(index) + " LIKE :var"+fields.get(index);
+                    // support first letters filter
+                    sqlStr+= "isFirstLettersMatched("+fields.get(index) + ",:var"+fields.get(index)+")=1";
                     if( fields.size() > 1  && index < fields.size()-1 ){
                         sqlStr+=" AND "; // we combine the condition to get field value that closely matches the criteria
                     }
@@ -172,7 +170,7 @@ public class EntityManagerDAO {
                 query = entitymanager.createQuery(sqlStr);
                 // Set parameter
                 for( String field : fields ){
-                    query.setParameter("var"+field, "%"+ criteria.get(field) +"%");
+                    query.setParameter("var"+field, criteria.get(field));
                 }
             }
         }

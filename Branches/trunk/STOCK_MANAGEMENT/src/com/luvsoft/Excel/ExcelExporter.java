@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.luvsoft.Excel.ErrorManager.ErrorId;
+import com.luvsoft.utils.EntityAnalyzer;
+import com.luvsoft.utils.ErrorManager.ErrorId;
 
 import jxl.Workbook;
 import jxl.WorkbookSettings;
