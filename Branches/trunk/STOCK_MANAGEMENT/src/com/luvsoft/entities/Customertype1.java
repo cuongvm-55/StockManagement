@@ -92,4 +92,16 @@ public class Customertype1 extends AbstractEntity implements java.io.Serializabl
     public static String getEntityname() {
         return "Customertype1";
     }
+
+    @Override
+    public Object getValueByPropertyName(String propertyName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void verifyObject() {
+        // TODO Auto-generated method stub
+        
+    }
 }

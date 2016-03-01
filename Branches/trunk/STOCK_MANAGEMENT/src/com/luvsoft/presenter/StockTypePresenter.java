@@ -8,7 +8,6 @@ import com.luvsoft.DAO.StockTypeModel;
 import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Stocktype;
 import com.luvsoft.utils.ACTION;
-import com.luvsoft.utils.NemErrorList;
 import com.luvsoft.view.StockType.StockTypeView;
 import com.vaadin.ui.TextField;
 
@@ -25,6 +24,7 @@ public class StockTypePresenter implements StockTypeListener {
         this.view = view;
         model = new StockTypeModel();
         criteriaMap = new HashMap<String, String>();
+        action = ACTION.UNKNOWN;
     }
 
     /**
@@ -55,15 +55,12 @@ public class StockTypePresenter implements StockTypeListener {
 
     @Override
     public void generateTable() {
-        // view.setTable(model.getData(0, DEFAULT_NUMBER_OF_RECORDS_PER_PAGE));
-        // view.setNumberOfPages(0, (int) Math.ceil((double) model.getCountData()/DEFAULT_NUMBER_OF_RECORDS_PER_PAGE));
         criteriaMap.clear(); // we do not filter data when generate table
         goToPage(currentPage);
     }
 
     @Override
     public void goToPage(int number) {
-        // int pageTotal = (int) Math.ceil((double) model.getCountData()/DEFAULT_NUMBER_OF_RECORDS_PER_PAGE);
         FilterObject filterObject = new FilterObject(
                 criteriaMap,
                 0,
@@ -77,10 +74,17 @@ public class StockTypePresenter implements StockTypeListener {
             number = 0;
         }
 
-        // view.setTable(model.getData(number, DEFAULT_NUMBER_OF_RECORDS_PER_PAGE));
         filterObject.setPageIndex(number);
         filterObject.setNumberOfRecordsPerPage(DEFAULT_NUMBER_OF_RECORDS_PER_PAGE);
-        view.setTable(model.getFilterData(filterObject));
+
+        // Due to a possible bug in Vaadin (table cannot setRows by itself when we update table by table editor)
+        // we consider to work around it by separating UPDATE_BY_TABLE_EDITOR like a specific case
+        if(action.equals(ACTION.UPDATE_BY_TABLE_EDITOR))
+        {
+            view.setListOfData(model.getFilterData(filterObject));
+        } else {
+            view.setTable(model.getFilterData(filterObject));
+        }
         view.setNumberOfPages(number, pageTotal);
         currentPage = number;
     }
@@ -112,25 +116,17 @@ public class StockTypePresenter implements StockTypeListener {
         }
         else if(action.equals(ACTION.UPDATE)) {
             model.update((Stocktype) entity);
-            // refresh table
+            generateTable();
+        } else if(action.equals(ACTION.UPDATE_BY_TABLE_EDITOR)) {
+            model.update((Stocktype) entity);
             generateTable();
         }
+        this.action = ACTION.UNKNOWN; // Reset action state after modification to avoid duplicate action in the future
     }
 
-    @Override
-    public boolean validateForm(AbstractEntity entity) {
-        Stocktype stocktype = (Stocktype) entity;
-        if(model.isDuplicatedName(stocktype)) {
-            NemErrorList.raiseErrorFieldExisted("Tên");
-            return false;
-        }
-
-        if(stocktype.getName().trim().isEmpty()) {
-            System.out.println("EMPTY " + stocktype.getName());
-            NemErrorList.raiseErrorFieldEmpty("Tên");
-            return false;
-        }
-        return true;
+    public void updateEntity(AbstractEntity entity, ACTION action) {
+        this.setAction(action);
+        updateEntity(entity);
     }
 
     @Override

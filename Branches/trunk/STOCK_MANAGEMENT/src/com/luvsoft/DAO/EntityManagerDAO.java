@@ -184,14 +184,20 @@ public class EntityManagerDAO {
     }
 
     /**
-     * Check the name is duplicated or not
+     * Check a property of an entity is duplicated or not
      * @param entityName
-     * @param name
-     * @return true if the name is existing in database
+     * @param propertyName
+     * @param propertyValue
+     * @return
      */
     @SuppressWarnings("unchecked")
-    public List<Object> findEntityByName(String entityName, String name) {
-        Query query = entitymanager.createQuery("SELECT e FROM " + entityName + " e WHERE e.name=:name");
-        return query.setParameter("name", name.trim()).getResultList();
+    public List<Object> findEntityByProperty(String entityName, String propertyName, Object propertyValue) {
+        Query query = entitymanager.createQuery("SELECT e FROM " + entityName + " e WHERE e." + propertyName + "=:value");
+        if(propertyValue instanceof String) {
+            return query.setParameter("value", ((String) propertyValue).trim()).getResultList();
+        } else {
+            return query.setParameter("value", propertyValue.toString()).getResultList();
+            // TODO we should check with other type of propertyValue
+        }
     }
 }

@@ -92,4 +92,16 @@ public class Materialtype2 extends AbstractEntity implements java.io.Serializabl
     public static String getEntityname() {
         return "Materialtype2";
     }
+
+    @Override
+    public Object getValueByPropertyName(String propertyName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void verifyObject() {
+        // TODO Auto-generated method stub
+        
+    }
 }

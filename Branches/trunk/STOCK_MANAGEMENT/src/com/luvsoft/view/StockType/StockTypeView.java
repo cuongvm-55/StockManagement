@@ -15,15 +15,22 @@ import com.luvsoft.view.component.FileChooser;
 import com.luvsoft.view.component.FileImportHelper;
 import com.luvsoft.view.component.GenericTabCategory;
 import com.luvsoft.view.component.LuvsoftConfirmationDialog;
+import com.luvsoft.view.validator.LuvsoftTableBeanValidator;
+import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitEvent;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitHandler;
+import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.data.util.PropertysetItem;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Window.CloseListener;
-import com.vaadin.ui.UI;
 
 
 public class StockTypeView extends GenericTabCategory<Stocktype> implements StockTypeViewInterface, ClickListener{
@@ -34,7 +41,7 @@ public class StockTypeView extends GenericTabCategory<Stocktype> implements Stoc
     public StockTypeView() {
         presenter = new StockTypePresenter(this);
 
-        super.init("Danh Sách Các Loại Kho")
+        super.init("Danh Sách Các Loại Kho", Stocktype.class)
                                     .withGeneralFuntionsList()
                                     .withTableProperties("name", "description")
                                     .withHeaderNames("name", "<b>Tên</b>")
@@ -58,10 +65,36 @@ public class StockTypeView extends GenericTabCategory<Stocktype> implements Stoc
                 @Override
                 public void textChange(TextChangeEvent event) {
                     presenter.doFilter(getFilterFields().indexOf(filter), event.getText());
-    }
+                }
             });
         }
 
+        PropertysetItem stocktypeItem = new PropertysetItem();
+        stocktypeItem.addItemProperty("name", new ObjectProperty<String>(""));
+        stocktypeItem.addItemProperty("description", new ObjectProperty<String>(""));
+        FieldGroup fieldGroup = new FieldGroup(stocktypeItem);
+        fieldGroup.setBuffered(true);
+
+        LuvsoftTableBeanValidator<Stocktype> nameValidator = new LuvsoftTableBeanValidator<Stocktype>(Stocktype.class, "name");
+        this.content.getColumn("name").getEditorField().addValidator(nameValidator);
+        LuvsoftTableBeanValidator<Stocktype> descritionValidator = new LuvsoftTableBeanValidator<Stocktype>(Stocktype.class, "description");
+        this.content.getColumn("description").getEditorField().addValidator(descritionValidator);
+        this.content.getEditorFieldGroup().addCommitHandler(new CommitHandler() {
+
+            @Override
+            public void preCommit(CommitEvent commitEvent) throws CommitException {
+                Stocktype stocktype = (Stocktype) content.getEditedItemId();
+                nameValidator.setEntity(stocktype);
+                nameValidator.setCalledByPreCommit(true);
+                content.getEditorFieldGroup().isValid();
+            }
+
+            @Override
+            public void postCommit(CommitEvent commitEvent) {
+                    Stocktype stocktype = (Stocktype) content.getEditedItemId();
+                    presenter.updateEntity(stocktype, ACTION.UPDATE_BY_TABLE_EDITOR);
+            }
+        });
     }
 
     @Override
@@ -74,8 +107,8 @@ public class StockTypeView extends GenericTabCategory<Stocktype> implements Stoc
     public void buttonClick(ClickEvent event) {
         if(event.getButton().equals(btnAdd)) {
             Stocktype stockType = new Stocktype();
-            StockTypeForm form = new StockTypeForm(stockType, presenter, ACTION.CREATE);
-            UI.getCurrent().addWindow(form);
+            StockTypeFormCreator form = new StockTypeFormCreator();
+            form.createForm(stockType, presenter, ACTION.CREATE);
 
         } else if(event.getButton().equals(btnEdit)) {
             Stocktype stockType = null;
@@ -86,12 +119,12 @@ public class StockTypeView extends GenericTabCategory<Stocktype> implements Stoc
                 return;
             }
 
-            StockTypeForm form = new StockTypeForm(stockType, presenter, ACTION.UPDATE);
-            UI.getCurrent().addWindow(form);
+            StockTypeFormCreator form = new StockTypeFormCreator();
+            form.createForm(stockType, presenter, ACTION.UPDATE);
 
         } else if(event.getButton().equals(btnDelete)) {
             Collection<Object> selectedRows = content.getSelectedRows();
-            LuvsoftConfirmationDialog dialog = new LuvsoftConfirmationDialog("Bạn có chắc chắn muốn xóa?");
+            LuvsoftConfirmationDialog dialog = new LuvsoftConfirmationDialog("Xác nhận xóa?");
             dialog.addLuvsoftClickListener(new ClickListener() {
                 private static final long serialVersionUID = 351366856643651627L;
 
@@ -122,7 +155,7 @@ public class StockTypeView extends GenericTabCategory<Stocktype> implements Stoc
                         ErrorId error = stockTypeExporter.export();
                         if( error == ErrorId.EXCEL_EXPORT_NOERROR){
                             ErrorManager.getInstance().notifyWarning(error, "");
-            }
+                        }
                         else{
                             ErrorManager.getInstance().raiseError(error, "");
                         }

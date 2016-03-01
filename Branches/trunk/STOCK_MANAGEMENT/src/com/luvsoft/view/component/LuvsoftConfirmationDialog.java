@@ -6,11 +6,9 @@ import org.vaadin.viritin.layouts.MWindow;
 
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class LuvsoftConfirmationDialog extends MWindow {
@@ -19,20 +17,18 @@ public class LuvsoftConfirmationDialog extends MWindow {
 
     @SuppressWarnings("serial")
     public LuvsoftConfirmationDialog(String title) {
-        withClosable(true).withDraggable(false).withModal(true).withResizable(false).setWidth("20%");
+        withClosable(true).withDraggable(false).withModal(true).withResizable(false);
+        this.setCaption("<b>" + title + "</b>");
+        this.setCaptionAsHtml(true);
 
         MVerticalLayout wrapper = new MVerticalLayout();
 
-        Label lblTitle = new Label(title);
-        lblTitle.addStyleName(ValoTheme.LABEL_BOLD);
-        wrapper.add(lblTitle);
-
         MHorizontalLayout footer = new MHorizontalLayout();
-        footer.setSizeFull();
+        footer.setSpacing(true);
         wrapper.add(footer);
 
         Button esc = new Button("Hủy");
-        esc.setIcon(FontAwesome.SIGN_OUT);
+        esc.setIcon(FontAwesome.BAN);
         esc.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
@@ -45,9 +41,7 @@ public class LuvsoftConfirmationDialog extends MWindow {
         save.addStyleName(ValoTheme.BUTTON_FRIENDLY);
         save.setClickShortcut(KeyCode.ENTER);
 
-        footer.add(esc);
-        footer.add(save, Alignment.MIDDLE_RIGHT);
-        footer.setExpandRatio(save, 1.0f);
+        footer.add(esc, save);
 
         this.setContent(wrapper);
     }

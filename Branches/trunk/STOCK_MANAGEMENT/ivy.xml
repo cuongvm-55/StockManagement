@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE ivy-module [
-	<!ENTITY vaadin.version "7.6.1">
+	<!ENTITY vaadin.version "7.6.3">
 ]>
 <ivy-module version="2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -45,6 +45,9 @@
         <dependency org="org.hibernate" name="hibernate-core" rev="3.3.2.GA"/>
         <dependency org="org.hibernate" name="hibernate-entitymanager" rev="4.2.6.Final"/>
         <dependency org="org.hibernate" name="hibernate-validator-annotation-processor" rev="4.1.0.Final"/>
-        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.6"/>	
+        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.6"/>
+
+        <!-- Viritin -->
+        <dependency org="org.vaadin" name="viritin" rev="1.46" />
 	</dependencies>
 </ivy-module>

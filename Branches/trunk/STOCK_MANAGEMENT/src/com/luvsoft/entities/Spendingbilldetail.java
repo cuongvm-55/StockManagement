@@ -106,4 +106,16 @@ public class Spendingbilldetail extends AbstractEntity implements java.io.Serial
     public static String getEntityname() {
         return "Spendingbilldetail";
     }
+
+    @Override
+    public Object getValueByPropertyName(String propertyName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void verifyObject() {
+        // TODO Auto-generated method stub
+        
+    }
 }

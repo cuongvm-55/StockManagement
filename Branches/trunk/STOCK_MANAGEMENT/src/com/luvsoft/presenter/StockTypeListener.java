@@ -9,7 +9,7 @@ public interface StockTypeListener {
     public void updateEntity(AbstractEntity entity);
     public void deleteEntity(AbstractEntity entity);
     public void setAction(ACTION action);
-    public boolean validateForm(AbstractEntity entity);
+    // public boolean validateForm(AbstractEntity entity);
     public void goToPage(int number);
     public void goToFirstPage();
     public void goToLastPage();

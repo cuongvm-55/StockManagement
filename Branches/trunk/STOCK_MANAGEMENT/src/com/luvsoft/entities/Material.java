@@ -198,4 +198,16 @@ public class Material extends AbstractEntity implements java.io.Serializable {
     public static String getEntityname() {
         return "Material";
     }
+
+    @Override
+    public Object getValueByPropertyName(String propertyName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void verifyObject() {
+        // TODO Auto-generated method stub
+        
+    }
 }

@@ -51,7 +51,11 @@ public class GenericTabCategory<T> implements ClickListener {
     protected MGrid<T> content;
     protected int currentPage;
 
-    protected GenericTabCategory<T> init(String strTitle) {
+    // Backing Beans: Any changes (update, delete, create)
+    // should re-charge this list instead of setRows() again
+    private List<T> listOfData;
+
+    protected GenericTabCategory<T> init(String strTitle, Class<T> typeOfRows) {
         wrapper = new MVerticalLayout();
         wrapper.setSpacing(true);
 
@@ -71,10 +75,13 @@ public class GenericTabCategory<T> implements ClickListener {
         btnImportExcel = new Button("Nhập Vào Từ Excel", FontAwesome.ARROW_DOWN);
         btnExportExcel = new Button("Xuất Ra Excel", FontAwesome.ARROW_UP);
 
-        content = new MGrid<T>();
+        content = new MGrid<>(typeOfRows);
         content.setSizeFull();
         content.setEditorEnabled(true);
         content.setSelectionMode(SelectionMode.MULTI);
+        content.setEditorSaveCaption("Lưu");
+        content.setEditorCancelCaption("Hủy");
+
         tableProperties = new ArrayList<String>();
 
         filterFields = new ArrayList<TextField>();
@@ -167,9 +174,10 @@ public class GenericTabCategory<T> implements ClickListener {
      * @param listData
      * @return
      */
-    public GenericTabCategory<T> withContentData(List<T> listData) {
+    public GenericTabCategory<T> withContentData(List<T> listOfData) {
         try{
-            content.setRows(listData);
+            this.listOfData = listOfData;
+            content.setRows(this.listOfData);
         }catch(Exception e)
         {
             System.out.println("No record found.");
@@ -355,5 +363,13 @@ public class GenericTabCategory<T> implements ClickListener {
 
     public void setFilterFields(List<TextField> filterFields) {
         this.filterFields = filterFields;
+    }
+
+    public List<T> getListOfData() {
+        return listOfData;
+    }
+
+    public void setListOfData(List<T> listOfData) {
+        this.listOfData = listOfData;
     }
 }

@@ -106,4 +106,16 @@ public class Receivingbilldetail extends AbstractEntity implements java.io.Seria
     public static String getEntityname() {
         return "Receivingbilldetail";
     }
+
+    @Override
+    public Object getValueByPropertyName(String propertyName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void verifyObject() {
+        // TODO Auto-generated method stub
+        
+    }
 }

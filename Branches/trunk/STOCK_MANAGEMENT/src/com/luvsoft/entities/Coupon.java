@@ -186,4 +186,16 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
         return "Coupon";
     }
 
+    @Override
+    public Object getValueByPropertyName(String propertyName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void verifyObject() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
