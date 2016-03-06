@@ -58,8 +58,9 @@ public class Stocktype extends AbstractEntity implements java.io.Serializable {
         this.stocks = stocks;
     }
 
-    public static Stocktype cloneObject(Stocktype stockType) {
-        return new Stocktype(stockType.getId(), stockType.getName(), stockType.getDescription(), stockType.getStocks());
+    @Override
+    public Stocktype cloneObject() {
+        return new Stocktype(getId(), getName(), getDescription(), getStocks());
     }
 
     @Override

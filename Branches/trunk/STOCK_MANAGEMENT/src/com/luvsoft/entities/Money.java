@@ -106,4 +106,10 @@ public class Money extends AbstractEntity implements java.io.Serializable {
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public AbstractEntity cloneObject() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

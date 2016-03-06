@@ -10,7 +10,7 @@ import com.luvsoft.utils.ACTION;
 import com.luvsoft.view.component.GenericTabCategory;
 import com.vaadin.ui.TextField;
 
-public class AbstractEntityPresenter {
+public class AbstractEntityPresenter implements UpdateEntityListener{
     @SuppressWarnings("rawtypes")
     protected GenericTabCategory view;
     protected AbstractEntityModel model;
