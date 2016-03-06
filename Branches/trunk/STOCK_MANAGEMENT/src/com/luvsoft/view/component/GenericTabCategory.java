@@ -8,6 +8,7 @@ import org.vaadin.resetbuttonfortextfield.ResetButtonForTextField;
 import org.vaadin.viritin.grid.MGrid;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
+import com.luvsoft.presenter.AbstractEntityPresenter;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -21,7 +22,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-public class GenericTabCategory<T> implements ClickListener {
+public abstract class GenericTabCategory<T> implements ClickListener{
     private static final long serialVersionUID = 5952786059392464758L;
     // MMI part
     protected MVerticalLayout wrapper;
@@ -54,6 +55,8 @@ public class GenericTabCategory<T> implements ClickListener {
     // Backing Beans: Any changes (update, delete, create)
     // should re-charge this list instead of setRows() again
     private List<T> listOfData;
+
+    protected AbstractEntityPresenter presenter;
 
     protected GenericTabCategory<T> init(String strTitle, Class<T> typeOfRows) {
         wrapper = new MVerticalLayout();
@@ -102,6 +105,18 @@ public class GenericTabCategory<T> implements ClickListener {
 
         wrapper.addComponents(title, functionsWrapper, content, paginationWrapper);
         wrapper.setComponentAlignment(paginationWrapper, Alignment.MIDDLE_CENTER);
+
+        // Handle events
+        this.btnAdd.addClickListener(this);
+        this.btnEdit.addClickListener(this);
+        this.btnDelete.addClickListener(this);
+        this.btnImportExcel.addClickListener(this);
+        this.btnExportExcel.addClickListener(this);
+        this.btnRefresh.addClickListener(this);
+        this.btnFirstPage.addClickListener(this);
+        this.btnLastPage.addClickListener(this);
+        this.btnPreviousPage.addClickListener(this);
+        this.btnNextPage.addClickListener(this);
         return this;
     }
 
@@ -347,12 +362,6 @@ public class GenericTabCategory<T> implements ClickListener {
         this.currentPage = currentPage;
     }
 
-    @Override
-    public void buttonClick(ClickEvent event) {
-        // TODO Auto-generated method stub
-        
-    }
-    
     public List<String> getTableProperties(){
         return tableProperties;
     }
@@ -372,4 +381,47 @@ public class GenericTabCategory<T> implements ClickListener {
     public void setListOfData(List<T> listOfData) {
         this.listOfData = listOfData;
     }
+
+    @Override
+    public void buttonClick(ClickEvent event) {
+        if(event.getButton().equals(btnAdd)) {
+            onAddButtonClicked();
+        } else if(event.getButton().equals(btnEdit)) {
+            onEditButtonClicked();
+        } else if(event.getButton().equals(btnDelete)) {
+            onDeleteButtonClicked();
+        } else if(event.getButton().equals(btnExportExcel)) {
+            onExcelExportButtonClicked();
+        } else if(event.getButton().equals(btnImportExcel)) {
+            onExcelImportButtonClicked();
+        } else if(event.getButton().equals(btnRefresh)) {
+            presenter.refreshView();
+        } else if(event.getButton().equals(btnFirstPage)) {
+            presenter.goToFirstPage();
+        } else if(event.getButton().equals(btnLastPage)) {
+            presenter.goToLastPage();
+        } else if(event.getButton().equals(btnNextPage)) {
+            presenter.goToNextPage();
+        } else if(event.getButton().equals(btnPreviousPage)) {
+            presenter.goToPreviousPage();
+        } else {
+            for(int i=0; i<this.paginationNumberWrapper.getComponentCount(); i++) {
+                Button btnNumber = (Button) this.paginationNumberWrapper.getComponent(i);
+                if(btnNumber.getData().equals(event.getButton().getData())) {
+                    presenter.goToPage(i);
+                }
+            }
+        }
+    }
+
+    public void setTable(List<T> listData) {
+        this.withContentData(listData);
+    }
+
+    // abstract functions
+    protected abstract void onAddButtonClicked();
+    protected abstract void onEditButtonClicked();
+    protected abstract void onDeleteButtonClicked();
+    protected abstract void onExcelImportButtonClicked();
+    protected abstract void onExcelExportButtonClicked();
 }

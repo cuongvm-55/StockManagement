@@ -4,7 +4,7 @@ import org.vaadin.viritin.form.AbstractForm.ResetHandler;
 import org.vaadin.viritin.form.AbstractForm.SavedHandler;
 
 import com.luvsoft.entities.Stocktype;
-import com.luvsoft.presenter.StockTypeListener;
+import com.luvsoft.presenter.AbstractEntityPresenter;
 import com.luvsoft.utils.ACTION;
 import com.luvsoft.view.validator.LuvsoftFormBeanValidator;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -14,10 +14,10 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class StockTypeFormCreator {
-    private StockTypeListener presenter;
+    private AbstractEntityPresenter presenter;
 
     @SuppressWarnings("unchecked")
-    public void createForm(Stocktype stockType, StockTypeListener presenter, ACTION action) {
+    public void createForm(Stocktype stockType, AbstractEntityPresenter presenter, ACTION action) {
         this.presenter = presenter;
         this.presenter.setAction(action);
 

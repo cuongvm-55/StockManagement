@@ -41,8 +41,10 @@ public class MainMenu extends TabSheet {
         subTabCategory.addStyleName(ValoTheme.TABSHEET_FRAMED);
         subTabCategory.addStyleName(ValoTheme.TABSHEET_ICONS_ON_TOP);
         subTabCategory.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
-        subTabCategory.addTab(stockTypeView.getWrapper(), "Loại Kho", FontAwesome.TRUCK);
+
         addTab(subTabCategory, "Danh Mục", FontAwesome.BOOK);
+        subTabCategory.addTab(stockTypeView.getWrapper(), "Loại Kho", FontAwesome.TRUCK);
+        subTabCategory.addTab(stockTypeView.getWrapper(), "Kho", FontAwesome.CAR);
 
         VerticalLayout subTabInformation = new VerticalLayout();
         addTab(subTabInformation, "Trợ Giúp", FontAwesome.INFO);

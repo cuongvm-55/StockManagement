@@ -47,7 +47,7 @@ public class ErrorManager {
         return instance;
     }
 
-    static String getExcelErrorString(ErrorId error){
+    static String getErrorString(ErrorId error){
         return errorTexts.get(error);
     }
 
@@ -57,7 +57,7 @@ public class ErrorManager {
      */
     public void raiseError(ErrorId error, String param){
         showNotification("<b>Lỗi</b>",
-                "<i>" + getExcelErrorString(error) +"!</i><br>"+ param+ "</br>",
+                getErrorString(error) + "!<br>"+ param+ "</br>",
                 Notification.Type.ERROR_MESSAGE);
     }
 
@@ -67,9 +67,8 @@ public class ErrorManager {
      */
     public void notifyWarning(ErrorId warning, String param){
         showNotification("<b>Thông báo</b>",
-                "<i>" + getExcelErrorString(warning) +"</i><br>"+ param+ "</br>",
+                getErrorString(warning) +"<br>"+ param+ "</br>",
                 Notification.Type.TRAY_NOTIFICATION);
-        
     }
     private void showNotification(String title, String description, Notification.Type type){
         Notification notify = new Notification(title,
