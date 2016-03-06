@@ -11,7 +11,7 @@ import com.luvsoft.utils.ACTION;
 import com.luvsoft.view.StockType.StockTypeView;
 import com.vaadin.ui.TextField;
 
-public class StockTypePresenter implements StockTypeListener {
+public class StockTypePresenter implements StockTypeListener, UpdateEntityListener {
     private StockTypeView view;
     private StockTypeModel model;
     private final int DEFAULT_NUMBER_OF_RECORDS_PER_PAGE = 8;

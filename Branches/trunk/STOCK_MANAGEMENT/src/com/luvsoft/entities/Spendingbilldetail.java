@@ -118,4 +118,10 @@ public class Spendingbilldetail extends AbstractEntity implements java.io.Serial
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public AbstractEntity cloneObject() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
