@@ -4,18 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class StockTypeImporter extends EntityImporter{
+public class StockImporter extends EntityImporter{
     @Override
     public String getEntityFullPathName() {
-        return "com.luvsoft.entities.Stocktype";
+        return "com.luvsoft.entities.Stock";
     }
 
     @SuppressWarnings("serial")
     public Map<String, String> getFieldList(){
         return new HashMap<String, String>(){{
+            put("code","Mã");
             put("name","Tên");
             put("description","Mô tả");
+            put("stocktype","Loại kho");
         }};
     }
-
 }

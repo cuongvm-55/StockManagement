@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.luvsoft.entities.AbstractEntity;
+import com.luvsoft.entities.Stock;
 import com.luvsoft.entities.Stocktype;
 
 public class StockTypeModel extends AbstractEntityModel{
@@ -23,5 +24,20 @@ public class StockTypeModel extends AbstractEntityModel{
     @Override
     public String getEntityname(){
         return Stocktype.getEntityname();
+    }
+    
+    @Override
+    public List<Stock> getStockListByStockTypeName(String stockTypeName){
+        List<Stock> stockList = new ArrayList<Stock>();
+        List<String> params = new ArrayList<String>();
+        params.add(stockTypeName);
+        List<Object> objectlist = entityManager.findByQuery("SELECT e FROM " + Stock.getEntityname() + " e WHERE stocktype.name LIKE :var0", params);
+
+        for (Object object : objectlist) {
+            Stock stock = (Stock) object;
+            stock.verifyObject();
+            stockList.add(stock);
+        }
+        return stockList;
     }
 }

@@ -268,7 +268,6 @@ public class FileImportHelper extends Window implements Field, StartedListener, 
         fireValueChange();
 
         System.out.println("upload finished!!");
-        int nbrOfImportedRecords = 0;
         ErrorId error = importer.process(receiver.getContentAsStream());
         if( error == ErrorId.EXCEL_IMPORT_NOERROR ){
             ErrorManager.getInstance().notifyWarning(error, "Số lượng bản ghi đã nhập: "+importer.getNbrOfImportedRecords());

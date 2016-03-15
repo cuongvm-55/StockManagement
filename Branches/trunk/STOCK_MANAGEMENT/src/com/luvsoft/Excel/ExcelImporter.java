@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import jxl.Cell;
 import jxl.CellType;
@@ -22,6 +23,8 @@ public abstract class ExcelImporter {
     public ErrorId parse(InputStream inputStream){
         try {
             Workbook workbook = Workbook.getWorkbook(inputStream);
+            List<String> fieldList = new ArrayList<String>();
+            fieldList.addAll(getFieldList().keySet());
             for(int index = 0; index < 1/*workbook.getNumberOfSheets()*/; index++){ // accept only the first sheet
                 Sheet sheet = workbook.getSheet(index);
                 System.out.println("Rows: " + sheet.getRows());
@@ -49,14 +52,22 @@ public abstract class ExcelImporter {
                     LabelCell lc = (LabelCell) cell;
                     String header = lc.getString();
                     System.out.println(header);
-                    if( header.equals("") || headers.contains(header)){
+                    if( header.equals("") || headers.contains(header) || !getFieldList().values().contains(header)){
                         // invalid header or duplicate header, return
                         System.out.println("Invalid excel file: Invalid header!");
                         return ErrorId.EXCEL_IMPORT_INVALID_HEADERS;
                     }
-                    headers.add(header);
+
+                    // Actually the value get from Excel file is the text value (e.g: "Stock type name")
+                    // We have to map it to the field name of entity (e.g: stocktype)
+                    for( int i=0;i<fieldList.size();i++){
+                        if( getFieldList().get(fieldList.get(i)).equals(header) ){
+                            headers.add(fieldList.get(i));
+                            break;
+                        }
+                    }
                 }
-                
+
                 // get records, get whatever data...
                 // from second rows
                 System.out.println("Get records:");
@@ -95,4 +106,6 @@ public abstract class ExcelImporter {
             return ErrorId.EXCEL_IMPORT_FAIL_TO_READ_FILE;
         }
     }
+
+    public abstract Map<String, String> getFieldList();
 }

@@ -31,6 +31,7 @@ public class LuvsoftAbstractForm<T extends AbstractEntity> extends AbstractForm<
     private T cloneEntity;
 
     // List of available components
+    private TextField code = new TextField();
     private TextField name = new TextField();
     private TextArea description = new TextArea();
 
@@ -88,7 +89,9 @@ public class LuvsoftAbstractForm<T extends AbstractEntity> extends AbstractForm<
     @SuppressWarnings("unchecked")
     public void addValidators() {
         for(int i=0; i<listComponents.size(); i++) {
-            addValidator(listValidators.get(i), listComponents.get(i));
+            if( i < listValidators.size() && listValidators.get(i) != null ){
+                addValidator(listValidators.get(i), listComponents.get(i));
+            }
         }
     }
 
@@ -142,8 +145,30 @@ public class LuvsoftAbstractForm<T extends AbstractEntity> extends AbstractForm<
                 listComponents.add(description);
                 listValidators.add(new LuvsoftFormBeanValidator<AbstractEntity>(beanClass, propertyName));
                 break;
+            case "code":
+                code.setCaption(caption);
+                listComponents.add(code);
+                listValidators.add(new LuvsoftFormBeanValidator<AbstractEntity>(beanClass, propertyName));
+                break;
             default:
                 break;
         }
+    }
+
+    public List<AbstractComponent> getListComponents() {
+        return listComponents;
+    }
+
+    public void setListComponents(List<AbstractComponent> listComponents) {
+        this.listComponents = listComponents;
+    }
+
+    public List<LuvsoftFormBeanValidator<AbstractEntity>> getListValidators() {
+        return listValidators;
+    }
+
+    public void setListValidators(
+            List<LuvsoftFormBeanValidator<AbstractEntity>> listValidators) {
+        this.listValidators = listValidators;
     }
 }

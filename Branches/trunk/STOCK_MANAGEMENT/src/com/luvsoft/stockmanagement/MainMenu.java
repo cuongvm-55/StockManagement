@@ -1,6 +1,7 @@
 package com.luvsoft.stockmanagement;
 
 import com.luvsoft.view.StockType.StockTypeView;
+import com.luvsoft.view.StockType.StockView;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
@@ -10,6 +11,7 @@ public class MainMenu extends TabSheet {
     private static final long serialVersionUID = 6290323462935186029L;
     // List of views
     private StockTypeView stockTypeView;
+    private StockView stockView;
 
     public MainMenu() {
         super();
@@ -18,6 +20,7 @@ public class MainMenu extends TabSheet {
 
     public void initViews() {
         stockTypeView = new StockTypeView();
+        stockView = new StockView();
     }
 
 
@@ -44,7 +47,7 @@ public class MainMenu extends TabSheet {
 
         addTab(subTabCategory, "Danh Mục", FontAwesome.BOOK);
         subTabCategory.addTab(stockTypeView.getWrapper(), "Loại Kho", FontAwesome.TRUCK);
-        subTabCategory.addTab(stockTypeView.getWrapper(), "Kho", FontAwesome.CAR);
+        subTabCategory.addTab(stockView.getWrapper(), "Kho", FontAwesome.CAR);
 
         VerticalLayout subTabInformation = new VerticalLayout();
         addTab(subTabInformation, "Trợ Giúp", FontAwesome.INFO);

@@ -32,7 +32,7 @@ public class EntityManagerDAO {
         try{
             entitymanager.getTransaction( ).begin( );
             try{
-                entitymanager.persist( object );
+                entitymanager.merge( object );
             }catch(EntityExistsException eee){
                 System.out.println("Entity existed!");
                 return false;
@@ -136,8 +136,14 @@ public class EntityManagerDAO {
      * @return
      */
     public Object findByName(String entityName, String name){
-        Query query = entitymanager.createQuery("SELECT e FROM " + entityName + " e WHERE name="+name);
-        return query.getSingleResult();
+        System.out.println("entityName: "+entityName+", name: "+name);
+        Query query = entitymanager.createQuery("SELECT e FROM " + entityName + " e WHERE name LIKE :name");
+        query.setParameter("name", name);
+        try{
+            return query.getSingleResult();
+        }catch(Exception e){
+            return null;
+        }
     }
 
     /**
@@ -161,16 +167,15 @@ public class EntityManagerDAO {
                 sqlStr += " WHERE ";
                 while( index < fields.size() ){
                     // support first letters filter
-                    sqlStr+= "isFirstLettersMatched("+fields.get(index) + ",:var"+fields.get(index)+")=1";
+                    sqlStr+= "isFirstLettersMatched("+ fields.get(index) + ",:var"+ fields.get(index).replace(".", "") +")=1";
                     if( fields.size() > 1  && index < fields.size()-1 ){
                         sqlStr+=" AND "; // we combine the condition to get field value that closely matches the criteria
                     }
                     index++;
                 }
                 query = entitymanager.createQuery(sqlStr);
-                // Set parameter
                 for( String field : fields ){
-                    query.setParameter("var"+field, criteria.get(field));
+                    query.setParameter("var"+field.replace(".", ""), criteria.get(field));
                 }
             }
         }
@@ -197,5 +202,21 @@ public class EntityManagerDAO {
             return query.setParameter("value", propertyValue.toString()).getResultList();
             // TODO we should check with other type of propertyValue
         }
+    }
+    
+    /**
+     * Find list of object by inputed query string
+     * @param queryStr, e.g: SELECT :var0,:var1 FROM...
+     * @param params, list of parameter corresponding to position 0, 1,...
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<Object> findByQuery(String queryStr, List<String> params){
+        Query query = entitymanager.createQuery(queryStr);
+        System.out.println(queryStr);
+        for(int i=0;i<params.size();i++){
+            query.setParameter("var"+i, params.get(i));
+        }
+        return query.getResultList();
     }
 }

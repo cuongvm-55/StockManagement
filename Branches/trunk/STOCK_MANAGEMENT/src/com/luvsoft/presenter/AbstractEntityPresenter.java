@@ -1,5 +1,6 @@
 package com.luvsoft.presenter;
 
+import java.util.List;
 import java.util.Map;
 
 import com.luvsoft.DAO.AbstractEntityModel;
@@ -10,7 +11,7 @@ import com.luvsoft.utils.ACTION;
 import com.luvsoft.view.component.GenericTabCategory;
 import com.vaadin.ui.TextField;
 
-public class AbstractEntityPresenter implements UpdateEntityListener{
+public abstract class AbstractEntityPresenter implements UpdateEntityListener{
     @SuppressWarnings("rawtypes")
     protected GenericTabCategory view;
     protected AbstractEntityModel model;
@@ -28,12 +29,20 @@ public class AbstractEntityPresenter implements UpdateEntityListener{
      * @param value
      */
     public void doFilter(int filterFieldIdx, String value){
+        // check if the current field is foreign key (contains "frk_")
+        // re-formatted it before add to query. e.g: "frk_stocktype_name" -->"stocktype_name" --> "stocktype.name"
+        String key = (String)view.getTableProperties().get(filterFieldIdx);
+        if( key.startsWith("frk_") ){
+            key = key.replace("frk_", "");
+            key = key.replace("_", ".");
+        }
+
         // remove old <K, V> if exist
-        criteriaMap.remove(view.getTableProperties().get(filterFieldIdx));
+        criteriaMap.remove(key);
 
         // add new <K, V>
         if( value != null && !value.equals("") ){
-            criteriaMap.put((String)view.getTableProperties().get(filterFieldIdx), value);
+            criteriaMap.put(key, value);
         }
 
         goToPage(0); // always back to the first page
@@ -99,32 +108,30 @@ public class AbstractEntityPresenter implements UpdateEntityListener{
         goToPage(view.getCurrentPage()-1);
     }
 
-    public void updateEntity(AbstractEntity entity) {
-        if(action.equals(ACTION.CREATE)) {
-            model.addNew((Stocktype) entity);
-            goToLastPage();
-        }
-        else if(action.equals(ACTION.UPDATE)) {
-            model.update((Stocktype) entity);
-            generateTable();
-        } else if(action.equals(ACTION.UPDATE_BY_TABLE_EDITOR)) {
-            model.update((Stocktype) entity);
-            generateTable();
-        }
-        this.action = ACTION.UNKNOWN; // Reset action state after modification to avoid duplicate action in the future
-    }
-
     public void updateEntity(AbstractEntity entity, ACTION action) {
         this.setAction(action);
         updateEntity(entity);
     }
 
     public void deleteEntity(AbstractEntity entity) {
-        model.deleteEntity((Stocktype) entity);
-        generateTable();
+        doPreDeleteAction(entity);
+        model.deleteEntity(entity);
+        //generateTable();
+        refreshView();
     }
 
     public void setAction(ACTION action) {
         this.action = action;
+    }
+
+    /**
+     * Do the stuff before delete entity
+     */
+    public void doPreDeleteAction(AbstractEntity entity){};
+    
+    public abstract void updateEntity(AbstractEntity entity);
+    public List<Stocktype> getStockTypeList(){return null;}
+    public AbstractEntity getEntityByName(String entityName, String name){
+        return model.getEntityByName(entityName, name);
     }
 }

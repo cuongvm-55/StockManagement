@@ -98,6 +98,15 @@ public class EntityAnalyzer {
         this.fieldList = fieldList;
     }
 
+    public Field getFieldByName(String fieldName){
+        for( Field field : this.getFieldList() ){
+            if( field.getName().equals(fieldName) ){
+                return field;
+            }
+        }
+        
+        return null;
+    }
     /**
      * Get value of a field by invoke getting method of an object
      * @param field
@@ -105,9 +114,9 @@ public class EntityAnalyzer {
      * @param object
      * @return
      */
-    public static Object getFieldValue(Object object, Field field){
+    public static Object getFieldValue(Object object, String fieldName){
      // Find the correct method
-        Method method = getMethod(object.getClass(), field, "get");
+        Method method = getMethod(object.getClass(), fieldName, "get");
         if( method != null )
         {
             try{
@@ -129,12 +138,12 @@ public class EntityAnalyzer {
      * @param methodPrefix : Only "set" or "get"
      * @return
      */
-    public static Method getMethod(Class<?> clazz, Field field, String methodPrefix){
+    public static Method getMethod(Class<?> clazz, String fieldName, String methodPrefix){
         // Find the correct method
         for (Method method : clazz.getMethods()){
             if( (method.getName().startsWith(methodPrefix))
-                    && (method.getName().length() == (field.getName().length() + 3))){
-                if (method.getName().toLowerCase().endsWith(field.getName().toLowerCase())){
+                    && (method.getName().length() == (fieldName.length() + 3))){
+                if (method.getName().toLowerCase().endsWith(fieldName.toLowerCase())){
                     return method;
                 }
             }
@@ -148,9 +157,9 @@ public class EntityAnalyzer {
      * @param field
      * @return
      */
-    public static boolean setFieldValue(Object object, Field field, Object param){
+    public static boolean setFieldValue(Object object, String fieldName, Object param){
         // Find the correct method
-        Method method = getMethod(object.getClass(), field, "set");
+        Method method = getMethod(object.getClass(), fieldName, "set");
         if( method != null )
         {
             try{

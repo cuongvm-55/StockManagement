@@ -1,11 +1,13 @@
+
 package com.luvsoft.Excel;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import jxl.write.Label;
 import jxl.write.WritableCell;
@@ -21,13 +23,19 @@ public abstract class EntityExporter extends ExcelExporter{
         currentRow = 0;
     }
 
+    public abstract Map<String, String> getFieldList();
     public abstract String getEntityFullPathName();
 
+    /**
+     * Build the header of Excel file
+     * The header should be the field text (e.g: "Tên") instead of field name of class (e.g: "name")
+     */
     protected boolean buildHeader(List<WritableCell> headers){
-        List<Field> fields = entityAnalyzer.getFieldList();
+        List<String> headerList = new ArrayList<String>();
+        headerList.addAll(getFieldList().keySet());
         currentColumn = 0; // from the first column
-        for( int i=0;i<fields.size();i++ ){
-            Label lbl = createLabelCell(currentColumn, currentRow, fields.get(i).getName());
+        for( int i=0;i<headerList.size();i++ ){
+            Label lbl = createLabelCell(currentColumn, currentRow, getFieldList().get(headerList.get(i)));
             headers.add(lbl);
             currentColumn++;
         }
@@ -44,29 +52,36 @@ public abstract class EntityExporter extends ExcelExporter{
     protected boolean buildContent(List<WritableCell> contents) {
         EntityManagerDAO entityDAO = new EntityManagerDAO();
         List<Object> entities = entityDAO.findAll(entityAnalyzer.getEntityName());
+        List<String> headerList = new ArrayList<String>();
+        headerList.addAll(getFieldList().keySet());
         for( Object entity : entities){
             currentColumn = 0; // from the first column
-            for( Field field : entityAnalyzer.getFieldList() ){
-                Object val = EntityAnalyzer.getFieldValue(entity, field);
+            for( String fieldName : headerList ){
+                if( entityAnalyzer.getFieldByName(fieldName) == null ){
+                    // This case should not happen
+                    System.out.println("Cannot get field name: " + fieldName);
+                    continue;
+                }
+                Object val = EntityAnalyzer.getFieldValue(entity, fieldName);
                 if( val == null )
                 {
                     currentColumn++;
                     continue; // ignore null value
                 }
-                if( field.getType().equals(String.class) ){
+                if( entityAnalyzer.getFieldByName(fieldName).getType().equals(String.class) ){
                     Label lbl = createLabelCell(currentColumn,
                             currentRow,
                             val.toString());
                     contents.add(lbl);
                 }
-                else if( field.getType().equals(Integer.class) ||
-                            field.getType().equals(BigDecimal.class)){
+                else if( entityAnalyzer.getFieldByName(fieldName).getType().equals(Integer.class) ||
+                        entityAnalyzer.getFieldByName(fieldName).getType().equals(BigDecimal.class)){
                     jxl.write.Number nbr = createNumberCell(currentColumn,
                             currentRow,
                             Float.parseFloat(val.toString()));
                     contents.add(nbr);
                 }
-                else if( field.getType().equals(Date.class) ){
+                else if( entityAnalyzer.getFieldByName(fieldName).getType().equals(Date.class) ){
                     jxl.write.DateTime date = createDateCell(
                             currentColumn,
                             currentRow,
@@ -76,7 +91,7 @@ public abstract class EntityExporter extends ExcelExporter{
                 }
                 // Object generated from foreign key
                 // Export only its name
-                else if( field.getType().getPackage().getName()
+                else if( entityAnalyzer.getFieldByName(fieldName).getType().getPackage().getName()
                         .equals("com.luvsoft.entities") ){
                     Method method = null;
 
