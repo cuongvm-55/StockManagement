@@ -4,6 +4,28 @@
 /* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
 /* The actual styles should be defined in stockmanagement.scss */
 .stockmanagement {
-  @include addons;
-  @include stockmanagement;
+    @include addons;
+    @include stockmanagement;
+
+    .v-button-multiline .v-button-caption {
+        white-space: normal;
+    }
+
+    .left-panel {
+        background-color: white;
+        border: 1px solid #d5d5d5;
+        border-radius: 4px;
+        -webkit-box-shadow: 3px 2px 15px -4px rgb(25, 23, 25);
+        -moz-box-shadow: 3px 2px 15px -4px rgba(128,120,128,1);
+        box-shadow: 3px 2px 15px -4px rgba(128,120,128,1);
+        animation: valo-animate-in-slide-right 800ms 10ms backwards, valo-animate-in-fade 600ms 100ms backwards
+    }
+
+    .caption-center .v-caption {
+        text-align: center;
+        font-size: 16px;
+        box-shadow: 0px 6px 10px 0px rgba(60, 61, 64, 0.12);
+        background: skyblue;
+        text-shadow: 3px 3px 6px rgba(142, 150, 150, 0.89);
+    }
 }

@@ -1,7 +1,9 @@
 package com.luvsoft.stockmanagement;
 
+import com.luvsoft.entities.Stocktype;
 import com.luvsoft.view.StockType.StockTypeView;
 import com.luvsoft.view.StockType.StockView;
+import com.luvsoft.view.component.GenericTabFunction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
@@ -34,7 +36,14 @@ public class MainMenu extends TabSheet {
         VerticalLayout subTabSystem = new VerticalLayout();
         addTab(subTabSystem, "Hệ Thống", FontAwesome.COGS);
 
-        VerticalLayout subTabFunction = new VerticalLayout();
+        GenericTabFunction tab = new GenericTabFunction();
+        tab.init();
+        TabSheet subTabFunction = new TabSheet();
+        subTabFunction.addStyleName(ValoTheme.TABSHEET_FRAMED);
+        subTabFunction.addStyleName(ValoTheme.TABSHEET_ICONS_ON_TOP);
+        subTabFunction.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
+        subTabFunction.setSizeFull();
+        subTabFunction.addTab(tab.getWapper(), "Bán Hàng", FontAwesome.DOLLAR);
         addTab(subTabFunction, "Chức Năng", FontAwesome.FOLDER_OPEN);
 
         VerticalLayout subTabReport = new VerticalLayout();
@@ -44,7 +53,7 @@ public class MainMenu extends TabSheet {
         subTabCategory.addStyleName(ValoTheme.TABSHEET_FRAMED);
         subTabCategory.addStyleName(ValoTheme.TABSHEET_ICONS_ON_TOP);
         subTabCategory.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
-
+        subTabCategory.setSizeFull();
         addTab(subTabCategory, "Danh Mục", FontAwesome.BOOK);
         subTabCategory.addTab(stockTypeView.getWrapper(), "Loại Kho", FontAwesome.TRUCK);
         subTabCategory.addTab(stockView.getWrapper(), "Kho", FontAwesome.CAR);

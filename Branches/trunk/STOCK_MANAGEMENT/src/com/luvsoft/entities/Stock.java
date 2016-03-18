@@ -18,9 +18,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.luvsoft.utils.NemErrorList;
 import com.luvsoft.view.component.anotations.AvoidDuplication;
@@ -76,6 +78,7 @@ public class Stock extends AbstractEntity implements java.io.Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idStockType", nullable = false)
+    @NotNull(message= NemErrorList.Error_StockTypeNotEmpty)
     public Stocktype getStocktype() {
         return this.stocktype;
     }
@@ -133,7 +136,7 @@ public class Stock extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "Stock [id=" + id + ", stocktype=" + stocktype + ", code="
+        return "Stock [id=" + id + ", stocktype=" + stocktype.getName() + ", code="
                 + code + ", name=" + name + ", description=" + description
                 + ", materials=" + materials + ", frk_stocktype_name="
                 + frk_stocktype_name + "]";

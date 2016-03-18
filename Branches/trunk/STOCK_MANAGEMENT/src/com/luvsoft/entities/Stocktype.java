@@ -120,8 +120,9 @@ public class Stocktype extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "Stocktype [id=" + id + ", name=" + name + ", description="
-                + description + ", stocks=" + stocks + "]";
+//        return "Stocktype [id=" + id + ", name=" + name + ", description="
+//                + description + ", stocks=" + stocks + "]";
+        return name;
     }
 
     public static String getEntityname() {

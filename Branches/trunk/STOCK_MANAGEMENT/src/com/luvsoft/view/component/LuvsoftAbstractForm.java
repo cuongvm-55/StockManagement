@@ -15,6 +15,7 @@ import com.vaadin.event.ShortcutAction.ModifierKey;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
@@ -34,6 +35,7 @@ public class LuvsoftAbstractForm<T extends AbstractEntity> extends AbstractForm<
     private TextField code = new TextField();
     private TextField name = new TextField();
     private TextArea description = new TextArea();
+    private ComboBox stocktype = new ComboBox();
 
     public LuvsoftAbstractForm(UpdateEntityListener presenter, ACTION action, T cloneEntity) {
         setEagerValidation(true);
@@ -150,6 +152,13 @@ public class LuvsoftAbstractForm<T extends AbstractEntity> extends AbstractForm<
                 listComponents.add(code);
                 listValidators.add(new LuvsoftFormBeanValidator<AbstractEntity>(beanClass, propertyName));
                 break;
+            case "stocktype":
+                stocktype.setCaption(caption);
+                stocktype.setNullSelectionAllowed(false);
+                stocktype.setNewItemsAllowed(false);
+                listComponents.add(stocktype);
+                listValidators.add(new LuvsoftFormBeanValidator<AbstractEntity>(beanClass, propertyName));
+                break;
             default:
                 break;
         }
@@ -170,5 +179,13 @@ public class LuvsoftAbstractForm<T extends AbstractEntity> extends AbstractForm<
     public void setListValidators(
             List<LuvsoftFormBeanValidator<AbstractEntity>> listValidators) {
         this.listValidators = listValidators;
+    }
+
+    public ComboBox getStocktype() {
+        return stocktype;
+    }
+
+    public void setStocktype(ComboBox stocktype) {
+        this.stocktype = stocktype;
     }
 }

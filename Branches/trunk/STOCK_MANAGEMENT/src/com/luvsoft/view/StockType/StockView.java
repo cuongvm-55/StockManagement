@@ -80,8 +80,10 @@ public class StockView extends GenericTabCategory<Stock> {
 
         LuvsoftTableBeanValidator<Stock> nameValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "name");
         this.content.getColumn("name").getEditorField().addValidator(nameValidator);
-        LuvsoftTableBeanValidator<Stock> descritionValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "description");
-        this.content.getColumn("description").getEditorField().addValidator(descritionValidator);
+        LuvsoftTableBeanValidator<Stock> descriptionValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "description");
+        this.content.getColumn("description").getEditorField().addValidator(descriptionValidator);
+        LuvsoftTableBeanValidator<Stock> stockTypeValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "stocktype");
+        this.content.getColumn("frk_stocktype_name").getEditorField().addValidator(stockTypeValidator);
         this.content.getEditorFieldGroup().addCommitHandler(new CommitHandler() {
 
             @Override
@@ -107,6 +109,7 @@ public class StockView extends GenericTabCategory<Stock> {
      */
     protected void onAddButtonClicked(){
         Stock stock = new Stock();
+        stock.verifyObject();
         StockFromCreator form = new StockFromCreator();
         form.createForm(stock, presenter, ACTION.CREATE);
     }
