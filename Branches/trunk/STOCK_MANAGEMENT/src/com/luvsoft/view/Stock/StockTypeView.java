@@ -1,4 +1,4 @@
-package com.luvsoft.view.StockType;
+package com.luvsoft.view.Stock;
 
 import java.util.Collection;
 
@@ -37,13 +37,12 @@ public class StockTypeView extends GenericTabCategory<Stocktype> {
     public StockTypeView() {
         presenter = new StockTypePresenter(this);
         super.init("Danh Sách Các Loại Kho", Stocktype.class)
-            .withGeneralFuntionsList()
-            .withTableProperties("name", "description")
-            .withHeaderNames("name", "<b>Tên</b>")
-            .withHeaderNames("description", "<b>Mô Tả</b>");
+        .withGeneralFuntionsList()
+        .withTableProperties("name", "description")
+        .withHeaderNames("name", "<b>Tên</b>")
+        .withHeaderNames("description", "<b>Mô Tả</b>");
 
-        presenter.generateTable();
-
+        //presenter.generateTable();
         for(TextField filter : this.getFilterFields()){
             filter.addTextChangeListener(new TextChangeListener() {
                 @Override
@@ -70,7 +69,7 @@ public class StockTypeView extends GenericTabCategory<Stocktype> {
                 Stocktype stocktype = (Stocktype) content.getEditedItemId();
                 nameValidator.setEntity(stocktype);
                 nameValidator.setCalledByPreCommit(true);
-                content.getEditorFieldGroup().isValid();
+                //content.getEditorFieldGroup().isValid();
             }
 
             @Override
@@ -79,6 +78,11 @@ public class StockTypeView extends GenericTabCategory<Stocktype> {
                     presenter.updateEntity(stocktype, ACTION.UPDATE_BY_TABLE_EDITOR);
             }
         });
+    }
+
+    @Override
+    public void initView() {
+        presenter.generateTable();
     }
 
     /**

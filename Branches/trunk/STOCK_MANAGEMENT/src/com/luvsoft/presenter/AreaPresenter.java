@@ -3,17 +3,17 @@ package com.luvsoft.presenter;
 import java.util.HashMap;
 import java.util.List;
 
-import com.luvsoft.DAO.StockTypeModel;
+import com.luvsoft.DAO.AreaModel;
 import com.luvsoft.entities.AbstractEntity;
-import com.luvsoft.entities.Stock;
-import com.luvsoft.entities.Stocktype;
+import com.luvsoft.entities.Area;
+import com.luvsoft.entities.Customer;
 import com.luvsoft.utils.ACTION;
-import com.luvsoft.view.Stock.StockTypeView;
+import com.luvsoft.view.Customer.AreaView;
 
-public class StockTypePresenter extends AbstractEntityPresenter {
-    public StockTypePresenter(StockTypeView view) {
+public class AreaPresenter extends AbstractEntityPresenter {
+    public AreaPresenter(AreaView view) {
         this.view = view;
-        model = new StockTypeModel();
+        model = new AreaModel();
         criteriaMap = new HashMap<String, String>();
         action = ACTION.UNKNOWN;
     }
@@ -34,21 +34,21 @@ public class StockTypePresenter extends AbstractEntityPresenter {
     }
 
     /**
-     * Set stocktype of all stock that belong to the to-be-deleted stocktype to null
+     * Set area of all customer that belong to the to-be-deleted area to null
      */
     @Override
     public void doPreDeleteAction(AbstractEntity entity){
-        // Find all stock belong to the stock type of entity
-        Stocktype stocktype = (Stocktype)entity;
-        if( stocktype.getName() == null){
+        // Find all customer belong to the area
+        Area area = (Area)entity;
+        if( area.getName() == null){
             return; // nothing to do
         }
-        List<Stock> stockList = model.getStockListByStockTypeName(stocktype.getName());
-        if( stockList != null ){
-            for( int idx = 0; idx < stockList.size(); idx++ ){
-                Stock stk = stockList.get(idx);
-                stk.setStocktype(null); // set stocktype of these stock to be null
-                model.update(stk); // update it in db
+        List<Customer> customerList = model.getCustomerListByAreaName(area.getName());
+        if( customerList != null ){
+            for( int idx = 0; idx < customerList.size(); idx++ ){
+                Customer c = customerList.get(idx);
+                c.setArea(null); // set are of these customer to be null
+                model.update(c); // update it in db
             }
         }
     }

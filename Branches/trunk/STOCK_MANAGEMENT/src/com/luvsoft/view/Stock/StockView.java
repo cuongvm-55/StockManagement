@@ -1,4 +1,4 @@
-package com.luvsoft.view.StockType;
+package com.luvsoft.view.Stock;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,14 +39,12 @@ public class StockView extends GenericTabCategory<Stock> {
     public StockView() {
         presenter = new StockPresenter(this);
         super.init("Danh Sách Kho", Stock.class)
-            .withGeneralFuntionsList()
-            .withTableProperties("code", "name", "description", "frk_stocktype_name")
-            .withHeaderNames("code", "<b>Mã</b>")
-            .withHeaderNames("name", "<b>Tên</b>")
-            .withHeaderNames("description", "<b>Mô Tả</b>")
-            .withHeaderNames("frk_stocktype_name", "<b>Loại Kho</b>");
-
-        presenter.generateTable();
+        .withGeneralFuntionsList()
+        .withTableProperties("code", "name", "description", "frk_stocktype_name")
+        .withHeaderNames("code", "<b>Mã</b>")
+        .withHeaderNames("name", "<b>Tên</b>")
+        .withHeaderNames("description", "<b>Mô Tả</b>")
+        .withHeaderNames("frk_stocktype_name", "<b>Loại Kho</b>");
 
         for(TextField filter : this.getFilterFields()){
             filter.addTextChangeListener(new TextChangeListener() {
@@ -71,13 +69,12 @@ public class StockView extends GenericTabCategory<Stock> {
             }
         }
 
-        //if( !stockTypeCombx.isEmpty() ){
-        //    stockTypeCombx.select(itemId);
-        //}
         this.content.getColumn("frk_stocktype_name").setEditorField(stockTypeCombx);
         FieldGroup fieldGroup = new FieldGroup(stockItem);
         fieldGroup.setBuffered(true);
 
+        LuvsoftTableBeanValidator<Stock> codeValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "code");
+        this.content.getColumn("code").getEditorField().addValidator(codeValidator);
         LuvsoftTableBeanValidator<Stock> nameValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "name");
         this.content.getColumn("name").getEditorField().addValidator(nameValidator);
         LuvsoftTableBeanValidator<Stock> descriptionValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "description");
@@ -89,19 +86,24 @@ public class StockView extends GenericTabCategory<Stock> {
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
                 Stock stock = (Stock) content.getEditedItemId();
-                System.out.println(stock.getFrk_stocktype_name());
                 nameValidator.setEntity(stock);
                 nameValidator.setCalledByPreCommit(true);
+                codeValidator.setEntity(stock);
+                codeValidator.setCalledByPreCommit(true);
                 content.getEditorFieldGroup().isValid();
             }
 
             @Override
             public void postCommit(CommitEvent commitEvent) {
                 Stock stock = (Stock) content.getEditedItemId();
-                System.out.println(stock.getFrk_stocktype_name());
                 presenter.updateEntity(stock, ACTION.UPDATE_BY_TABLE_EDITOR);
             }
         });
+    }
+
+    @Override
+    public void initView() {
+        presenter.generateTable();
     }
 
     /**

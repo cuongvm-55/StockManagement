@@ -8,7 +8,7 @@ import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Stock;
 import com.luvsoft.entities.Stocktype;
 import com.luvsoft.utils.ACTION;
-import com.luvsoft.view.StockType.StockView;
+import com.luvsoft.view.Stock.StockView;
 
 public class StockPresenter extends AbstractEntityPresenter {
     public StockPresenter(StockView view) {

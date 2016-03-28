@@ -2,6 +2,8 @@ package com.luvsoft.entities;
 
 // Generated Jan 26, 2016 10:06:12 PM by Hibernate Tools 4.3.1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,9 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-
-import static javax.persistence.GenerationType.IDENTITY;
-
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,7 +21,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.luvsoft.utils.NemErrorList;
 import com.luvsoft.view.component.anotations.AvoidDuplication;
@@ -49,6 +47,10 @@ public class Stock extends AbstractEntity implements java.io.Serializable {
     private transient String frk_stocktype_name; // name value of foreign key, formatted as: "frk_type_name"
 
     public Stock() {
+        id=-1;
+        code="";
+        name="";
+        description="";
     }
 
     public Stock(Stocktype stocktype, String code, String name) {
@@ -92,10 +94,10 @@ public class Stock extends AbstractEntity implements java.io.Serializable {
         }
     }
 
-    @Column(name = "code", nullable = false, length = 45)
-    @Length(max = 45, message = NemErrorList.Error_NameTooLong)
-    @NotBlank(message = NemErrorList.Error_NameNotEmpty)
-    @AvoidDuplication(message = NemErrorList.Error_NameIsDuplicated)
+    @Column(name = "code", unique = true, nullable = false, length = 45)
+    @Length(max = 45, message = NemErrorList.Error_CodeTooLong)
+    @NotBlank(message = NemErrorList.Error_CodeNotEmpty)
+    @AvoidDuplication(message = NemErrorList.Error_CodeIsDuplicated)
     public String getCode() {
         return this.code;
     }

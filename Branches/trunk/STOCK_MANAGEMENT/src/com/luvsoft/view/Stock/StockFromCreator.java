@@ -1,4 +1,4 @@
-package com.luvsoft.view.StockType;
+package com.luvsoft.view.Stock;
 
 import java.util.List;
 

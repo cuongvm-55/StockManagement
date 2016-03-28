@@ -86,7 +86,6 @@ public abstract class GenericTabCategory<T> implements ClickListener{
         content.setEditorCancelCaption("Hủy");
 
         tableProperties = new ArrayList<String>();
-
         filterFields = new ArrayList<TextField>();
 
         paginationWrapper = new HorizontalLayout();
@@ -138,7 +137,7 @@ public abstract class GenericTabCategory<T> implements ClickListener{
                 // Add new TextFields to each column which filters the data from
                 // that column
                 String columnId = property;
-                TextField filter = getColumnFilter(columnId);
+                TextField filter = getColumnFilter();
                 ResetButtonForTextField.extend(filter);
                 filter.setImmediate(true);
                 filteringHeader.getCell(columnId).setComponent(filter);
@@ -153,7 +152,7 @@ public abstract class GenericTabCategory<T> implements ClickListener{
         }
     }
 
-    private TextField getColumnFilter(final Object columnId) {
+    private TextField getColumnFilter() {
         TextField filter = new TextField();
         filter.setWidth("100%");
         filter.addStyleName(ValoTheme.TEXTFIELD_TINY);
@@ -170,6 +169,7 @@ public abstract class GenericTabCategory<T> implements ClickListener{
         content.withProperties(properties);
         tableProperties.clear();
         tableProperties.addAll(Arrays.asList(properties));
+        setColumnFiltering(true);
         return this;
     }
 
@@ -197,7 +197,6 @@ public abstract class GenericTabCategory<T> implements ClickListener{
         {
             System.out.println("No record found.");
         }
-        setColumnFiltering(true);
         return this;
     }
 
@@ -424,4 +423,6 @@ public abstract class GenericTabCategory<T> implements ClickListener{
     protected abstract void onDeleteButtonClicked();
     protected abstract void onExcelImportButtonClicked();
     protected abstract void onExcelExportButtonClicked();
+
+    protected abstract void initView();
 }

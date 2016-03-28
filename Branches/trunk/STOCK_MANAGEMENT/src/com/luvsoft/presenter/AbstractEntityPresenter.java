@@ -58,8 +58,7 @@ public abstract class AbstractEntityPresenter implements UpdateEntityListener{
     }
 
     public void generateTable() {
-        criteriaMap.clear(); // we do not filter data when generate table
-        goToPage(currentPage);
+        refreshView();
     }
 
     @SuppressWarnings("unchecked")
