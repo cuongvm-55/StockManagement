@@ -1,11 +1,13 @@
-package com.luvsoft.view.StockType;
+package com.luvsoft.view.Stock;
 
 import java.util.Collection;
+import java.util.List;
 
-import com.luvsoft.Excel.StockTypeExporter;
-import com.luvsoft.Excel.StockTypeImporter;
+import com.luvsoft.Excel.StockExporter;
+import com.luvsoft.Excel.StockImporter;
+import com.luvsoft.entities.Stock;
 import com.luvsoft.entities.Stocktype;
-import com.luvsoft.presenter.StockTypePresenter;
+import com.luvsoft.presenter.StockPresenter;
 import com.luvsoft.utils.ACTION;
 import com.luvsoft.utils.ErrorManager;
 import com.luvsoft.utils.ErrorManager.ErrorId;
@@ -24,25 +26,25 @@ import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Window.CloseListener;
 
-
-public class StockTypeView extends GenericTabCategory<Stocktype> {
+public class StockView extends GenericTabCategory<Stock> {
     private static final long serialVersionUID = -7975276654447059817L;
 
     @SuppressWarnings("serial")
-    public StockTypeView() {
-        presenter = new StockTypePresenter(this);
-        super.init("Danh Sách Các Loại Kho", Stocktype.class)
-            .withGeneralFuntionsList()
-            .withTableProperties("name", "description")
-            .withHeaderNames("name", "<b>Tên</b>")
-            .withHeaderNames("description", "<b>Mô Tả</b>");
-
-        presenter.generateTable();
+    public StockView() {
+        presenter = new StockPresenter(this);
+        super.init("Danh Sách Kho", Stock.class)
+        .withGeneralFuntionsList()
+        .withTableProperties("code", "name", "description", "frk_stocktype_name")
+        .withHeaderNames("code", "<b>Mã</b>")
+        .withHeaderNames("name", "<b>Tên</b>")
+        .withHeaderNames("description", "<b>Mô Tả</b>")
+        .withHeaderNames("frk_stocktype_name", "<b>Loại Kho</b>");
 
         for(TextField filter : this.getFilterFields()){
             filter.addTextChangeListener(new TextChangeListener() {
@@ -53,57 +55,81 @@ public class StockTypeView extends GenericTabCategory<Stocktype> {
             });
         }
 
-        PropertysetItem stocktypeItem = new PropertysetItem();
-        stocktypeItem.addItemProperty("name", new ObjectProperty<String>(""));
-        stocktypeItem.addItemProperty("description", new ObjectProperty<String>(""));
-        FieldGroup fieldGroup = new FieldGroup(stocktypeItem);
+        PropertysetItem stockItem = new PropertysetItem();
+        stockItem.addItemProperty("code", new ObjectProperty<String>(""));
+        stockItem.addItemProperty("name", new ObjectProperty<String>(""));
+        stockItem.addItemProperty("description", new ObjectProperty<String>(""));
+        stockItem.addItemProperty("frk_stocktype_name", new ObjectProperty<String>(""));
+
+        ComboBox stockTypeCombx = new ComboBox();
+        List<Stocktype> stockTypeList = presenter.getStockTypeList();
+        if( stockTypeList != null ){
+            for(Stocktype type : stockTypeList){
+                stockTypeCombx.addItem(type.getName());
+            }
+        }
+
+        this.content.getColumn("frk_stocktype_name").setEditorField(stockTypeCombx);
+        FieldGroup fieldGroup = new FieldGroup(stockItem);
         fieldGroup.setBuffered(true);
 
-        LuvsoftTableBeanValidator<Stocktype> nameValidator = new LuvsoftTableBeanValidator<Stocktype>(Stocktype.class, "name");
+        LuvsoftTableBeanValidator<Stock> codeValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "code");
+        this.content.getColumn("code").getEditorField().addValidator(codeValidator);
+        LuvsoftTableBeanValidator<Stock> nameValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "name");
         this.content.getColumn("name").getEditorField().addValidator(nameValidator);
-        LuvsoftTableBeanValidator<Stocktype> descritionValidator = new LuvsoftTableBeanValidator<Stocktype>(Stocktype.class, "description");
-        this.content.getColumn("description").getEditorField().addValidator(descritionValidator);
+        LuvsoftTableBeanValidator<Stock> descriptionValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "description");
+        this.content.getColumn("description").getEditorField().addValidator(descriptionValidator);
+        LuvsoftTableBeanValidator<Stock> stockTypeValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "stocktype");
+        this.content.getColumn("frk_stocktype_name").getEditorField().addValidator(stockTypeValidator);
         this.content.getEditorFieldGroup().addCommitHandler(new CommitHandler() {
 
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
-                Stocktype stocktype = (Stocktype) content.getEditedItemId();
-                nameValidator.setEntity(stocktype);
+                Stock stock = (Stock) content.getEditedItemId();
+                nameValidator.setEntity(stock);
                 nameValidator.setCalledByPreCommit(true);
+                codeValidator.setEntity(stock);
+                codeValidator.setCalledByPreCommit(true);
                 content.getEditorFieldGroup().isValid();
             }
 
             @Override
             public void postCommit(CommitEvent commitEvent) {
-                    Stocktype stocktype = (Stocktype) content.getEditedItemId();
-                    presenter.updateEntity(stocktype, ACTION.UPDATE_BY_TABLE_EDITOR);
+                Stock stock = (Stock) content.getEditedItemId();
+                presenter.updateEntity(stock, ACTION.UPDATE_BY_TABLE_EDITOR);
             }
         });
+    }
+
+    @Override
+    public void initView() {
+        presenter.generateTable();
     }
 
     /**
      * Do the stuff when Add button clicked
      */
     protected void onAddButtonClicked(){
-        Stocktype stockType = new Stocktype();
-        StockTypeFormCreator form = new StockTypeFormCreator();
-        form.createForm(stockType, presenter, ACTION.CREATE);
+        Stock stock = new Stock();
+        stock.verifyObject();
+        StockFromCreator form = new StockFromCreator();
+        form.createForm(stock, presenter, ACTION.CREATE);
     }
-    
+
     /**
      * Do the stuff when Edit button clicked
      */
     protected void onEditButtonClicked(){
-        Stocktype stockType = null;
+        Stock stock = null;
         for (Object object : content.getSelectedRows()) {
-            stockType = (Stocktype) object;
+            stock = (Stock) object;
         }
-        if(stockType == null) {
+        if(stock == null) {
             return;
         }
 
-        StockTypeFormCreator form = new StockTypeFormCreator();
-        form.createForm(stockType, presenter, ACTION.UPDATE);
+        StockFromCreator form = new StockFromCreator();
+        form.createForm(stock, presenter, ACTION.UPDATE);
     }
 
     /**
@@ -118,7 +144,8 @@ public class StockTypeView extends GenericTabCategory<Stocktype> {
             @Override
             public void buttonClick(ClickEvent event) {
                 for (Object object : selectedRows) {
-                    presenter.deleteEntity((Stocktype) object);
+                    Stock stock = (Stock)object;
+                    presenter.deleteEntity(stock);
                 }
                 dialog.close();
             }
@@ -134,7 +161,7 @@ public class StockTypeView extends GenericTabCategory<Stocktype> {
 
     @Override
     protected void onExcelImportButtonClicked() {
-        getContent().getUI().addWindow(new FileImportHelper(new StockTypeImporter()));
+        getContent().getUI().addWindow(new FileImportHelper<Stock>(new StockImporter(), this));
     }
 
     @SuppressWarnings("serial")
@@ -146,8 +173,8 @@ public class StockTypeView extends GenericTabCategory<Stocktype> {
             @Override
             public void windowClose(CloseEvent e) {
                 if( fileChooser.getChoosenFile() != null ){
-                    StockTypeExporter stockTypeExporter = new StockTypeExporter(fileChooser.getChoosenFile());
-                    ErrorId error = stockTypeExporter.export();
+                    StockExporter stockExporter = new StockExporter(fileChooser.getChoosenFile());
+                    ErrorId error = stockExporter.export();
                     if( error == ErrorId.EXCEL_EXPORT_NOERROR){
                         ErrorManager.getInstance().notifyWarning(error, "");
                     }

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 20, 2016 at 10:07 AM
+-- Generation Time: Feb 27, 2016 at 06:59 PM
 -- Server version: 5.6.26-log
 -- PHP Version: 5.6.8
 
@@ -227,8 +227,8 @@ CREATE TABLE IF NOT EXISTS `material` (
   `id` int(11) NOT NULL COMMENT 'Id của vật tư',
   `code` varchar(45) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Mã vật tư',
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tên vật tư',
-  `idMaterialType1` int(11) DEFAULT NULL COMMENT 'FK: id của loại vật tư 1',
-  `idMaterialType2` int(11) DEFAULT NULL COMMENT 'FK: id của loại vật tư 2\\n',
+  `idMaterialType1` int(11) NOT NULL COMMENT 'FK: id của loại vật tư 1',
+  `idMaterialType2` int(11) NOT NULL COMMENT 'FK: id của loại vật tư 2\\n',
   `price` decimal(19,4) NOT NULL COMMENT 'giá bán',
   `idStock` int(11) NOT NULL COMMENT 'FK: id của kho',
   `idUnit` int(11) DEFAULT NULL COMMENT 'Đơn vị tính',
@@ -389,17 +389,16 @@ CREATE TABLE IF NOT EXISTS `stock` (
   `id` int(11) NOT NULL COMMENT 'id của kho',
   `code` varchar(45) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Mã kho',
   `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tên kho',
-  `idStockType` int(11) DEFAULT NULL COMMENT 'Foreign key: id của loại kho',
+  `idStockType` int(11) NOT NULL COMMENT 'Foreign key: id của loại kho',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `stock`
 --
 
 INSERT INTO `stock` (`id`, `code`, `name`, `idStockType`, `description`) VALUES
-(2, 'KHO 2 sad', 'Kho Cầu Giấy dsad', NULL, 'Mô tả'),
-(16, 'KHO1', 'Kho Mĩ Đình', 108, 'ádadasd');
+(3, 'KH2', 'Kho hàng 2', 2, NULL);
 
 -- --------------------------------------------------------
 
@@ -411,14 +410,29 @@ CREATE TABLE IF NOT EXISTS `stocktype` (
   `id` int(11) NOT NULL COMMENT 'id của kho',
   `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL COMMENT 'tên loại kho',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `stocktype`
 --
 
 INSERT INTO `stocktype` (`id`, `name`, `description`) VALUES
-(108, 'Kho hàng tồn', 'Kho chứa hàng tồn');
+(2, 'Kho 2sdfsdf', 'sdfsdf'),
+(19, 'wqwrq', 'afadf'),
+(20, 'qwrqwf', 'dfsdf'),
+(21, 'qfqefq', 'dfsdf'),
+(26, 'adalsdj', '\nasd1312413414'),
+(27, 'qf2234234', ''),
+(29, '3423jlkjwklerjklwr', '`t2t34twt'),
+(30, '14432adf', '3r232r32'),
+(31, '23r23wdatnq3', 'wfwef32f'),
+(32, 'weff23f', 'wef23f2f'),
+(33, '32fwef3', ''),
+(39, 'wqrf', '2342e23e'),
+(42, 'Nguy?n Qu?c ??t', '12344'),
+(43, 'Vy m?nh C??ng', 'C??ng vm4'),
+(44, 'dlfjldfj', 'aldfjlkdf'),
+(45, 'aflsjdfl', 'ldfjwlkejfklw');
 
 -- --------------------------------------------------------
 
@@ -667,12 +681,12 @@ ALTER TABLE `spendingbilldetail`
 -- AUTO_INCREMENT for table `stock`
 --
 ALTER TABLE `stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của kho',AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của kho',AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `stocktype`
 --
 ALTER TABLE `stocktype`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của kho',AUTO_INCREMENT=109;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của kho',AUTO_INCREMENT=46;
 --
 -- AUTO_INCREMENT for table `unit`
 --

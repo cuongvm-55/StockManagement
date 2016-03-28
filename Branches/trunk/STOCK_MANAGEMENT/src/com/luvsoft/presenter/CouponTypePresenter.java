@@ -3,17 +3,17 @@ package com.luvsoft.presenter;
 import java.util.HashMap;
 import java.util.List;
 
-import com.luvsoft.DAO.StockTypeModel;
+import com.luvsoft.DAO.CouponTypeModel;
 import com.luvsoft.entities.AbstractEntity;
-import com.luvsoft.entities.Stock;
-import com.luvsoft.entities.Stocktype;
+import com.luvsoft.entities.Coupon;
+import com.luvsoft.entities.Coupontype;
 import com.luvsoft.utils.ACTION;
-import com.luvsoft.view.Stock.StockTypeView;
+import com.luvsoft.view.Coupon.CouponTypeView;
 
-public class StockTypePresenter extends AbstractEntityPresenter {
-    public StockTypePresenter(StockTypeView view) {
+public class CouponTypePresenter extends AbstractEntityPresenter {
+    public CouponTypePresenter(CouponTypeView view) {
         this.view = view;
-        model = new StockTypeModel();
+        model = new CouponTypeModel();
         criteriaMap = new HashMap<String, String>();
         action = ACTION.UNKNOWN;
     }
@@ -34,20 +34,20 @@ public class StockTypePresenter extends AbstractEntityPresenter {
     }
 
     /**
-     * Set stocktype of all stock that belong to the to-be-deleted stocktype to null
+     * Set coupontype of all coupon that belong to the to-be-deleted coupontype to null
      */
     @Override
     public void doPreDeleteAction(AbstractEntity entity){
         // Find all stock belong to the stock type of entity
-        Stocktype stocktype = (Stocktype)entity;
-        if( stocktype.getName() == null){
+        Coupontype type = (Coupontype)entity;
+        if( type.getName() == null){
             return; // nothing to do
         }
-        List<Stock> stockList = model.getStockListByStockTypeName(stocktype.getName());
-        if( stockList != null ){
-            for( int idx = 0; idx < stockList.size(); idx++ ){
-                Stock stk = stockList.get(idx);
-                stk.setStocktype(null); // set stocktype of these stock to be null
+        List<Coupon> list = model.getCouponListByCouponTypeName(type.getName());
+        if( list != null ){
+            for( int idx = 0; idx < list.size(); idx++ ){
+                Coupon stk = list.get(idx);
+                stk.setCoupontype(null); // set stocktype of these stock to be null
                 model.update(stk); // update it in db
             }
         }

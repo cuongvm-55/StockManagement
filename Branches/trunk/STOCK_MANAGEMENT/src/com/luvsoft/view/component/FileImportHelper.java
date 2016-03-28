@@ -1,6 +1,7 @@
 package com.luvsoft.view.component;
 
 import com.luvsoft.Excel.EntityImporter;
+import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.utils.ErrorManager;
 import com.luvsoft.utils.ErrorManager.ErrorId;
 import com.vaadin.data.Buffered;
@@ -45,7 +46,7 @@ import org.vaadin.viritin.label.RichText;
  *
  */
 @SuppressWarnings({ "serial", "unused", "rawtypes" })
-public class FileImportHelper extends Window implements Field, StartedListener, FailedListener,
+public class FileImportHelper <T extends AbstractEntity> extends Window implements Field, StartedListener, FailedListener,
         FinishedListener, ProgressListener {
     private VerticalLayout layout;
     private static final int MAX_SHOWN_BYTES = 5;
@@ -56,8 +57,10 @@ public class FileImportHelper extends Window implements Field, StartedListener, 
     private ProgressBar progress = new ProgressBar(0.0f);
     
     private EntityImporter importer;
+    
+    private GenericTabCategory<T> ownerView;
 
-    public FileImportHelper(EntityImporter _importer) {
+    public FileImportHelper(EntityImporter _importer, GenericTabCategory<T> _ownerView) {
         this.setModal(true);
         this.setResizable(false);
         this.setClosable(true);
@@ -71,6 +74,7 @@ public class FileImportHelper extends Window implements Field, StartedListener, 
         upload = new Upload(null, receiver);
         upload.setImmediate(true);
 
+        ownerView = _ownerView;
         upload.addProgressListener(this);
         upload.addStartedListener(this);
         upload.addFailedListener(this);
@@ -275,6 +279,9 @@ public class FileImportHelper extends Window implements Field, StartedListener, 
         else{
             ErrorManager.getInstance().raiseError(error, "Số lượng bản ghi đã nhập: "+importer.getNbrOfImportedRecords());
         }
+
+        // reload owner view
+        ownerView.initView();
 
         clear(); // clear processed data
         close();

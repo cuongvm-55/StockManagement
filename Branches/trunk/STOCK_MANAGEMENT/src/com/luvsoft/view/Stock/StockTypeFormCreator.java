@@ -1,4 +1,4 @@
-package com.luvsoft.view.StockType;
+package com.luvsoft.view.Stock;
 
 import com.luvsoft.entities.Stocktype;
 import com.luvsoft.presenter.UpdateEntityListener;

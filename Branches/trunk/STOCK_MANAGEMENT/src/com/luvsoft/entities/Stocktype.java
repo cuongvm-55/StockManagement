@@ -58,23 +58,7 @@ public class Stocktype extends AbstractEntity implements java.io.Serializable {
         this.stocks = stocks;
     }
 
-    @Override
-    public Stocktype cloneObject() {
-        return new Stocktype(getId(), getName(), getDescription(), getStocks());
-    }
-
-    @Override
-    public void verifyObject() {
-        if(id == null) {
-            id = -1;
-        }
-        if(name == null) {
-            name = "";
-        }
-        if(description == null) {
-            description = "";
-        }
-    }
+    
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -138,5 +122,23 @@ public class Stocktype extends AbstractEntity implements java.io.Serializable {
                 return this.description;
         }
         return new String("Not found");
+    }
+    
+    @Override
+    public Stocktype cloneObject() {
+        return new Stocktype(getId(), getName(), getDescription(), getStocks());
+    }
+
+    @Override
+    public void verifyObject() {
+        if(id == null) {
+            id = -1;
+        }
+        if(name == null) {
+            name = "";
+        }
+        if(description == null) {
+            description = "";
+        }
     }
 }

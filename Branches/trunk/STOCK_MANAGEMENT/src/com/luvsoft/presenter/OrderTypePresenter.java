@@ -3,17 +3,17 @@ package com.luvsoft.presenter;
 import java.util.HashMap;
 import java.util.List;
 
-import com.luvsoft.DAO.StockTypeModel;
+import com.luvsoft.DAO.OrderTypeModel;
 import com.luvsoft.entities.AbstractEntity;
-import com.luvsoft.entities.Stock;
-import com.luvsoft.entities.Stocktype;
+import com.luvsoft.entities.Order;
+import com.luvsoft.entities.Ordertype;
 import com.luvsoft.utils.ACTION;
-import com.luvsoft.view.Stock.StockTypeView;
+import com.luvsoft.view.Order.OrderTypeView;
 
-public class StockTypePresenter extends AbstractEntityPresenter {
-    public StockTypePresenter(StockTypeView view) {
+public class OrderTypePresenter extends AbstractEntityPresenter {
+    public OrderTypePresenter(OrderTypeView view) {
         this.view = view;
-        model = new StockTypeModel();
+        model = new OrderTypeModel();
         criteriaMap = new HashMap<String, String>();
         action = ACTION.UNKNOWN;
     }
@@ -34,20 +34,19 @@ public class StockTypePresenter extends AbstractEntityPresenter {
     }
 
     /**
-     * Set stocktype of all stock that belong to the to-be-deleted stocktype to null
+     * Set type of all entities that belong to the to-be-deleted type to null
      */
     @Override
     public void doPreDeleteAction(AbstractEntity entity){
-        // Find all stock belong to the stock type of entity
-        Stocktype stocktype = (Stocktype)entity;
-        if( stocktype.getName() == null){
+        Ordertype type = (Ordertype)entity;
+        if( type.getName() == null){
             return; // nothing to do
         }
-        List<Stock> stockList = model.getStockListByStockTypeName(stocktype.getName());
-        if( stockList != null ){
-            for( int idx = 0; idx < stockList.size(); idx++ ){
-                Stock stk = stockList.get(idx);
-                stk.setStocktype(null); // set stocktype of these stock to be null
+        List<Order> list = model.getOrderListByOrderTypeName(type.getName());
+        if( list != null ){
+            for( int idx = 0; idx < list.size(); idx++ ){
+                Order stk = list.get(idx);
+                stk.setOrdertype(null);
                 model.update(stk); // update it in db
             }
         }
