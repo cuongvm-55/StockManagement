@@ -139,7 +139,7 @@ public class AreaView extends GenericTabCategory<Area> {
 
     @Override
     protected void onExcelImportButtonClicked() {
-        getContent().getUI().addWindow(new FileImportHelper(new AreaImporter()));
+        getContent().getUI().addWindow(new FileImportHelper<Area>(new AreaImporter(), this));
     }
 
     @SuppressWarnings("serial")

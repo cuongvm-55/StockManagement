@@ -138,7 +138,7 @@ public class StockTypeView extends GenericTabCategory<Stocktype> {
 
     @Override
     protected void onExcelImportButtonClicked() {
-        getContent().getUI().addWindow(new FileImportHelper(new StockTypeImporter()));
+        getContent().getUI().addWindow(new FileImportHelper<Stocktype>(new StockTypeImporter(), this));
     }
 
     @SuppressWarnings("serial")

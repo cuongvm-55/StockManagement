@@ -1,13 +1,11 @@
-package com.luvsoft.view.Stock;
+package com.luvsoft.view.Coupon;
 
 import java.util.Collection;
-import java.util.List;
 
-import com.luvsoft.Excel.StockExporter;
-import com.luvsoft.Excel.StockImporter;
-import com.luvsoft.entities.Stock;
-import com.luvsoft.entities.Stocktype;
-import com.luvsoft.presenter.StockPresenter;
+import com.luvsoft.Excel.CouponTypeExporter;
+import com.luvsoft.Excel.CouponTypeImporter;
+import com.luvsoft.entities.Coupontype;
+import com.luvsoft.presenter.CouponTypePresenter;
 import com.luvsoft.utils.ACTION;
 import com.luvsoft.utils.ErrorManager;
 import com.luvsoft.utils.ErrorManager.ErrorId;
@@ -26,26 +24,25 @@ import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Window.CloseListener;
 
-public class StockView extends GenericTabCategory<Stock> {
+
+public class CouponTypeView extends GenericTabCategory<Coupontype> {
     private static final long serialVersionUID = -7975276654447059817L;
 
     @SuppressWarnings("serial")
-    public StockView() {
-        presenter = new StockPresenter(this);
-        super.init("Danh Sách Kho", Stock.class)
+    public CouponTypeView() {
+        presenter = new CouponTypePresenter(this);
+        super.init("Danh Sách Các Loại Kho", Coupontype.class)
         .withGeneralFuntionsList()
-        .withTableProperties("code", "name", "description", "frk_stocktype_name")
-        .withHeaderNames("code", "<b>Mã</b>")
+        .withTableProperties("name", "description")
         .withHeaderNames("name", "<b>Tên</b>")
-        .withHeaderNames("description", "<b>Mô Tả</b>")
-        .withHeaderNames("frk_stocktype_name", "<b>Loại Kho</b>");
+        .withHeaderNames("description", "<b>Mô Tả</b>");
 
+        //presenter.generateTable();
         for(TextField filter : this.getFilterFields()){
             filter.addTextChangeListener(new TextChangeListener() {
                 @Override
@@ -55,48 +52,29 @@ public class StockView extends GenericTabCategory<Stock> {
             });
         }
 
-        PropertysetItem stockItem = new PropertysetItem();
-        stockItem.addItemProperty("code", new ObjectProperty<String>(""));
-        stockItem.addItemProperty("name", new ObjectProperty<String>(""));
-        stockItem.addItemProperty("description", new ObjectProperty<String>(""));
-        stockItem.addItemProperty("frk_stocktype_name", new ObjectProperty<String>(""));
-
-        ComboBox stockTypeCombx = new ComboBox();
-        List<Stocktype> stockTypeList = presenter.getStockTypeList();
-        if( stockTypeList != null ){
-            for(Stocktype type : stockTypeList){
-                stockTypeCombx.addItem(type.getName());
-            }
-        }
-
-        this.content.getColumn("frk_stocktype_name").setEditorField(stockTypeCombx);
-        FieldGroup fieldGroup = new FieldGroup(stockItem);
+        PropertysetItem stocktypeItem = new PropertysetItem();
+        stocktypeItem.addItemProperty("name", new ObjectProperty<String>(""));
+        stocktypeItem.addItemProperty("description", new ObjectProperty<String>(""));
+        FieldGroup fieldGroup = new FieldGroup(stocktypeItem);
         fieldGroup.setBuffered(true);
 
-        LuvsoftTableBeanValidator<Stock> codeValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "code");
-        this.content.getColumn("code").getEditorField().addValidator(codeValidator);
-        LuvsoftTableBeanValidator<Stock> nameValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "name");
+        LuvsoftTableBeanValidator<Coupontype> nameValidator = new LuvsoftTableBeanValidator<Coupontype>(Coupontype.class, "name");
         this.content.getColumn("name").getEditorField().addValidator(nameValidator);
-        LuvsoftTableBeanValidator<Stock> descriptionValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "description");
-        this.content.getColumn("description").getEditorField().addValidator(descriptionValidator);
-        LuvsoftTableBeanValidator<Stock> stockTypeValidator = new LuvsoftTableBeanValidator<Stock>(Stock.class, "stocktype");
-        this.content.getColumn("frk_stocktype_name").getEditorField().addValidator(stockTypeValidator);
+        LuvsoftTableBeanValidator<Coupontype> descritionValidator = new LuvsoftTableBeanValidator<Coupontype>(Coupontype.class, "description");
+        this.content.getColumn("description").getEditorField().addValidator(descritionValidator);
         this.content.getEditorFieldGroup().addCommitHandler(new CommitHandler() {
 
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
-                Stock stock = (Stock) content.getEditedItemId();
-                nameValidator.setEntity(stock);
+                Coupontype type = (Coupontype) content.getEditedItemId();
+                nameValidator.setEntity(type);
                 nameValidator.setCalledByPreCommit(true);
-                codeValidator.setEntity(stock);
-                codeValidator.setCalledByPreCommit(true);
-                content.getEditorFieldGroup().isValid();
             }
 
             @Override
             public void postCommit(CommitEvent commitEvent) {
-                Stock stock = (Stock) content.getEditedItemId();
-                presenter.updateEntity(stock, ACTION.UPDATE_BY_TABLE_EDITOR);
+                Coupontype type = (Coupontype) content.getEditedItemId();
+                presenter.updateEntity(type, ACTION.UPDATE_BY_TABLE_EDITOR);
             }
         });
     }
@@ -110,26 +88,25 @@ public class StockView extends GenericTabCategory<Stock> {
      * Do the stuff when Add button clicked
      */
     protected void onAddButtonClicked(){
-        Stock stock = new Stock();
-        stock.verifyObject();
-        StockFromCreator form = new StockFromCreator();
-        form.createForm(stock, presenter, ACTION.CREATE);
+        Coupontype type = new Coupontype();
+        CouponTypeFormCreator form = new CouponTypeFormCreator();
+        form.createForm(type, presenter, ACTION.CREATE);
     }
-
+    
     /**
      * Do the stuff when Edit button clicked
      */
     protected void onEditButtonClicked(){
-        Stock stock = null;
+        Coupontype type = null;
         for (Object object : content.getSelectedRows()) {
-            stock = (Stock) object;
+            type = (Coupontype) object;
         }
-        if(stock == null) {
+        if(type == null) {
             return;
         }
 
-        StockFromCreator form = new StockFromCreator();
-        form.createForm(stock, presenter, ACTION.UPDATE);
+        CouponTypeFormCreator form = new CouponTypeFormCreator();
+        form.createForm(type, presenter, ACTION.UPDATE);
     }
 
     /**
@@ -144,8 +121,7 @@ public class StockView extends GenericTabCategory<Stock> {
             @Override
             public void buttonClick(ClickEvent event) {
                 for (Object object : selectedRows) {
-                    Stock stock = (Stock)object;
-                    presenter.deleteEntity(stock);
+                    presenter.deleteEntity((Coupontype) object);
                 }
                 dialog.close();
             }
@@ -161,7 +137,7 @@ public class StockView extends GenericTabCategory<Stock> {
 
     @Override
     protected void onExcelImportButtonClicked() {
-        getContent().getUI().addWindow(new FileImportHelper<Stock>(new StockImporter(), this));
+        getContent().getUI().addWindow(new FileImportHelper<Coupontype>(new CouponTypeImporter(), this));
     }
 
     @SuppressWarnings("serial")
@@ -173,8 +149,8 @@ public class StockView extends GenericTabCategory<Stock> {
             @Override
             public void windowClose(CloseEvent e) {
                 if( fileChooser.getChoosenFile() != null ){
-                    StockExporter stockExporter = new StockExporter(fileChooser.getChoosenFile());
-                    ErrorId error = stockExporter.export();
+                    CouponTypeExporter exporter = new CouponTypeExporter(fileChooser.getChoosenFile());
+                    ErrorId error = exporter.export();
                     if( error == ErrorId.EXCEL_EXPORT_NOERROR){
                         ErrorManager.getInstance().notifyWarning(error, "");
                     }

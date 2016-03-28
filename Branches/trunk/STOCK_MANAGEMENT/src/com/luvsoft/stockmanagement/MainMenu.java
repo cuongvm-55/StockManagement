@@ -1,6 +1,12 @@
 package com.luvsoft.stockmanagement;
 
+import com.luvsoft.view.Coupon.CouponTypeView;
 import com.luvsoft.view.Customer.AreaView;
+import com.luvsoft.view.Customer.CustomerType1View;
+import com.luvsoft.view.Customer.CustomerType2View;
+import com.luvsoft.view.Material.MaterialType1View;
+import com.luvsoft.view.Material.MaterialType2View;
+import com.luvsoft.view.Order.OrderTypeView;
 import com.luvsoft.view.Stock.StockTypeView;
 import com.luvsoft.view.Stock.StockView;
 import com.luvsoft.view.component.GenericTabFunction;
@@ -16,11 +22,23 @@ public class MainMenu extends TabSheet {
     private static final String SUB_TAB_CATEGORY_STOCK = "Kho";
     private static final String SUB_TAB_CATEGORY_STOCK_TYPE = "Loại Kho";
     private static final String SUB_TAB_CATEGORY_AREA = "Khu Vực";
+    private static final String SUB_TAB_CATEGORY_COUNPON_TYPE = "Loại Phiếu";
+    private static final String SUB_TAB_CATEGORY_CUSTOMER_TYPE_1 = "Loại Khách Hàng 1";
+    private static final String SUB_TAB_CATEGORY_CUSTOMER_TYPE_2 = "Loại Khách Hàng 2";
+    private static final String SUB_TAB_CATEGORY_MATERIAL_TYPE_1 = "Loại Vật Tư 1";
+    private static final String SUB_TAB_CATEGORY_MATERIAL_TYPE_2 = "Loại Vật Tư 2";
+    private static final String SUB_TAB_CATEGORY_ORDER_TYPE = "Loại Hóa Đơn";
 
     // List of views
     private StockTypeView stockTypeView;
     private StockView stockView;
     private AreaView areaView;
+    private CouponTypeView couponTypeView;
+    private CustomerType1View customerType1View;
+    private CustomerType2View customerType2View;
+    private MaterialType1View materialType1View;
+    private MaterialType2View materialType2View;
+    private OrderTypeView orderTypeView;
 
     public MainMenu() {
         super();
@@ -32,6 +50,12 @@ public class MainMenu extends TabSheet {
         stockTypeView.initView(); // the first tabsheet will be chosen automatically, we have to init it
         stockView = new StockView();
         areaView = new AreaView();
+        couponTypeView = new CouponTypeView();
+        customerType1View = new CustomerType1View();
+        customerType2View = new CustomerType2View();
+        materialType1View = new MaterialType1View();
+        materialType2View = new MaterialType2View();
+        orderTypeView = new OrderTypeView();
     }
 
     @SuppressWarnings("serial")
@@ -67,6 +91,12 @@ public class MainMenu extends TabSheet {
         subTabCategory.addTab(stockTypeView.getWrapper(), SUB_TAB_CATEGORY_STOCK_TYPE, FontAwesome.TRUCK);
         subTabCategory.addTab(stockView.getWrapper(), SUB_TAB_CATEGORY_STOCK, FontAwesome.CAR);
         subTabCategory.addTab(areaView.getWrapper(), SUB_TAB_CATEGORY_AREA, FontAwesome.LOCATION_ARROW);
+        subTabCategory.addTab(couponTypeView.getWrapper(), SUB_TAB_CATEGORY_COUNPON_TYPE, FontAwesome.FILE_TEXT);
+        subTabCategory.addTab(customerType1View.getWrapper(), SUB_TAB_CATEGORY_CUSTOMER_TYPE_1, FontAwesome.MALE);
+        subTabCategory.addTab(customerType2View.getWrapper(), SUB_TAB_CATEGORY_CUSTOMER_TYPE_2, FontAwesome.FEMALE);
+        subTabCategory.addTab(materialType1View.getWrapper(), SUB_TAB_CATEGORY_MATERIAL_TYPE_1, FontAwesome.TAG);
+        subTabCategory.addTab(materialType2View.getWrapper(), SUB_TAB_CATEGORY_MATERIAL_TYPE_2, FontAwesome.TAG);
+        subTabCategory.addTab(orderTypeView.getWrapper(), SUB_TAB_CATEGORY_ORDER_TYPE, FontAwesome.TICKET);
 
         // add listener to tabsheet
         subTabCategory.addSelectedTabChangeListener(new SelectedTabChangeListener() {
@@ -85,6 +115,24 @@ public class MainMenu extends TabSheet {
                     break;
                 case MainMenu.SUB_TAB_CATEGORY_AREA:
                     areaView.initView();
+                    break;
+                case MainMenu.SUB_TAB_CATEGORY_COUNPON_TYPE:
+                    couponTypeView.initView();
+                    break;
+                case MainMenu.SUB_TAB_CATEGORY_CUSTOMER_TYPE_1:
+                    customerType1View.initView();
+                    break;
+                case MainMenu.SUB_TAB_CATEGORY_CUSTOMER_TYPE_2:
+                    customerType2View.initView();
+                    break;
+                case MainMenu.SUB_TAB_CATEGORY_MATERIAL_TYPE_1:
+                    materialType1View.initView();
+                    break;
+                case MainMenu.SUB_TAB_CATEGORY_MATERIAL_TYPE_2:
+                    materialType2View.initView();
+                    break;
+                case MainMenu.SUB_TAB_CATEGORY_ORDER_TYPE:
+                    orderTypeView.initView();
                     break;
                 default:
                     System.out.println("Sub tab sheet is not handled!");

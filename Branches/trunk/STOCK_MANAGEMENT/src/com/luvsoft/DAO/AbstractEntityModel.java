@@ -3,7 +3,10 @@ package com.luvsoft.DAO;
 import java.util.List;
 
 import com.luvsoft.entities.AbstractEntity;
+import com.luvsoft.entities.Coupon;
 import com.luvsoft.entities.Customer;
+import com.luvsoft.entities.Material;
+import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Stock;
 import com.luvsoft.entities.Stocktype;
 
@@ -29,14 +32,26 @@ public abstract class AbstractEntityModel {
         entityManager.remove(getEntityname(), entity.getId());
     }
 
-    public List<Stock> getStockListByStockTypeName(String stockTypeName){return null;}
-    public List<Stocktype> getStockTypeList(){return null;}
-    public List<Customer> getCustomerListByAreaName(String areaName){return null;}
-    
     public AbstractEntity getEntityByName(String entityName, String name){
         Object obj = entityManager.findByName(entityName, name);
         return (AbstractEntity)obj;
     }
+
+    // override functions
+    public List<Stock> getStockListByStockTypeName(String stockTypeName){return null;}
+    public List<Stocktype> getStockTypeList(){return null;}
+
+    public List<Customer> getCustomerListByAreaName(String areaName){return null;}
+
+    public List<Coupon> getCouponListByCouponTypeName(String typeName){return null;}
+
+    public List<Customer> getCustomerListByCustomerType1Name(String typeName){return null;}
+    public List<Customer> getCustomerListByCustomertype2Name(String typeName){return null;}
+
+    public List<Material> getMaterialListByMaterialType1Name(String typeName){return null;}
+    public List<Material> getMaterialListByMaterialType2Name(String typeName){return null;}
+
+    public List<Order> getOrderListByOrderTypeName(String typeName){return null;}
 
     // abstract functions
     public abstract String getEntityname();
