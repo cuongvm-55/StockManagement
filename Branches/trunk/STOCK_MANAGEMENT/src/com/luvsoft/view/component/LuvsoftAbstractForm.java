@@ -25,17 +25,17 @@ import com.vaadin.ui.themes.ValoTheme;
 public class LuvsoftAbstractForm<T extends AbstractEntity> extends AbstractForm<T>{
     private static final long serialVersionUID = -7144760489697191396L;
 
-    private List<AbstractComponent> listComponents = new ArrayList<AbstractComponent>();
-    private List<LuvsoftFormBeanValidator<AbstractEntity>> listValidators = new ArrayList<LuvsoftFormBeanValidator<AbstractEntity>>();
+    protected List<AbstractComponent> listComponents = new ArrayList<AbstractComponent>();
+    protected List<LuvsoftFormBeanValidator<AbstractEntity>> listValidators = new ArrayList<LuvsoftFormBeanValidator<AbstractEntity>>();
     private ACTION action;
     private UpdateEntityListener presenter;
     private T cloneEntity;
 
     // List of available components
-    private TextField code = new TextField();
-    private TextField name = new TextField();
-    private TextArea description = new TextArea();
-    private ComboBox stocktype = new ComboBox();
+    protected TextField code;
+    protected TextField name;
+    protected TextArea description;
+    protected ComboBox stocktype;
 
     public LuvsoftAbstractForm(UpdateEntityListener presenter, ACTION action, T cloneEntity) {
         setEagerValidation(true);
@@ -45,13 +45,23 @@ public class LuvsoftAbstractForm<T extends AbstractEntity> extends AbstractForm<
         this.cloneEntity = cloneEntity;
     }
 
-    @Override
-    protected Component createContent() {
-        this.setSizeUndefined();
+    /**
+     * Override this method to build specific field layout
+     * @return
+     */
+    protected MVerticalLayout buildFieldLayouts(){
         MVerticalLayout wrapper = new MVerticalLayout();
         for (AbstractComponent component : listComponents) {
             wrapper.add(component);
         }
+        return wrapper;
+    }
+
+    @Override
+    protected Component createContent() {
+        this.setSizeUndefined();
+        // build field layouts
+        MVerticalLayout wrapper = buildFieldLayouts();
 
         Button save = new Button("Lưu");
         save.addStyleName(ValoTheme.BUTTON_FRIENDLY);
@@ -138,21 +148,25 @@ public class LuvsoftAbstractForm<T extends AbstractEntity> extends AbstractForm<
     public void createTextField(String caption, Class<?> beanClass, String propertyName) {
         switch (propertyName) {
             case "name":
+                name = new TextField();
                 name.setCaption(caption);
                 listComponents.add(name);
                 listValidators.add(new LuvsoftFormBeanValidator<AbstractEntity>(beanClass, propertyName));
                 break;
-            case "description":
-                description.setCaption(caption);
-                listComponents.add(description);
-                listValidators.add(new LuvsoftFormBeanValidator<AbstractEntity>(beanClass, propertyName));
-                break;
             case "code":
+                code = new TextField();
                 code.setCaption(caption);
                 listComponents.add(code);
                 listValidators.add(new LuvsoftFormBeanValidator<AbstractEntity>(beanClass, propertyName));
                 break;
+            case "description":
+                description = new TextArea();
+                description.setCaption(caption);
+                listComponents.add(description);
+                listValidators.add(new LuvsoftFormBeanValidator<AbstractEntity>(beanClass, propertyName));
+                break;
             case "stocktype":
+                stocktype = new ComboBox();
                 stocktype.setCaption(caption);
                 stocktype.setNullSelectionAllowed(false);
                 stocktype.setNewItemsAllowed(false);

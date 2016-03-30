@@ -1,6 +1,6 @@
 package com.luvsoft.Excel;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class OrderTypeExporter extends EntityExporter{
@@ -14,7 +14,7 @@ public class OrderTypeExporter extends EntityExporter{
     
     @SuppressWarnings("serial")
     public Map<String, String> getFieldList(){
-        return new HashMap<String, String>(){{
+        return new LinkedHashMap<String, String>(){{
             put("name","Tên");
             put("description","Mô tả");
         }};

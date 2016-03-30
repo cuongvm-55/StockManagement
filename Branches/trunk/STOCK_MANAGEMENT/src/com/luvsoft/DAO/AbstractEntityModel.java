@@ -3,8 +3,11 @@ package com.luvsoft.DAO;
 import java.util.List;
 
 import com.luvsoft.entities.AbstractEntity;
+import com.luvsoft.entities.Area;
 import com.luvsoft.entities.Coupon;
 import com.luvsoft.entities.Customer;
+import com.luvsoft.entities.Customertype1;
+import com.luvsoft.entities.Customertype2;
 import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Stock;
@@ -50,8 +53,13 @@ public abstract class AbstractEntityModel {
 
     public List<Material> getMaterialListByMaterialType1Name(String typeName){return null;}
     public List<Material> getMaterialListByMaterialType2Name(String typeName){return null;}
+    public List<Material> getMaterialByUnitName(String unitName){return null;}
 
     public List<Order> getOrderListByOrderTypeName(String typeName){return null;}
+
+    public List<Area> getAreaList(){return null;}
+    public List<Customertype1> getCustomerType1List(){return null;}
+    public List<Customertype2> getCustomerType2List(){return null;}
 
     // abstract functions
     public abstract String getEntityname();

@@ -33,6 +33,7 @@ public abstract class EntityExporter extends ExcelExporter{
     protected boolean buildHeader(List<WritableCell> headers){
         List<String> headerList = new ArrayList<String>();
         headerList.addAll(getFieldList().keySet());
+        System.out.println(headerList);
         currentColumn = 0; // from the first column
         for( int i=0;i<headerList.size();i++ ){
             Label lbl = createLabelCell(currentColumn, currentRow, getFieldList().get(headerList.get(i)));
