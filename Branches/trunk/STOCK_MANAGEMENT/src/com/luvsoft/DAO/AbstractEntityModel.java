@@ -40,6 +40,14 @@ public abstract class AbstractEntityModel {
         return (AbstractEntity)obj;
     }
 
+    public List<Object> findAll(String entityName) {
+        return entityManager.findAll(entityName);
+    }
+
+    public Object findLastItem(String entityName) {
+        return entityManager.findLastItem(entityName);
+    }
+
     // override functions
     public List<Stock> getStockListByStockTypeName(String stockTypeName){return null;}
     public List<Stocktype> getStockTypeList(){return null;}

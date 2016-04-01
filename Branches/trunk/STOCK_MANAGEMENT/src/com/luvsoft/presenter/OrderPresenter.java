@@ -13,9 +13,14 @@ import com.luvsoft.DAO.AbstractEntityModel;
 import com.luvsoft.DAO.CustomerModel;
 import com.luvsoft.DAO.FilterObject;
 import com.luvsoft.DAO.MaterialModel;
+import com.luvsoft.DAO.OrderModel;
+import com.luvsoft.DAO.OrderTypeModel;
 import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Customer;
 import com.luvsoft.entities.Material;
+import com.luvsoft.entities.Ordertype;
+import com.vaadin.ui.OptionGroup;
+import com.vaadin.ui.TextField;
 
 public class OrderPresenter extends AbstractEntityPresenter implements OrderListener {
 
@@ -57,12 +62,34 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     ////////////////////////////////////////////////////////////////////////////
     CustomerModel customerModel = new CustomerModel();
     MaterialModel materialModel = new MaterialModel();
+    OrderTypeModel orderTypeModel = new OrderTypeModel();
+    OrderModel orderModel = new OrderModel();
 
     private List<Object> listCustomers = new ArrayList<Object>();
     private List<Object> listMaterials = new ArrayList<Object>();
 
     public OrderPresenter() {
         criteriaMap = new HashMap<String, String>();
+    }
+
+    public void createOrderTypes(OptionGroup options, Ordertype ordertype) {
+        List<Ordertype> ordertypeList = orderTypeModel.findAll();
+        for (Ordertype ordertype1 : ordertypeList) {
+            options.addItem(ordertype1.getName());
+        }
+
+        if(ordertype == null || ordertype.getId() == -1) {
+            if(ordertypeList != null && !ordertypeList.isEmpty()) {
+                options.setValue(ordertypeList.get(0).getName());
+            }
+        } else {
+            options.setValue(ordertype.getName());
+        }
+    }
+
+    public void generateOrderCode(TextField orderCode) {
+        Integer lastItem = orderModel.findLastItem().getId(); 
+        orderCode.setValue("HD" + (lastItem + 1) + (int) (Math.random() * 50000 + 1));
     }
 
     public List<Object> doFilter(String foreignKey, String value, AbstractEntityModel model){
@@ -148,6 +175,10 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         @Override
         public Object toItem(SuggestFieldSuggestion suggestion) {
             Material result = new Material();
+            if(suggestion == null) {
+                return result;
+            }
+
             for (Object object : listMaterials) {
                 Material bean = (Material) object;
                 if (bean.getId().toString().equals(suggestion.getId())) {
@@ -214,6 +245,10 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         @Override
         public Object toItem(SuggestFieldSuggestion suggestion) {
             Customer result = new Customer();
+            if(suggestion == null) {
+                return result;
+            }
+
             for (Object object : listCustomers) {
                 Customer bean = (Customer) object;
                 if (bean.getId().toString().equals(suggestion.getId())) {

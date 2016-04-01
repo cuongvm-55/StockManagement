@@ -1,46 +1,23 @@
 package com.luvsoft.view.component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.vaadin.resetbuttonfortextfield.ResetButtonForTextField;
-import org.vaadin.suggestfield.SuggestField;
-import org.vaadin.viritin.grid.MGrid;
-
-import com.luvsoft.entities.Customer;
-import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
-import com.luvsoft.entities.Orderdetail;
-import com.luvsoft.entities.Stocktype;
 import com.luvsoft.presenter.OrderPresenter;
-import com.luvsoft.presenter.OrderPresenter.CustomerConverter;
 import com.luvsoft.view.Order.OrderFormContent;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Grid.HeaderRow;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.OptionGroup;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class GenericTabFunction implements ClickListener {
-
+    private static final long serialVersionUID = -8619515264131687495L;
     // MMI part
-    HorizontalLayout wrapper;
-    VerticalLayout leftPanel;
+    private HorizontalLayout wrapper;
+    private VerticalLayout leftPanel;
+    private OrderFormContent centerPart;
 
     // Left panel part
     private CssLayout sellPart;
@@ -65,7 +42,7 @@ public class GenericTabFunction implements ClickListener {
 
         Order order = new Order();
         order.verifyObject();
-        OrderFormContent centerPart = new OrderFormContent(presenter, order);
+        centerPart = new OrderFormContent(presenter, order);
         wrapper.addComponent(centerPart);
 
         wrapper.setExpandRatio(centerPart, 1.0f);
@@ -122,12 +99,22 @@ public class GenericTabFunction implements ClickListener {
                 categoryPart.addComponents(material, customer, stock);
             }
         }
+
+        // Event register
+        order.addClickListener(this);
+        returnToSupplier.addClickListener(this);
+
+        material.addClickListener(this);
+        customer.addClickListener(this);
+        stock.addClickListener(this);
     }
 
     @Override
     public void buttonClick(ClickEvent event) {
-        // TODO Auto-generated method stub
-        
+        if(event.getButton().equals(order)) {
+            centerPart.setOrder(new Order());
+            centerPart.create();
+        }
     }
 
     public HorizontalLayout getWapper() {

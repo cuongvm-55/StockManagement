@@ -44,6 +44,7 @@ public class Order extends AbstractEntity implements java.io.Serializable {
     private Set<Orderdetail> orderdetails = new HashSet<Orderdetail>(0);
 
     public Order() {
+        verifyObject();
     }
 
     public Order(String orderCode, String content, Date date) {

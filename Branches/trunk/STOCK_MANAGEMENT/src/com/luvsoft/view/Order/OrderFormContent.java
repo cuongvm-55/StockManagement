@@ -1,6 +1,7 @@
 package com.luvsoft.view.Order;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.vaadin.suggestfield.SuggestField;
@@ -56,8 +57,8 @@ public class OrderFormContent extends VerticalLayout {
     private Button discard;
 
     // Presenter
-    OrderPresenter presenter;
-    Order order;
+    private OrderPresenter presenter;
+    private Order order;
 
     public OrderFormContent(OrderPresenter presenter, Order order) {
         super();
@@ -69,6 +70,7 @@ public class OrderFormContent extends VerticalLayout {
     public void create() {
         addStyleName("formlayout-spacing max-textfield-width background-blue");
         setSizeFull();
+        removeAllComponents();
 
         Label centertitle = new Label("Hóa đơn");
         centertitle.addStyleName("center font16 " + ValoTheme.LABEL_BOLD);
@@ -192,13 +194,21 @@ public class OrderFormContent extends VerticalLayout {
         setExpandRatio(footer, 0.1f);
 
         // Fill data
-        orderType.addItem("Xuất Bán");
-        orderType.addItem("Xuất Bán Nội Bộ");
-        if(order != null && order.getId() != -1) {
-            orderNumber.setValue(order.getOrderCode());
-            orderContent.setValue(order.getContent());
-            orderDate.setValue(order.getDate());
-            orderNote.setValue(order.getNote());
+        // If order is not null and has an id (it is already created) 
+        // we will fill data for components by data of this order
+        // If order is not null and doesn't have any id (it is never created)
+        // we will generate an unique value for order number
+        if(order != null) {
+            presenter.createOrderTypes(orderType, order.getOrdertype());
+            if(order.getId() != -1) {
+                orderNumber.setValue(order.getOrderCode());
+                orderContent.setValue(order.getContent());
+                orderDate.setValue(order.getDate());
+                orderNote.setValue(order.getNote());
+            } else {
+                presenter.generateOrderCode(orderNumber);
+                orderDate.setValue(new Date());
+            }
         }
     }
 
@@ -271,5 +281,13 @@ public class OrderFormContent extends VerticalLayout {
             }
         });
         return search;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

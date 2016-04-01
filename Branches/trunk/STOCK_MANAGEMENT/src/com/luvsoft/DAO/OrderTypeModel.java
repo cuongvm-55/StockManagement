@@ -21,6 +21,18 @@ public class OrderTypeModel extends AbstractEntityModel{
         return entityList;
     }
 
+    public List<Ordertype> findAll() {
+        List<Ordertype> entityList = new ArrayList<Ordertype>();
+        List<Object> objectlist = findAll(getEntityname());
+
+        for (Object object : objectlist) {
+            Ordertype entity = (Ordertype) object;
+            entity.verifyObject();
+            entityList.add(entity);
+        }
+        return entityList;
+    }
+
     @Override
     public String getEntityname(){
         return Ordertype.getEntityname();
