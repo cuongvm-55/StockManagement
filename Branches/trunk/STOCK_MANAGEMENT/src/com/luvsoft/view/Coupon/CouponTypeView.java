@@ -36,7 +36,7 @@ public class CouponTypeView extends GenericTabCategory<Coupontype> {
     @SuppressWarnings("serial")
     public CouponTypeView() {
         presenter = new CouponTypePresenter(this);
-        super.init("Danh Sách Các Loại Kho", Coupontype.class)
+        super.init("Danh Sách Các Loại Phiếu", Coupontype.class)
         .withGeneralFuntionsList()
         .withTableProperties("name", "description")
         .withHeaderNames("name", "<b>Tên</b>")

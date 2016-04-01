@@ -1,35 +1,34 @@
 package com.luvsoft.DAO;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Customer;
-import com.luvsoft.entities.Stock;
+import com.luvsoft.entities.Material;
 
-public class CustomerModel extends AbstractEntityModel {
+public class MaterialModel extends AbstractEntityModel {
 
-    public List<Object> getCustomers() {
+    public List<Object> getMaterials() {
         return entityManager.findAll(getEntityname());
     }
 
     @Override
     public String getEntityname() {
-        return Customer.getEntityname();
+        return Material.getEntityname();
     }
 
     @Override
     public List<AbstractEntity> getFilterData(FilterObject filterObject) {
-        List<AbstractEntity> customerList = new ArrayList<AbstractEntity>();
+        List<AbstractEntity> materialList = new ArrayList<AbstractEntity>();
         List<Object> objectlist = entityManager.searchWithCriteriaWithPagination(getEntityname(), filterObject);
 
         for (Object object : objectlist) {
-            Customer customer = (Customer) object;
-            customer.verifyObject();
-            customerList.add(customer);
+            Material material = (Material) object;
+            material.verifyObject();
+            materialList.add(material);
         }
-        return customerList;
+        return materialList;
     }
 
 }

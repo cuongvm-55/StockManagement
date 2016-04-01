@@ -36,7 +36,7 @@ public class OrderTypeView extends GenericTabCategory<Ordertype> {
     @SuppressWarnings("serial")
     public OrderTypeView() {
         presenter = new OrderTypePresenter(this);
-        super.init("Danh Sách Các Loại Kho", Ordertype.class)
+        super.init("Danh Sách Loại Hóa Đơn", Ordertype.class)
         .withGeneralFuntionsList()
         .withTableProperties("name", "description")
         .withHeaderNames("name", "<b>Tên</b>")
@@ -115,7 +115,7 @@ public class OrderTypeView extends GenericTabCategory<Ordertype> {
      */
     protected void onDeleteButtonClicked(){
         Collection<Object> selectedRows = content.getSelectedRows();
-        LuvsoftConfirmationDialog dialog = new LuvsoftConfirmationDialog("Xác nhận xóa?");
+        LuvsoftConfirmationDialog dialog = new LuvsoftConfirmationDialog("XÃ¡c nháº­n xÃ³a?");
         dialog.addLuvsoftClickListener(new ClickListener() {
             private static final long serialVersionUID = 351366856643651627L;
 

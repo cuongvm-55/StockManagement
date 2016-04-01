@@ -36,7 +36,7 @@ public class CustomerType2View extends GenericTabCategory<Customertype2> {
     @SuppressWarnings("serial")
     public CustomerType2View() {
         presenter = new CustomerType2Presenter(this);
-        super.init("Danh Sách Các Loại Kho", Customertype2.class)
+        super.init("Danh Sách Loại Khách Hàng 2", Customertype2.class)
         .withGeneralFuntionsList()
         .withTableProperties("name", "description")
         .withHeaderNames("name", "<b>Tên</b>")

@@ -306,6 +306,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         this.frk_customertype2_name = frk_customertype2_name;
     }
 
+    @Transient
     public String getFrk_area_name() {
         return frk_area_name;
     }
@@ -364,7 +365,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         id = id == null ? -1 : id;
         code = code == null ? "" : code;
         name = name == null ? "" : name;
-        address = address == null ? "" : name;
+        address = address == null ? "" : address;
         phoneNumber = phoneNumber == null ? "" : phoneNumber;
         email = email == null ? "" : email;
         bankName = bankName == null ? "" : bankName;

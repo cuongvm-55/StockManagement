@@ -15,7 +15,7 @@ public class StockFromCreator {
         LuvsoftAbstractForm<Stock> form = new LuvsoftAbstractForm<Stock>(presenter, action, stock);
         form.createTextField("Mã", Stock.class, "code");
         form.createTextField("Tên", Stock.class, "name");
-        form.createTextField("Mô tả", Stock.class, "description");
+        form.createTextField("Mô Tả", Stock.class, "description");
         form.createTextField("Loại Kho", Stock.class, "stocktype");
 
         List<Stocktype> stockTypeList = presenter.getStockTypeList();

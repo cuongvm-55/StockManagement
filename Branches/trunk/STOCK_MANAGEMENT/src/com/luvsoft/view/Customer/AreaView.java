@@ -36,7 +36,7 @@ public class AreaView extends GenericTabCategory<Area> {
     @SuppressWarnings("serial")
     public AreaView() {
         presenter = new AreaPresenter(this);
-        super.init("Danh Sách Các Loại Kho", Area.class)
+        super.init("Danh Sách Khu Vực", Area.class)
         .withGeneralFuntionsList()
         .withTableProperties("name", "description")
         .withHeaderNames("name", "<b>Tên</b>")
