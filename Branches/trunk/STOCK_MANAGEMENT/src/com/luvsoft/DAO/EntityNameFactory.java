@@ -3,6 +3,7 @@ package com.luvsoft.DAO;
 import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Area;
 import com.luvsoft.entities.Coupontype;
+import com.luvsoft.entities.Customer;
 import com.luvsoft.entities.Customertype1;
 import com.luvsoft.entities.Customertype2;
 import com.luvsoft.entities.Materialtype1;
@@ -10,6 +11,7 @@ import com.luvsoft.entities.Materialtype2;
 import com.luvsoft.entities.Ordertype;
 import com.luvsoft.entities.Stock;
 import com.luvsoft.entities.Stocktype;
+import com.luvsoft.entities.Unit;
 
 public class EntityNameFactory {
 
@@ -38,7 +40,11 @@ public class EntityNameFactory {
         if(classType == Customertype2.class) {
             return Customertype2.getEntityname();
         }
-        
+
+        if(classType == Unit.class) {
+            return Unit.getEntityname();
+        }
+
         if(classType == Materialtype1.class) {
             return Materialtype1.getEntityname();
         }
@@ -49,6 +55,10 @@ public class EntityNameFactory {
 
         if(classType == Ordertype.class) {
             return Ordertype.getEntityname();
+        }
+
+        if(classType == Customer.class) {
+            return Customer.getEntityname();
         }
 
         return "";

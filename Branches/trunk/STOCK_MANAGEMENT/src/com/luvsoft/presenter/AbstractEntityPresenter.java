@@ -6,6 +6,9 @@ import java.util.Map;
 import com.luvsoft.DAO.AbstractEntityModel;
 import com.luvsoft.DAO.FilterObject;
 import com.luvsoft.entities.AbstractEntity;
+import com.luvsoft.entities.Area;
+import com.luvsoft.entities.Customertype1;
+import com.luvsoft.entities.Customertype2;
 import com.luvsoft.entities.Stocktype;
 import com.luvsoft.utils.ACTION;
 import com.luvsoft.view.component.GenericTabCategory;
@@ -123,14 +126,17 @@ public abstract class AbstractEntityPresenter implements UpdateEntityListener{
         this.action = action;
     }
 
-    /**
-     * Do the stuff before delete entity
-     */
-    public void doPreDeleteAction(AbstractEntity entity){};
-    
-    public abstract void updateEntity(AbstractEntity entity);
-    public List<Stocktype> getStockTypeList(){return null;}
     public AbstractEntity getEntityByName(String entityName, String name){
         return model.getEntityByName(entityName, name);
     }
+
+    // abstract functions
+    public abstract void updateEntity(AbstractEntity entity);
+
+    // override functions
+    public void doPreDeleteAction(AbstractEntity entity){}; //<! Do the stuff before delete entity
+    public List<Stocktype> getStockTypeList(){return null;}
+    public List<Area> getAreaList(){return null;}
+    public List<Customertype1> getCustomerType1List(){return null;}
+    public List<Customertype2> getCustomerType2List(){return null;}
 }

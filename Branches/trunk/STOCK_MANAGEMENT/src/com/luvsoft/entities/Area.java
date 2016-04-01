@@ -106,8 +106,7 @@ public class Area extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "Area [id=" + id + ", name=" + name + ", description="
-                + description + ", customers=" + customers + "]";
+        return name;
     }
 
     public static String getEntityname() {

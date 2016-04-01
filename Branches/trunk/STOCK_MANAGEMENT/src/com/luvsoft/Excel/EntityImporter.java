@@ -106,7 +106,7 @@ public abstract class EntityImporter extends ExcelImporter{
                             }
                         }
                         else if( field.getType().equals(BigDecimal.class) && data.getClass().equals(Double.class) ){
-                            if( !EntityAnalyzer.setFieldValue(entityInstance, fieldName, (BigDecimal)data) ){
+                            if( !EntityAnalyzer.setFieldValue(entityInstance, fieldName, new BigDecimal(Double.parseDouble(data.toString()))) ){
                                 return ErrorId.EXCEL_IMPORT_FAIL_TO_PROCESS_ENTITY_RECORD;
                             }
                         }else if( field.getType().getPackage().getName()
