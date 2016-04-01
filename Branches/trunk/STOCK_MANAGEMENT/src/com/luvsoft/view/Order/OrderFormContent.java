@@ -12,6 +12,7 @@ import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Orderdetail;
 import com.luvsoft.presenter.OrderPresenter;
 import com.luvsoft.presenter.OrderPresenter.CustomerConverter;
+import com.luvsoft.presenter.OrderPresenter.MaterialConverter;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.server.FontAwesome;
@@ -19,16 +20,17 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid.HeaderRow;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class OrderFormContent extends VerticalLayout {
+    private static final long serialVersionUID = -6147363220520400910L;
     // Information part
     private OptionGroup orderType; // fetch from OrderType
     private TextField orderNumber; // auto generate
@@ -212,8 +214,17 @@ public class OrderFormContent extends VerticalLayout {
                 filter.addStyleName(ValoTheme.TEXTFIELD_TINY);
                 filter.setInputPrompt("Tìm Kiếm");
                 filter.setImmediate(true);
-                presenter.setUpSuggestFieldForOrderDetail(filter);
+                filter.setMinimumQueryCharacters(2);
+
+                if(property.equals("frk_material_code")) {
+                    presenter.setUpSuggestFieldForMaterial(filter, MaterialConverter.BY_CODE);
+                } else if(property.equals("frk_material_name")) {
+                    presenter.setUpSuggestFieldForMaterial(filter, MaterialConverter.BY_NAME);
+                }
+
                 filter.addValueChangeListener(new ValueChangeListener() {
+                    private static final long serialVersionUID = 6452140842646163170L;
+
                     @Override
                     public void valueChange(ValueChangeEvent event) {
                         Orderdetail orderDetail = new Orderdetail();
@@ -237,14 +248,14 @@ public class OrderFormContent extends VerticalLayout {
         }
     }
 
-    public void fillTextFieldByCustomer(Customer customer) {
+    private void fillTextFieldByCustomer(Customer customer) {
         customerCode.setValue(customer);
         customerName.setValue(customer);
         customerAddress.setValue(customer.getAddress());
         customerPhoneNumber.setValue(customer);
     }
 
-    public SuggestField createSuggestFieldForCustomer(CustomerConverter converter, String caption, String inputPrompt) {
+    private SuggestField createSuggestFieldForCustomer(CustomerConverter converter, String caption, String inputPrompt) {
         SuggestField search = new SuggestField();
         search.setCaption(caption);
         search.setInputPrompt(inputPrompt);
@@ -252,6 +263,8 @@ public class OrderFormContent extends VerticalLayout {
         presenter.setUpSuggestFieldForCustomer(search, converter);
 
         search.addValueChangeListener(new ValueChangeListener() {
+            private static final long serialVersionUID = -7248141255975105212L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
                 fillTextFieldByCustomer((Customer) search.getValue());

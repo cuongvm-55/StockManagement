@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.vaadin.resetbuttonfortextfield.ResetButtonForTextField;
 import org.vaadin.suggestfield.BeanSuggestionConverter;
 import org.vaadin.suggestfield.SuggestField;
 import org.vaadin.suggestfield.SuggestField.SuggestionHandler;
@@ -17,20 +16,45 @@ import com.luvsoft.DAO.MaterialModel;
 import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Customer;
 import com.luvsoft.entities.Material;
-import com.luvsoft.utils.ACTION;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 
 public class OrderPresenter extends AbstractEntityPresenter implements OrderListener {
 
+    ////////////////////////////////////////////////////////////////////////////////
+    // Declare enums and String converter
+    ////////////////////////////////////////////////////////////////////////////////
     public enum CustomerConverter {
         BY_CODE, BY_NAME, BY_PHONE_NUMBER,
+    }
+
+    private static String CustomerConverterString(CustomerConverter type) {
+        switch (type) {
+            case BY_PHONE_NUMBER:
+                return "phoneNumber";
+            case BY_CODE:
+                return "code";
+            case BY_NAME:
+                return "name";
+            default:
+                return "";
+        }
     }
 
     public enum MaterialConverter {
         BY_CODE, BY_NAME
     }
 
+    private static String MaterialConverterString(MaterialConverter type) {
+        switch (type) {
+            case BY_CODE:
+                return "code";
+            case BY_NAME:
+                return "name";
+            default:
+                return "";
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     CustomerModel customerModel = new CustomerModel();
     MaterialModel materialModel = new MaterialModel();
 
@@ -38,8 +62,6 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     private List<Object> listMaterials = new ArrayList<Object>();
 
     public OrderPresenter() {
-        // listCustomers = model.getCustomers();
-        // listMaterials = materialModel.getMaterials();
         criteriaMap = new HashMap<String, String>();
     }
 
@@ -75,22 +97,33 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         return listObject;
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    // For searching by material we create a suggestion field and setup for it includes:
+    // + Suggestion Converter to setup the format for suggestion (by toSuggestion() function) 
+    //   and return one item when it selected (by toItem() function)
+    // + Suggestion Handler to search items by a query. It will request to database by doFilter() function
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public void setUpSuggestFieldForOrderDetail(SuggestField search) {
-        search.setSuggestionConverter(new MaterialSuggestionConverterByCode());
+    public void setUpSuggestFieldForMaterial(SuggestField search, MaterialConverter type) {
+        search.setSuggestionConverter(new MaterialSuggestionConverter(type));
         search.setSuggestionHandler(new SuggestionHandler() {
+            private static final long serialVersionUID = 1843281143420378657L;
+
             @Override
             public List<Object> searchItems(String query) {
-                listMaterials = doFilter("code", query, materialModel);
+                listMaterials = doFilter(MaterialConverterString(type), query, materialModel);
                 return listMaterials;
             }
         });
     }
 
-    private class MaterialSuggestionConverterByCode extends BeanSuggestionConverter {
+    private class MaterialSuggestionConverter extends BeanSuggestionConverter {
+        private static final long serialVersionUID = -5171696939084857382L;
+        private MaterialConverter type;
 
-        public MaterialSuggestionConverterByCode() {
-            super(Customer.class, "id", "code", "code");
+        public MaterialSuggestionConverter(MaterialConverter type) {
+            super(Customer.class, "id", MaterialConverterString(type), MaterialConverterString(type));
+            this.type = type;
         }
 
         @Override
@@ -99,8 +132,16 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
                 return new SuggestFieldSuggestion("-1", "", "");
             } else {
                 Material material = (Material) item;
-                return new SuggestFieldSuggestion(material.getId().toString(), material.getCode() + " " + material.getName(),
-                        "");
+                switch (type) {
+                    case BY_CODE:
+                        return new SuggestFieldSuggestion(material.getId().toString(), material.getCode() + " " + material.getName(),
+                                "");
+                    case BY_NAME:
+                        return new SuggestFieldSuggestion(material.getId().toString(), material.getCode() + " " + material.getName(),
+                                "");
+                    default:
+                        return new SuggestFieldSuggestion("-1", "", "");
+                }
             }
         }
 
@@ -119,49 +160,33 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
 
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    // For searching by customer we create a suggestion field and setup for it includes:
+    // + Suggestion Converter to setup the format for suggestion (by toSuggestion() function) 
+    //   and return one item when it selected (by toItem() function)
+    // + Suggestion Handler to search items by a query. It will request to database by doFilter() function
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void setUpSuggestFieldForCustomer(SuggestField search, CustomerConverter type) {
-        search.setSuggestionConverter(createConverter(type));
+        search.setSuggestionConverter(new CustomerSuggestionConverter(type));
         search.setSuggestionHandler(new SuggestionHandler() {
+            private static final long serialVersionUID = 2924379050340561852L;
+
             @Override
             public List<Object> searchItems(String query) {
-                switch (type) {
-                    case BY_CODE:
-                        listCustomers = doFilter("code", query, customerModel);
-                        break;
-                    case BY_PHONE_NUMBER:
-                        listCustomers = doFilter("phoneNumber", query, customerModel);
-                        break;
-                    case BY_NAME:
-                        listCustomers = doFilter("name", query, customerModel);
-                        break;
-                    default:
-                        break;
-                }
-                
+                listCustomers = doFilter(CustomerConverterString(type), query, customerModel);
                 return listCustomers;
             }
         });
     }
 
-    public BeanSuggestionConverter createConverter(CustomerConverter type) {
-        switch (type) {
-            case BY_CODE:
-                return new CustomerSuggestionConverterByCode();
-            case BY_PHONE_NUMBER:
-                return new CustomerSuggestionConverterByPhoneNumber();
-            case BY_NAME:
-                return new CustomerSuggestionConverterByName();
-            default:
-                break;
-        }
-        return null;
-    }
+    private class CustomerSuggestionConverter extends BeanSuggestionConverter {
+        private static final long serialVersionUID = -2019270561085484476L;
+        private CustomerConverter type;
 
-    private class CustomerSuggestionConverterByPhoneNumber extends BeanSuggestionConverter {
-
-        public CustomerSuggestionConverterByPhoneNumber() {
-            super(Customer.class, "id", "phoneNumber", "phoneNumber");
+        public CustomerSuggestionConverter(CustomerConverter type) {
+            super(Customer.class, "id", CustomerConverterString(type), CustomerConverterString(type));
+            this.type = type;
         }
 
         @Override
@@ -170,8 +195,19 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
                 return new SuggestFieldSuggestion("-1", "", "");
             } else {
                 Customer customer = (Customer) item;
-                return new SuggestFieldSuggestion(customer.getId().toString(), "<b>" + customer.getPhoneNumber() + "</b><br>" + customer.getName(),
-                        customer.getPhoneNumber());
+                switch (type) {
+                    case BY_CODE:
+                        return new SuggestFieldSuggestion(customer.getId().toString(), "<b>" + customer.getCode() + "</b><br>" + customer.getName() + " "
+                                + customer.getPhoneNumber(), customer.getCode());
+                    case BY_PHONE_NUMBER:
+                        return new SuggestFieldSuggestion(customer.getId().toString(), "<b>" + customer.getPhoneNumber() + "</b><br>" + customer.getName(),
+                                customer.getPhoneNumber());
+                    case BY_NAME:
+                        return new SuggestFieldSuggestion(customer.getId().toString(), "<b>" + customer.getName() + "</b><br>" + customer.getPhoneNumber(),
+                                customer.getName());
+                    default:
+                        return new SuggestFieldSuggestion("-1", "", "");
+                }
             }
         }
 
@@ -188,67 +224,6 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             return result;
         }
 
-    }
-
-    private class CustomerSuggestionConverterByCode extends BeanSuggestionConverter {
-
-        public CustomerSuggestionConverterByCode() {
-            super(Customer.class, "id", "code", "code");
-        }
-
-        @Override
-        public SuggestFieldSuggestion toSuggestion(Object item) {
-            if (item == null) {
-                return new SuggestFieldSuggestion("-1", "", "");
-            } else {
-                Customer customer = (Customer) item;
-                return new SuggestFieldSuggestion(customer.getId().toString(), "<b>" + customer.getCode() + "</b><br>" + customer.getName() + " "
-                        + customer.getPhoneNumber(), customer.getCode());
-            }
-        }
-
-        @Override
-        public Object toItem(SuggestFieldSuggestion suggestion) {
-            Customer result = new Customer();
-            for (Object object : listCustomers) {
-                Customer bean = (Customer) object;
-                if (bean.getId().toString().equals(suggestion.getId())) {
-                    result = bean;
-                    break;
-                }
-            }
-            return result;
-        }
-    }
-
-    private class CustomerSuggestionConverterByName extends BeanSuggestionConverter {
-        public CustomerSuggestionConverterByName() {
-            super(Customer.class, "id", "name", "name");
-        }
-
-        @Override
-        public SuggestFieldSuggestion toSuggestion(Object item) {
-            if (item == null) {
-                return new SuggestFieldSuggestion("-1", "", "");
-            } else {
-                Customer customer = (Customer) item;
-                return new SuggestFieldSuggestion(customer.getId().toString(), "<b>" + customer.getName() + "</b><br>" + customer.getPhoneNumber(),
-                        customer.getName());
-            }
-        }
-
-        @Override
-        public Object toItem(SuggestFieldSuggestion suggestion) {
-            Customer result = new Customer();
-            for (Object object : listCustomers) {
-                Customer bean = (Customer) object;
-                if (bean.getId().toString().equals(suggestion.getId())) {
-                    result = bean;
-                    break;
-                }
-            }
-            return result;
-        }
     }
 
     @Override

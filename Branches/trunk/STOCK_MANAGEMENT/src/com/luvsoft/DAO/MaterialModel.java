@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.luvsoft.entities.AbstractEntity;
-import com.luvsoft.entities.Customer;
 import com.luvsoft.entities.Material;
 
 public class MaterialModel extends AbstractEntityModel {
