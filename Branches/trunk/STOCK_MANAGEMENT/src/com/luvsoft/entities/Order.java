@@ -44,6 +44,7 @@ public class Order extends AbstractEntity implements java.io.Serializable {
     private Set<Orderdetail> orderdetails = new HashSet<Orderdetail>(0);
 
     public Order() {
+        verifyObject();
     }
 
     public Order(String orderCode, String content, Date date) {
@@ -162,10 +163,8 @@ public class Order extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "Order [id=" + id + ", customer=" + customer + ", ordertype="
-                + ordertype + ", orderCode=" + orderCode + ", buyer=" + buyer
-                + ", content=" + content + ", date=" + date + ", note=" + note
-                + ", receivingbills=" + receivingbills + ", orderdetails="
+        return "Order [id=" + id + ", customer=" + customer + ", ordertype=" + ordertype + ", orderCode=" + orderCode + ", buyer=" + buyer
+                + ", content=" + content + ", date=" + date + ", note=" + note + ", receivingbills=" + receivingbills + ", orderdetails="
                 + orderdetails + "]";
     }
 
@@ -181,8 +180,14 @@ public class Order extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public void verifyObject() {
-        // TODO Auto-generated method stub
-        
+        id = id == null ? -1 : id;
+        customer = customer == null ? new Customer() : customer;
+        ordertype = ordertype == null ? new Ordertype() : ordertype;
+        orderCode = orderCode == null ? "" : orderCode;
+        buyer = buyer == null ? "" : buyer;
+        content = content == null ? "" : content;
+        date = date == null ? new Date() : date;
+        note = note == null ? "" : note;
     }
 
     @Override

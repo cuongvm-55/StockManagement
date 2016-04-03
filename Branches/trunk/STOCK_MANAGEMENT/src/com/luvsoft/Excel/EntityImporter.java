@@ -109,7 +109,14 @@ public abstract class EntityImporter extends ExcelImporter{
                             if( !EntityAnalyzer.setFieldValue(entityInstance, fieldName, new BigDecimal(Double.parseDouble(data.toString()))) ){
                                 return ErrorId.EXCEL_IMPORT_FAIL_TO_PROCESS_ENTITY_RECORD;
                             }
-                        }else if( field.getType().getPackage().getName()
+                        }
+                        else if(field.getType().isPrimitive()
+                                && data.getClass().equals(Double.class)){
+                            if( !EntityAnalyzer.setFieldValue(entityInstance, fieldName, (int)Double.parseDouble(data.toString())/*Integer.parseInt(data.toString())*/) ){
+                                return ErrorId.EXCEL_IMPORT_FAIL_TO_PROCESS_ENTITY_RECORD;
+                            }
+                        }
+                        else if( field.getType().getPackage().getName()
                                 .equals("com.luvsoft.entities") && data.getClass().equals(String.class)){
                             // One-to-many relation
                             // The data received from excel file should be in string type (it's a name of referenced object)

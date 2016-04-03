@@ -76,6 +76,7 @@ public abstract class ExcelExporter {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss"); // it's not depend on the current language
                 String fileName = getDestFolder()+"/"+entityAnalyzer.getEntityName()+"_" + formatter.format(new Date()) + ".xls";
                 WorkbookSettings wbSettings = new WorkbookSettings();
+                wbSettings.setEncoding("Cp1252"); // default encoding of Excel 2007
                 wbSettings.setRationalization(false);
                 WritableWorkbook workBook = Workbook.createWorkbook(new File( fileName ), wbSettings);
 

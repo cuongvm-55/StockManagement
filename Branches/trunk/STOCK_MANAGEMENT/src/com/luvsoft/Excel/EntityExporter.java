@@ -77,11 +77,17 @@ public abstract class EntityExporter extends ExcelExporter{
                     contents.add(lbl);
                 }
                 else if( entityAnalyzer.getFieldByName(fieldName).getType().equals(Integer.class) ||
-                        entityAnalyzer.getFieldByName(fieldName).getType().isPrimitive() || // exception case for primitive value
                         entityAnalyzer.getFieldByName(fieldName).getType().equals(BigDecimal.class)){
                     jxl.write.Number nbr = createNumberCell(currentColumn,
                             currentRow,
                             Float.parseFloat(val.toString()));
+                    contents.add(nbr);
+                }
+                // exception case for primitive value (currently we use "int" only)
+                else if( entityAnalyzer.getFieldByName(fieldName).getType().isPrimitive() ){
+                    jxl.write.Number nbr = createNumberCell(currentColumn,
+                            currentRow,
+                            Integer.parseInt(val.toString()));
                     contents.add(nbr);
                 }
                 else if( entityAnalyzer.getFieldByName(fieldName).getType().equals(Date.class) ){

@@ -219,4 +219,12 @@ public class EntityManagerDAO {
         }
         return query.getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    public Object findLastItem(String entityName) {
+        Query query = entitymanager.createQuery("FROM " + entityName + " ORDER BY id DESC");
+        query.setMaxResults(1);
+        List<Object> results = query.getResultList();
+        return (results != null && results.size() > 0) ? results.get(0) : null;
+    }
 }

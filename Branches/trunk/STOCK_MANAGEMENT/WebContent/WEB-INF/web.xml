@@ -22,6 +22,12 @@
   		<param-name>legacyPropertyToString</param-name>
   		<param-value>false</param-value>
   	</init-param>
+  	<init-param>
+  		<description>
+  		Application widgetset</description>
+  		<param-name>widgetset</param-name>
+  		<param-value>com.luvsoft.stockmanagement.widgetset.Stock_managementWidgetset</param-value>
+  	</init-param>
   </servlet>
   <servlet-mapping>
   	<servlet-name>Stock Management Application</servlet-name>

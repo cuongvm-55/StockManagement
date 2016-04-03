@@ -13,6 +13,7 @@ import jxl.LabelCell;
 import jxl.NumberCell;
 import jxl.Sheet;
 import jxl.Workbook;
+import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
 
 import com.luvsoft.utils.ErrorManager.ErrorId;
@@ -22,7 +23,9 @@ public abstract class ExcelImporter {
     protected List<List<Object>> records; // list of records
     public ErrorId parse(InputStream inputStream){
         try {
-            Workbook workbook = Workbook.getWorkbook(inputStream);
+            WorkbookSettings ws = new WorkbookSettings();
+            ws.setEncoding("Cp1252"); // we export this encoding and we want to reuse the export file as a template
+            Workbook workbook = Workbook.getWorkbook(inputStream, ws);
             List<String> fieldList = new ArrayList<String>();
             fieldList.addAll(getFieldList().keySet());
             for(int index = 0; index < 1/*workbook.getNumberOfSheets()*/; index++){ // accept only the first sheet

@@ -49,5 +49,8 @@
 
         <!-- Viritin -->
         <dependency org="org.vaadin" name="viritin" rev="1.46" />
+
+        <!-- Reset button -->
+        <dependency org="org.vaadin" name="resetbuttonfortextfield" rev="1.2.1" />
 	</dependencies>
 </ivy-module>

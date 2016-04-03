@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Transient;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -34,6 +35,10 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
     private int quantityDelivered;
     private BigDecimal price;
     private Integer saleOff;
+
+    // Not-mapped members
+    private transient String frk_material_code;
+    private transient String frk_material_name;
 
     public Orderdetail() {
     }
@@ -120,6 +125,24 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
 
     public void setSaleOff(Integer saleOff) {
         this.saleOff = saleOff;
+    }
+
+    @Transient
+    public String getFrk_material_code() {
+        return frk_material_code;
+    }
+
+    public void setFrk_material_code(String frk_material_code) {
+        this.frk_material_code = frk_material_code;
+    }
+
+    @Transient
+    public String getFrk_material_name() {
+        return frk_material_name;
+    }
+
+    public void setFrk_material_name(String frk_material_name) {
+        this.frk_material_name = frk_material_name;
     }
 
     @Override

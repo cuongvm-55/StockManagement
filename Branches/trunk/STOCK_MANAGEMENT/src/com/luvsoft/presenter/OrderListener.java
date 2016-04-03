@@ -1,10 +1,12 @@
 package com.luvsoft.presenter;
 
-import com.vaadin.client.ui.VFilterSelect.SuggestionPopup;
+import org.vaadin.suggestfield.SuggestField;
 
-import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteSuggestionProvider;
+import com.luvsoft.presenter.OrderPresenter.CustomerConverter;
+import com.luvsoft.presenter.OrderPresenter.MaterialConverter;
 
 
 public interface OrderListener {
-    public AutocompleteSuggestionProvider getSuggestionProvider();
+    public void setUpSuggestFieldForCustomer(final SuggestField search, CustomerConverter type);
+    public void setUpSuggestFieldForMaterial(final SuggestField search, MaterialConverter type);
 }
