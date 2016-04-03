@@ -58,6 +58,7 @@ public abstract class EntityExporter extends ExcelExporter{
         for( Object entity : entities){
             currentColumn = 0; // from the first column
             for( String fieldName : headerList ){
+                System.out.println("fieldName: " + fieldName);
                 if( entityAnalyzer.getFieldByName(fieldName) == null ){
                     // This case should not happen
                     System.out.println("Cannot get field name: " + fieldName);
@@ -76,6 +77,7 @@ public abstract class EntityExporter extends ExcelExporter{
                     contents.add(lbl);
                 }
                 else if( entityAnalyzer.getFieldByName(fieldName).getType().equals(Integer.class) ||
+                        entityAnalyzer.getFieldByName(fieldName).getType().isPrimitive() || // exception case for primitive value
                         entityAnalyzer.getFieldByName(fieldName).getType().equals(BigDecimal.class)){
                     jxl.write.Number nbr = createNumberCell(currentColumn,
                             currentRow,

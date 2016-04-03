@@ -7,6 +7,7 @@ import com.luvsoft.view.Customer.CustomerType2View;
 import com.luvsoft.view.Customer.CustomerView;
 import com.luvsoft.view.Material.MaterialType1View;
 import com.luvsoft.view.Material.MaterialType2View;
+import com.luvsoft.view.Material.MaterialView;
 import com.luvsoft.view.Material.UnitView;
 import com.luvsoft.view.Order.OrderTypeView;
 import com.luvsoft.view.Stock.StockTypeView;
@@ -15,10 +16,11 @@ import com.luvsoft.view.component.GenericTabFunction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-public class MainMenu extends TabSheet {
+public class MainMenu extends TabSheet implements SelectedTabChangeListener{
     private static final long serialVersionUID = 6290323462935186029L;
     // Sub tab category
     // Stock
@@ -30,6 +32,7 @@ public class MainMenu extends TabSheet {
     private static final String SUB_TAB_CATEGORY_CUSTOMER_TYPE_2 = "Loại Khách Hàng 2";
     private static final String SUB_TAB_CATEGORY_AREA = "Khu Vực";
     // Material
+    private static final String SUB_TAB_CATEGORY_MATERIAL = "Vật Tư";
     private static final String SUB_TAB_CATEGORY_MATERIAL_TYPE_1 = "Loại Vật Tư 1";
     private static final String SUB_TAB_CATEGORY_MATERIAL_TYPE_2 = "Loại Vật Tư 2";
     private static final String SUB_TAB_CATEGORY_UNIT = "Đơn Vị Tính";
@@ -46,6 +49,7 @@ public class MainMenu extends TabSheet {
     private CustomerView customerView;
     private CustomerType1View customerType1View;
     private CustomerType2View customerType2View;
+    private MaterialView materialView;
     private MaterialType1View materialType1View;
     private MaterialType2View materialType2View;
     private OrderTypeView orderTypeView;
@@ -58,20 +62,19 @@ public class MainMenu extends TabSheet {
 
     public void initViews() {
         stockTypeView = new StockTypeView();
-        stockTypeView.initView(); // the first tabsheet will be chosen automatically, we have to init it
         stockView = new StockView();
         areaView = new AreaView();
         couponTypeView = new CouponTypeView();
         customerView = new CustomerView();
         customerType1View = new CustomerType1View();
         customerType2View = new CustomerType2View();
+        materialView = new MaterialView();
         materialType1View = new MaterialType1View();
         materialType2View = new MaterialType2View();
         orderTypeView = new OrderTypeView();
         unitView = new UnitView();
     }
 
-    @SuppressWarnings("serial")
     public void init() {
         addStyleName(ValoTheme.TABSHEET_COMPACT_TABBAR);
         setSizeFull();
@@ -101,68 +104,107 @@ public class MainMenu extends TabSheet {
         subTabCategory.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
         subTabCategory.setSizeFull();
         addTab(subTabCategory, "Danh Mục", FontAwesome.BOOK);
-        subTabCategory.addTab(stockTypeView.getWrapper(), SUB_TAB_CATEGORY_STOCK_TYPE, FontAwesome.TRUCK);
-        subTabCategory.addTab(stockView.getWrapper(), SUB_TAB_CATEGORY_STOCK, FontAwesome.CAR);
-        subTabCategory.addTab(customerView.getWrapper(), SUB_TAB_CATEGORY_CUSTOMER, FontAwesome.MALE);
-        subTabCategory.addTab(customerType1View.getWrapper(), SUB_TAB_CATEGORY_CUSTOMER_TYPE_1, FontAwesome.MALE);
-        subTabCategory.addTab(customerType2View.getWrapper(), SUB_TAB_CATEGORY_CUSTOMER_TYPE_2, FontAwesome.FEMALE);
-        subTabCategory.addTab(areaView.getWrapper(), SUB_TAB_CATEGORY_AREA, FontAwesome.LOCATION_ARROW);
-        subTabCategory.addTab(materialType1View.getWrapper(), SUB_TAB_CATEGORY_MATERIAL_TYPE_1, FontAwesome.TAG);
-        subTabCategory.addTab(materialType2View.getWrapper(), SUB_TAB_CATEGORY_MATERIAL_TYPE_2, FontAwesome.TAG);
-        subTabCategory.addTab(unitView.getWrapper(), SUB_TAB_CATEGORY_UNIT, FontAwesome.MAGIC);
-        subTabCategory.addTab(orderTypeView.getWrapper(), SUB_TAB_CATEGORY_ORDER_TYPE, FontAwesome.TICKET);
-        subTabCategory.addTab(couponTypeView.getWrapper(), SUB_TAB_CATEGORY_COUNPON_TYPE, FontAwesome.FILE_TEXT);
+
+        // sub tabs for order
+        TabSheet subTabCategoryGroup_Order = new TabSheet();
+        subTabCategory.addTab(subTabCategoryGroup_Order, "Hóa Đơn", FontAwesome.NEWSPAPER_O);
+        subTabCategoryGroup_Order.addTab(orderTypeView.getWrapper(), SUB_TAB_CATEGORY_ORDER_TYPE, FontAwesome.TICKET);
+        // First tab should be init because the framework select the first tab automatically
+        orderTypeView.initView();
+
+        // sub tabs for coupon
+        TabSheet subTabCategoryGroup_Coupon = new TabSheet();
+        subTabCategory.addTab(subTabCategoryGroup_Coupon, "Phiếu", FontAwesome.NEWSPAPER_O);
+        subTabCategoryGroup_Coupon.addTab(couponTypeView.getWrapper(), SUB_TAB_CATEGORY_COUNPON_TYPE, FontAwesome.FILE_TEXT);
+        couponTypeView.initView();
+
+        // sub tabs for material
+        TabSheet subTabCategoryGroup_Material = new TabSheet();
+        subTabCategory.addTab(subTabCategoryGroup_Material, "Vật Tư", FontAwesome.TAGS);
+        subTabCategoryGroup_Material.addTab(materialView.getWrapper(), SUB_TAB_CATEGORY_MATERIAL, FontAwesome.TAG);
+        materialView.initView();
+        subTabCategoryGroup_Material.addTab(materialType1View.getWrapper(), SUB_TAB_CATEGORY_MATERIAL_TYPE_1, FontAwesome.TAG);
+        subTabCategoryGroup_Material.addTab(materialType2View.getWrapper(), SUB_TAB_CATEGORY_MATERIAL_TYPE_2, FontAwesome.TAG);
+        subTabCategoryGroup_Material.addTab(unitView.getWrapper(), SUB_TAB_CATEGORY_UNIT, FontAwesome.MAGIC);
+        subTabCategoryGroup_Material.addTab(stockTypeView.getWrapper(), SUB_TAB_CATEGORY_STOCK_TYPE, FontAwesome.TRUCK);
+        subTabCategoryGroup_Material.addTab(stockView.getWrapper(), SUB_TAB_CATEGORY_STOCK, FontAwesome.CAR);
+
+        // sub tabs for customer
+        TabSheet subTabCategoryGroup_Customer = new TabSheet();
+        subTabCategory.addTab(subTabCategoryGroup_Customer, "Khách Hàng", FontAwesome.GROUP);
+        subTabCategoryGroup_Customer.addTab(customerView.getWrapper(), SUB_TAB_CATEGORY_CUSTOMER, FontAwesome.MALE);
+        customerView.initView();
+        subTabCategoryGroup_Customer.addTab(customerType1View.getWrapper(), SUB_TAB_CATEGORY_CUSTOMER_TYPE_1, FontAwesome.MALE);
+        subTabCategoryGroup_Customer.addTab(customerType2View.getWrapper(), SUB_TAB_CATEGORY_CUSTOMER_TYPE_2, FontAwesome.FEMALE);
+        subTabCategoryGroup_Customer.addTab(areaView.getWrapper(), SUB_TAB_CATEGORY_AREA, FontAwesome.LOCATION_ARROW);
 
         // add listener to tabsheet
-        subTabCategory.addSelectedTabChangeListener(new SelectedTabChangeListener() {
-            @Override
-            public void selectedTabChange(SelectedTabChangeEvent event) {
-                TabSheet tabsheet = event.getTabSheet();
-                Layout tab = (Layout) tabsheet.getSelectedTab();
-                String tabCaption = tabsheet.getTab(tab).getCaption();
-                System.out.println("Select tab: " + tabCaption);
-                switch( tabCaption ){
-                case MainMenu.SUB_TAB_CATEGORY_STOCK_TYPE:
-                    stockTypeView.initView();
-                    break;
-                case MainMenu.SUB_TAB_CATEGORY_STOCK:
-                    stockView.initView();
-                    break;
-                case MainMenu.SUB_TAB_CATEGORY_AREA:
-                    areaView.initView();
-                    break;
-                case MainMenu.SUB_TAB_CATEGORY_COUNPON_TYPE:
-                    couponTypeView.initView();
-                    break;
-                case MainMenu.SUB_TAB_CATEGORY_CUSTOMER:
-                    customerView.initView();
-                    break;
-                case MainMenu.SUB_TAB_CATEGORY_CUSTOMER_TYPE_1:
-                    customerType1View.initView();
-                    break;
-                case MainMenu.SUB_TAB_CATEGORY_CUSTOMER_TYPE_2:
-                    customerType2View.initView();
-                    break;
-                case MainMenu.SUB_TAB_CATEGORY_MATERIAL_TYPE_1:
-                    materialType1View.initView();
-                    break;
-                case MainMenu.SUB_TAB_CATEGORY_MATERIAL_TYPE_2:
-                    materialType2View.initView();
-                    break;
-                case MainMenu.SUB_TAB_CATEGORY_UNIT:
-                    unitView.initView();
-                    break;
-                case MainMenu.SUB_TAB_CATEGORY_ORDER_TYPE:
-                    orderTypeView.initView();
-                    break;
-                default:
-                    System.out.println("Sub tab sheet is not handled!");
-                    break;
-                }
-            }
-        });
+        subTabCategoryGroup_Order.addSelectedTabChangeListener(this);
+        subTabCategoryGroup_Coupon.addSelectedTabChangeListener(this);
+        subTabCategoryGroup_Material.addSelectedTabChangeListener(this);
+        subTabCategoryGroup_Customer.addSelectedTabChangeListener(this);
+        subTabCategory.addSelectedTabChangeListener(this);
 
         VerticalLayout subTabInformation = new VerticalLayout();
         addTab(subTabInformation, "Trợ Giúp", FontAwesome.INFO);
+    }
+
+    @Override
+    public void selectedTabChange(SelectedTabChangeEvent event) {
+        // We add the try/catch because we just want to handle the child tab
+        // we ignore all the parent tabs
+        try{
+            // Get the tabsheet that emitted the selected event
+            TabSheet tabsheet = event.getTabSheet();
+            Layout tab = (Layout) tabsheet.getSelectedTab();
+            String tabCaption = tabsheet.getTab(tab).getCaption();
+            System.out.println("tabCaption: " + tabCaption);
+            handleTabChangeEvent(tabCaption);
+        }catch(Exception e){
+        }
+    }
+
+    private void handleTabChangeEvent(String tabCaption){
+        switch( tabCaption ){
+        case MainMenu.SUB_TAB_CATEGORY_STOCK_TYPE:
+            stockTypeView.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_STOCK:
+            stockView.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_AREA:
+            areaView.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_COUNPON_TYPE:
+            couponTypeView.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_CUSTOMER:
+            customerView.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_CUSTOMER_TYPE_1:
+            customerType1View.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_CUSTOMER_TYPE_2:
+            customerType2View.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_MATERIAL:
+            materialView.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_MATERIAL_TYPE_1:
+            materialType1View.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_MATERIAL_TYPE_2:
+            materialType2View.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_UNIT:
+            unitView.initView();
+            break;
+        case MainMenu.SUB_TAB_CATEGORY_ORDER_TYPE:
+            orderTypeView.initView();
+            break;
+        default:
+            System.out.println("Sub tab sheet is not handled!");
+            break;
+        }
     }
 }

@@ -36,7 +36,7 @@ public class CustomerType1View extends GenericTabCategory<Customertype1> {
     @SuppressWarnings("serial")
     public CustomerType1View() {
         presenter = new CustomerType1Presenter(this);
-        super.init("Danh Sách Các Loại Kho", Customertype1.class)
+        super.init("Danh Sách Loại Khách Hàng 1", Customertype1.class)
         .withGeneralFuntionsList()
         .withTableProperties("name", "description")
         .withHeaderNames("name", "<b>Tên</b>")

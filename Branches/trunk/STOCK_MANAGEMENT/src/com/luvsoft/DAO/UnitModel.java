@@ -27,7 +27,7 @@ public class UnitModel extends AbstractEntityModel{
     }
     
     @Override
-    public List<Material> getMaterialByUnitName(String unitName){
+    public List<Material> getMaterialListByUnitName(String unitName){
         List<Material> mtList = new ArrayList<Material>();
         List<String> params = new ArrayList<String>();
         params.add(unitName);

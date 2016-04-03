@@ -91,8 +91,7 @@ public class Unit extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "Unit [id=" + id + ", name=" + name + ", materials=" + materials
-                + "]";
+        return name;
     }
     public static String getEntityname() {
         return "Unit";

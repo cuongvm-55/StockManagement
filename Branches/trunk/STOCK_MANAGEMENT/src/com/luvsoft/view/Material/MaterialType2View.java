@@ -36,7 +36,7 @@ public class MaterialType2View extends GenericTabCategory<Materialtype2> {
     @SuppressWarnings("serial")
     public MaterialType2View() {
         presenter = new MaterialType2Presenter(this);
-        super.init("Danh Sách Các Loại Kho", Materialtype2.class)
+        super.init("Danh Sách Loại Vật Tư 2", Materialtype2.class)
         .withGeneralFuntionsList()
         .withTableProperties("name", "description")
         .withHeaderNames("name", "<b>Tên</b>")

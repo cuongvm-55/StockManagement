@@ -36,7 +36,7 @@ public class OrderTypeView extends GenericTabCategory<Ordertype> {
     @SuppressWarnings("serial")
     public OrderTypeView() {
         presenter = new OrderTypePresenter(this);
-        super.init("Danh Sách Các Loại Kho", Ordertype.class)
+        super.init("Danh Sách Các Loại Hóa Đơn", Ordertype.class)
         .withGeneralFuntionsList()
         .withTableProperties("name", "description")
         .withHeaderNames("name", "<b>Tên</b>")

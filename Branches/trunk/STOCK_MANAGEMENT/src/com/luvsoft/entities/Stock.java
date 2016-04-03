@@ -138,10 +138,7 @@ public class Stock extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "Stock [id=" + id + ", stocktype=" + stocktype.getName() + ", code="
-                + code + ", name=" + name + ", description=" + description
-                + ", materials=" + materials + ", frk_stocktype_name="
-                + frk_stocktype_name + "]";
+        return name;
     }
 
     @Transient

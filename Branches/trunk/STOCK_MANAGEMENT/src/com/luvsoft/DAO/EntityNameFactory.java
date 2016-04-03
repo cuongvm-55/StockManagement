@@ -6,6 +6,7 @@ import com.luvsoft.entities.Coupontype;
 import com.luvsoft.entities.Customer;
 import com.luvsoft.entities.Customertype1;
 import com.luvsoft.entities.Customertype2;
+import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Materialtype1;
 import com.luvsoft.entities.Materialtype2;
 import com.luvsoft.entities.Ordertype;
@@ -59,6 +60,10 @@ public class EntityNameFactory {
 
         if(classType == Customer.class) {
             return Customer.getEntityname();
+        }
+
+        if(classType == Material.class) {
+            return Material.getEntityname();
         }
 
         return "";

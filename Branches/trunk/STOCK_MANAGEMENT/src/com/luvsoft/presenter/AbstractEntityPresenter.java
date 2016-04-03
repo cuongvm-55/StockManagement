@@ -9,7 +9,11 @@ import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Area;
 import com.luvsoft.entities.Customertype1;
 import com.luvsoft.entities.Customertype2;
+import com.luvsoft.entities.Materialtype1;
+import com.luvsoft.entities.Materialtype2;
+import com.luvsoft.entities.Stock;
 import com.luvsoft.entities.Stocktype;
+import com.luvsoft.entities.Unit;
 import com.luvsoft.utils.ACTION;
 import com.luvsoft.view.component.GenericTabCategory;
 import com.vaadin.ui.TextField;
@@ -139,4 +143,9 @@ public abstract class AbstractEntityPresenter implements UpdateEntityListener{
     public List<Area> getAreaList(){return null;}
     public List<Customertype1> getCustomerType1List(){return null;}
     public List<Customertype2> getCustomerType2List(){return null;}
+    public List<Unit> getUnitList(){return null;}
+    public List<Stock> getStockList(){return null;}
+    public List<Materialtype1> getMaterialType1List(){return null;}
+    public List<Materialtype2> getMaterialType2List(){return null;}
+
 }

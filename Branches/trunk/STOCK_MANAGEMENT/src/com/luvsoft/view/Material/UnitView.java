@@ -36,7 +36,7 @@ public class UnitView extends GenericTabCategory<Unit> {
     @SuppressWarnings("serial")
     public UnitView() {
         presenter = new UnitPresenter(this);
-        super.init("Danh Sách Các Loại Kho", Unit.class)
+        super.init("Danh Sách Đơn Vị Tính", Unit.class)
         .withGeneralFuntionsList()
         .withTableProperties("name")
         .withHeaderNames("name", "<b>Tên</b>");

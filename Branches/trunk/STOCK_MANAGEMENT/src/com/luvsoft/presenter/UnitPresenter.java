@@ -39,7 +39,7 @@ public class UnitPresenter extends AbstractEntityPresenter {
         if( unit.getName() == null){
             return; // nothing to do
         }
-        List<Material> uList = model.getMaterialByUnitName(unit.getName());
+        List<Material> uList = model.getMaterialListByUnitName(unit.getName());
         if( uList != null ){
             for( int idx = 0; idx < uList.size(); idx++ ){
                 Material stk = uList.get(idx);
