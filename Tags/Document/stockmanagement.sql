@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 20, 2016 at 10:07 AM
+-- Generation Time: Apr 03, 2016 at 02:17 PM
 -- Server version: 5.6.26-log
 -- PHP Version: 5.6.8
 
@@ -34,6 +34,21 @@ END$$
 --
 -- Functions
 --
+CREATE DEFINER=`root`@`localhost` FUNCTION `convertEncodingValueToOrigin`(inputStr VARCHAR(5000) ) RETURNS varchar(5000) CHARSET utf8
+BEGIN
+	DECLARE originChars   VARCHAR(55) DEFAULT "aaaaaaaaaaaaaadeeeeeeeeeiiiioooooooooouuuuuuuuuyyyy"; # Origin chars
+	DECLARE encodingChars VARCHAR(55) DEFAULT "àáạãẫâấậầăắặằẵđéèẹẽêệếềễĩíìịôốồộỗơớợờỡùụúũưựừứữýỳỵỹ"; # Encoding chars, must has the same size and idx than originChars
+	
+	# Convert all the encoding char in inputStr
+	DECLARE idx INTEGER DEFAULT 1;
+	WHILE ( idx <= LENGTH(encodingChars) ) DO
+		SET inputStr = REPLACE(inputStr, SUBSTRING(encodingChars, idx, 1), SUBSTRING(originChars, idx, 1));
+		SET idx = idx + 1;
+	END WHILE;
+	
+	RETURN inputStr;
+END$$
+
 CREATE DEFINER=`root`@`localhost` FUNCTION `isFirstLettersMatched`(inputStr VARCHAR(5000), criteria VARCHAR(5000) ) RETURNS tinyint(1)
 BEGIN
 	DECLARE debugMode BOOLEAN;
@@ -63,6 +78,14 @@ BEGIN
 		RETURN FALSE;
 	END IF;
 
+	# make the input and the criteria lower case
+	SET inputStr = LOWER(inputStr);
+	SET criteria = LOWER(criteria);
+	
+	# manipulate the encoding
+	SET inputStr = convertEncodingValueToOrigin(inputStr);
+	SET criteria = convertEncodingValueToOrigin(criteria);
+	
 	# debug mode active ?
 	SET debugMode = TRUE;
 	
@@ -80,18 +103,12 @@ BEGIN
 		
 		SET wordBoundIdxCriteria = IF((LOCATE(" ", criteria, 1) != 0), (LOCATE(" ", criteria, 1) - 1), LENGTH(criteria) );
 		SET currentCriteriaWord = SUBSTRING(criteria, 1, wordBoundIdxCriteria);
-	
-		CALL debug_msg(debugMode, (select concat_ws('',"inputWord:", currentInputWord)));
-		CALL debug_msg(debugMode, (select concat_ws('',"currentCriteriaWord:", currentCriteriaWord)));
 	checkCriteria: WHILE ( !(inputIdx > LENGTH(inputStr) || criteriaIdx > LENGTH(criteria)) ) DO
-			#IF ( SUBSTRING( currentInputWord, 1, LENGTH(currentCriteriaWord) ) NOT LIKE currentCriteriaWord ) THEN
-			#IF ( SUBSTRING( currentInputWord, 1, LENGTH(currentCriteriaWord) ) NOT LIKE concat('^', currentCriteriaWord, '$') ) THEN
 			IF ( STRCMP(SUBSTRING(currentInputWord, 1, LENGTH(currentCriteriaWord)), currentCriteriaWord) != 0 ) THEN
 				SET bOk = FALSE;
 				LEAVE checkCriteria;
 			END IF;
 			
-			CALL debug_msg(debugMode, "MATCHED DETECTED!!!");
 			SET inputIdx = wordBoundInputIdx + 2;
 			SET criteriaIdx = wordBoundIdxCriteria + 2;
 
@@ -100,11 +117,7 @@ BEGIN
 			
 			SET wordBoundInputIdx = IF((LOCATE(" ", inputStr, inputIdx) != 0), (LOCATE(" ", inputStr, inputIdx) - 1), LENGTH(inputStr) );
 			SET currentInputWord = SUBSTRING(inputStr, inputIdx, wordBoundInputIdx - inputIdx + 1);
-			
-			CALL debug_msg(debugMode, (select concat_ws('',"inputWord:", currentInputWord)));
-			CALL debug_msg(debugMode, (select concat_ws('',"currentCriteriaWord:", currentCriteriaWord)));
 		END WHILE;
-		CALL debug_msg(debugMode, (select concat_ws('',"criteriaIdx:", criteriaIdx)));
 		# check if all the criterias matched
 		IF ( bOk AND criteriaIdx > LENGTH(criteria) ) THEN
 			RETURN TRUE;
