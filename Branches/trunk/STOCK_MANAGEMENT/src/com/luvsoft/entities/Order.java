@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -152,7 +153,7 @@ public class Order extends AbstractEntity implements java.io.Serializable {
         this.receivingbills = receivingbills;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = {CascadeType.ALL})
     public Set<Orderdetail> getOrderdetails() {
         return this.orderdetails;
     }

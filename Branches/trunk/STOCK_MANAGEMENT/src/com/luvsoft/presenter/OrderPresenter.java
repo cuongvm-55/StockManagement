@@ -19,6 +19,7 @@ import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Customer;
 import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
+import com.luvsoft.entities.Orderdetail;
 import com.luvsoft.entities.Ordertype;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
@@ -73,8 +74,59 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         criteriaMap = new HashMap<String, String>();
     }
 
-    public void createOrderTypes(OptionGroup options, Ordertype ordertype) {
-        List<Ordertype> ordertypeList = orderTypeModel.findAll();
+    public void saveOrder(Order order) {
+        if(order == null || order.getOrderCode().equals("")) {
+            return;
+        }
+        orderModel.addNew(order);
+    }
+
+    /**
+     * Add an orderdetail to orderdetailList, if it is existed in list we will not add, if not we will add it
+     * @param orderdetail
+     * @param orderdetailList
+     * 
+     * @return return true if add successful, otherwise return false
+     */
+    public boolean addToOrderDetailList(Orderdetail orderdetail, List<Orderdetail> orderdetailList) {
+        if(orderdetail == null) {
+            System.out.println("Cannot add a null orderdetail");
+            return false;
+        }
+
+        if(orderdetailList == null ) {
+            orderdetailList = new ArrayList<Orderdetail>();
+        }
+
+        boolean isExisted = false;
+        for (Orderdetail orderdetail2 : orderdetailList) {
+            // We will avoid duplicated value in orderdetail List by comparing the material code of orderdetails
+            if(orderdetail2.getFrk_material_code().equals(orderdetail.getFrk_material_code())) {
+                isExisted = true;
+                break;
+            }
+        }
+
+        if(!isExisted) {
+            orderdetailList.add(orderdetail);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Order are "Xuất Bán" + "Xuất Bán Nội Bộ" and they are queried from database
+     * @param options -> component to display order types
+     * @param ordertype -> if order already has ordertype, we just fill it to default value of component,
+     *                     if not we will get the first item in ordertypelist and set default value for component
+     * @param ordertypeList  -> the list of ordertype
+     */
+    public void createOrderTypes(OptionGroup options, Ordertype ordertype, List<Ordertype> ordertypeList) {
+        ordertypeList = orderTypeModel.findAll();
+        if(ordertypeList == null) {
+            return;
+        }
+
         for (Ordertype ordertype1 : ordertypeList) {
             options.addItem(ordertype1.getName());
         }
@@ -88,8 +140,12 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         }
     }
 
+    /**
+     * Order Code has the format like that "HD" + currentId + random number (1->50000)
+     * @param Textfield orderCode
+     */
     public void generateOrderCode(TextField orderCode) {
-        Order lastOrder = orderModel.findLastItem(Order.getEntityname());
+        Order lastOrder = orderModel.findLastItem();
         Integer lastItem = (lastOrder != null ) ? lastOrder.getId() : 0; 
         orderCode.setValue("HD" + (lastItem + 1) + (int) (Math.random() * 50000 + 1));
     }

@@ -1,8 +1,11 @@
 package com.luvsoft.view.Order;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.vaadin.suggestfield.SuggestField;
 import org.vaadin.viritin.grid.MGrid;
@@ -11,6 +14,7 @@ import com.luvsoft.entities.Customer;
 import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Orderdetail;
+import com.luvsoft.entities.Ordertype;
 import com.luvsoft.presenter.OrderPresenter;
 import com.luvsoft.presenter.OrderPresenter.CustomerConverter;
 import com.luvsoft.presenter.OrderPresenter.MaterialConverter;
@@ -19,6 +23,8 @@ import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid.HeaderRow;
@@ -30,7 +36,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-public class OrderFormContent extends VerticalLayout {
+public class OrderFormContent extends VerticalLayout implements ClickListener {
     private static final long serialVersionUID = -6147363220520400910L;
     // Information part
     private OptionGroup orderType; // fetch from OrderType
@@ -50,6 +56,7 @@ public class OrderFormContent extends VerticalLayout {
     private List<SuggestField> filterFields;
     private List<String> tableProperties;
     private HeaderRow filteringHeader;
+    private List<Ordertype> ordertypeList;
 
     // Footer
     private Button printer;
@@ -59,6 +66,7 @@ public class OrderFormContent extends VerticalLayout {
     // Presenter
     private OrderPresenter presenter;
     private Order order;
+    private Customer customer;
 
     public OrderFormContent(OrderPresenter presenter, Order order) {
         super();
@@ -95,6 +103,7 @@ public class OrderFormContent extends VerticalLayout {
         buyer.setCaption("Người Mua");
         orderContent = new TextField();
         orderContent.setCaption("Diễn Giải");
+        orderContent.setValue("Xuất Bán Hàng Cho Khách");
         orderDate = new DateField();
         orderDate.setCaption("Ngày");
 
@@ -193,13 +202,19 @@ public class OrderFormContent extends VerticalLayout {
         setExpandRatio(totalwrapper, 0.1f);
         setExpandRatio(footer, 0.1f);
 
+        // Event register
+        save.addClickListener(this);
+        discard.addClickListener(this);
+        printer.addClickListener(this);
+
         // Fill data
         // If order is not null and has an id (it is already created) 
         // we will fill data for components by data of this order
         // If order is not null and doesn't have any id (it is never created)
         // we will generate an unique value for order number
         if(order != null) {
-            presenter.createOrderTypes(orderType, order.getOrdertype());
+            ordertypeList = new ArrayList<Ordertype>();
+            presenter.createOrderTypes(orderType, order.getOrdertype(), ordertypeList);
             if(order.getId() != -1) {
                 orderNumber.setValue(order.getOrderCode());
                 orderContent.setValue(order.getContent());
@@ -241,8 +256,17 @@ public class OrderFormContent extends VerticalLayout {
                         orderDetail.setMaterial((Material)filter.getValue());
                         orderDetail.setFrk_material_code(orderDetail.getMaterial().getCode());
                         orderDetail.setFrk_material_name(orderDetail.getMaterial().getName());
-                        orderDetails.add(orderDetail);
-                        tableOrderDetails.setRows(orderDetails);
+                        orderDetail.setOrder(order);
+
+                        // Set some default value
+                        orderDetail.setQuantityNeeded(10);
+                        orderDetail.setQuantityDelivered(10);
+                        orderDetail.setPrice(new BigDecimal("250000"));
+
+                        // Add orderdetail to table
+                        if(presenter.addToOrderDetailList(orderDetail, orderDetails)) {
+                            tableOrderDetails.setRows(orderDetails);
+                        }
                     }
                 });
 
@@ -259,6 +283,11 @@ public class OrderFormContent extends VerticalLayout {
     }
 
     private void fillTextFieldByCustomer(Customer customer) {
+        if(customer == null) {
+            System.out.println("Customer is null");
+            return;
+        }
+
         customerCode.setValue(customer);
         customerName.setValue(customer);
         customerAddress.setValue(customer.getAddress());
@@ -277,7 +306,8 @@ public class OrderFormContent extends VerticalLayout {
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-                fillTextFieldByCustomer((Customer) search.getValue());
+                customer = (Customer) search.getValue();
+                fillTextFieldByCustomer(customer);
             }
         });
         return search;
@@ -289,5 +319,64 @@ public class OrderFormContent extends VerticalLayout {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    @Override
+    public void buttonClick(ClickEvent event) {
+        if(event.getButton().equals(save)) {
+            saveOrder();
+        }
+    }
+
+    private void saveOrder() {
+        if(order == null) {
+            System.out.println("Has no order to save");
+            return;
+        }
+
+        // Set data for order
+        order.setOrderCode(orderNumber.getValue());
+        if(order.getOrderCode().trim().equals("")) {
+            System.out.println("Order code is invalid");
+            return;
+        }
+
+        if(customer != null && !customer.getCode().equals("") && customerCode.getValue() != null) {
+            order.setCustomer(customer);
+        }
+
+        if(orderContent.getValue().trim().equals("")) {
+            System.out.println("Content cannot be empty");
+            return;
+        }
+
+        if(orderDate.getValue() == null) {
+            System.out.println("Date cannot be empty");
+            return;
+        }
+
+        order.setBuyer(buyer.getValue());
+        order.setContent(orderContent.getValue());
+        order.setDate(orderDate.getValue());
+        order.setNote(orderNote.getValue());
+
+        if(ordertypeList == null || ordertypeList.isEmpty()) {
+            order.setOrdertype(null);
+        } else {
+            for (Ordertype ordertype : ordertypeList) {
+                if(ordertype.getName().equals(orderType.getValue())) {
+                    order.setOrdertype(ordertype);
+                }
+            }
+        }
+
+        // Update orderDetails List
+        if(orderDetails != null && !orderDetails.isEmpty()) {
+            Set<Orderdetail> setOrderdetails = new HashSet<Orderdetail>(orderDetails);
+            order.setOrderdetails(setOrderdetails);
+        }
+
+        // Save it to database
+        presenter.saveOrder(order);
     }
 }
