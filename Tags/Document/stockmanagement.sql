@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 03, 2016 at 02:17 PM
+-- Generation Time: Apr 06, 2016 at 05:47 PM
 -- Server version: 5.6.26-log
 -- PHP Version: 5.6.8
 
@@ -36,7 +36,7 @@ END$$
 --
 CREATE DEFINER=`root`@`localhost` FUNCTION `convertEncodingValueToOrigin`(inputStr VARCHAR(5000) ) RETURNS varchar(5000) CHARSET utf8
 BEGIN
-	DECLARE originChars   VARCHAR(55) DEFAULT "aaaaaaaaaaaaaadeeeeeeeeeiiiioooooooooouuuuuuuuuyyyy"; # Origin chars
+	DECLARE originChars VARCHAR(55)   DEFAULT "aaaaaaaaaaaaaadeeeeeeeeeiiiioooooooooouuuuuuuuuyyyy"; # Origin chars
 	DECLARE encodingChars VARCHAR(55) DEFAULT "àáạãẫâấậầăắặằẵđéèẹẽêệếềễĩíìịôốồộỗơớợờỡùụúũưựừứữýỳỵỹ"; # Encoding chars, must has the same size and idx than originChars
 	
 	# Convert all the encoding char in inputStr
@@ -139,7 +139,15 @@ CREATE TABLE IF NOT EXISTS `area` (
   `id` int(11) NOT NULL,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tên khu vực',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `area`
+--
+
+INSERT INTO `area` (`id`, `name`, `description`) VALUES
+(1, 'Mĩ Đình', 'Khu vực Mĩ Đình - Từ Liêm - Hà Nội 1'),
+(3, 'Cầu Giấy', 'Khu vực quận Cầu Giấy - Hà Nội');
 
 -- --------------------------------------------------------
 
@@ -183,7 +191,15 @@ CREATE TABLE IF NOT EXISTS `coupontype` (
   `id` int(11) NOT NULL,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT 'tên loại phiếu: Nhập mua, nhập hàng trả lại, xuất trả nhà cung cấp',
   `description` text COLLATE utf8_unicode_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `coupontype`
+--
+
+INSERT INTO `coupontype` (`id`, `name`, `description`) VALUES
+(1, 'Loại phiếu 1', 'sadadasd'),
+(2, 'Loại phiếu 2', 'ádadadadasd');
 
 -- --------------------------------------------------------
 
@@ -204,7 +220,34 @@ CREATE TABLE IF NOT EXISTS `customer` (
   `debt` decimal(19,4) NOT NULL DEFAULT '0.0000' COMMENT 'Công nợ. Nếu công nợ là số dương thì khách hàng đang nợ mình, ngược lại mình nợ khách hàng',
   `idCustomerType1` int(11) DEFAULT NULL COMMENT 'FK: id nhóm khách hàng 1',
   `idCustomerType2` int(11) DEFAULT NULL COMMENT 'FK: id nhóm khách hàng 2'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `customer`
+--
+
+INSERT INTO `customer` (`id`, `code`, `name`, `address`, `phoneNumber`, `idArea`, `email`, `bankName`, `bankAccount`, `debt`, `idCustomerType1`, `idCustomerType2`) VALUES
+(33, 'KH002', 'Vy Mạnh Cường', 'Mĩ Đình', '01663724852', 1, 'cuongvm.55@gmail.com', 'Tiên Phong Bank', '00352078001', '100000.0000', 3, 1),
+(34, 'KH1', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329830', 1, 'datnq.55@gmail.com', 'TP Bank', '21231', '5000000.0000', 1, 2),
+(35, 'KH002', 'Vy Mạnh Cường', 'Mĩ Đình', '01663724852', 1, 'cuongvm.55@gmail.com', 'Tiên Phong Bank', '00352078001', '100000.0000', 3, 1),
+(36, 'KH1', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329830', 1, 'datnq.55@gmail.com', 'TP Bank', '21231', '5000000.0000', 1, 2),
+(37, 'KH2', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329831', 1, 'datnq.55@gmail.com', 'TP Bank', '21232', '5000001.0000', 3, 2),
+(38, 'KH3', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329832', 1, 'datnq.55@gmail.com', 'TP Bank', '21233', '5000002.0000', 3, 1),
+(39, 'KH4', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329833', 1, 'datnq.55@gmail.com', 'TP Bank', '21234', '5000003.0000', NULL, NULL),
+(40, 'KH5', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329834', 1, 'datnq.55@gmail.com', 'TP Bank', '21235', '5000004.0000', NULL, NULL),
+(41, 'KH6', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329835', 1, 'datnq.55@gmail.com', 'TP Bank', '21236', '5000005.0000', NULL, NULL),
+(42, 'KH7', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329836', 1, 'datnq.55@gmail.com', 'TP Bank', '21237', '5000006.0000', NULL, NULL),
+(43, 'KH8', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329837', 1, 'datnq.55@gmail.com', 'TP Bank', '21238', '5000007.0000', NULL, NULL),
+(44, 'KH9', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329838', 1, 'datnq.55@gmail.com', 'TP Bank', '21239', '5000008.0000', NULL, NULL),
+(45, 'KH10', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329839', 1, 'datnq.55@gmail.com', 'TP Bank', '21240', '5000009.0000', NULL, NULL),
+(46, 'KH11', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329840', 1, 'datnq.55@gmail.com', 'TP Bank', '21241', '5000010.0000', NULL, NULL),
+(47, 'KH12', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329841', 1, 'datnq.55@gmail.com', 'TP Bank', '21242', '5000011.0000', NULL, NULL),
+(48, 'KH13', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329842', 1, 'datnq.55@gmail.com', 'TP Bank', '21243', '5000012.0000', NULL, NULL),
+(49, 'KH14', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329843', 1, 'datnq.55@gmail.com', 'TP Bank', '21244', '5000013.0000', NULL, NULL),
+(50, 'KH15', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329844', 1, 'datnq.55@gmail.com', 'TP Bank', '21245', '5000014.0000', NULL, NULL),
+(51, 'KH16', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329845', 1, 'datnq.55@gmail.com', 'TP Bank', '21246', '5000015.0000', NULL, NULL),
+(52, 'KH17', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329846', 1, 'datnq.55@gmail.com', 'TP Bank', '21247', '5000016.0000', NULL, NULL),
+(53, 'KH18', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329847', 1, 'datnq.55@gmail.com', 'TP Bank', '21248', '5000017.0000', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -216,7 +259,15 @@ CREATE TABLE IF NOT EXISTS `customertype1` (
   `id` int(11) NOT NULL,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tên nhóm khách hàng 1',
   `description` text COLLATE utf8_unicode_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `customertype1`
+--
+
+INSERT INTO `customertype1` (`id`, `name`, `description`) VALUES
+(1, 'Loại KH 1 1', 'adadad fgfg'),
+(3, 'Loại KH 1 2', 'ádadadadasd');
 
 -- --------------------------------------------------------
 
@@ -228,7 +279,15 @@ CREATE TABLE IF NOT EXISTS `customertype2` (
   `id` int(11) NOT NULL,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tên nhóm khách hàng 2',
   `description` text COLLATE utf8_unicode_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `customertype2`
+--
+
+INSERT INTO `customertype2` (`id`, `name`, `description`) VALUES
+(1, 'Loại KH 2 1', ''),
+(2, 'Loại KH 2 2', '');
 
 -- --------------------------------------------------------
 
@@ -247,7 +306,32 @@ CREATE TABLE IF NOT EXISTS `material` (
   `idUnit` int(11) DEFAULT NULL COMMENT 'Đơn vị tính',
   `quantity` int(11) NOT NULL DEFAULT '0' COMMENT 'Số lượng',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `material`
+--
+
+INSERT INTO `material` (`id`, `code`, `name`, `idMaterialType1`, `idMaterialType2`, `price`, `idStock`, `idUnit`, `quantity`, `description`) VALUES
+(50, 'VT1', 'Xích1', 1, 2, '100000.0000', 16, 1, 10, 'adasdasdas'),
+(51, 'VT2', 'Xích2', 1, 2, '100001.0000', 16, 1, 11, 'adasdasdas'),
+(52, 'VT3', 'Xích3', 1, 2, '100002.0000', 16, 1, 12, 'adasdasdas'),
+(53, 'VT4', 'Xích4', 1, 2, '100003.0000', 16, 1, 13, 'adasdasdas'),
+(54, 'VT5', 'Xích5', 1, 2, '100004.0000', 16, 1, 14, 'adasdasdas'),
+(55, 'VT6', 'Xích6', 1, 2, '100005.0000', 16, 1, 15, 'adasdasdas'),
+(56, 'VT7', 'Xích7', 1, 2, '100006.0000', 16, 1, 16, 'adasdasdas'),
+(57, 'VT8', 'Xích8', 1, 2, '100007.0000', 16, 1, 17, 'adasdasdas'),
+(58, 'VT9', 'Xích9', 1, 2, '100008.0000', 16, 1, 18, 'adasdasdas'),
+(59, 'VT10', 'Xích10', 1, 2, '100009.0000', 16, 1, 19, 'adasdasdas'),
+(60, 'VT11', 'Xích11', 1, 2, '100010.0000', 16, 1, 20, 'adasdasdas'),
+(61, 'VT12', 'Xích12', 1, 2, '100011.0000', 16, 1, 21, 'adasdasdas'),
+(62, 'VT13', 'Xích13', 1, 2, '100012.0000', 16, 1, 22, 'adasdasdas'),
+(63, 'VT14', 'Xích14', 1, 2, '100013.0000', 16, 1, 23, 'adasdasdas'),
+(64, 'VT15', 'Xích15', 1, 2, '100014.0000', 16, 1, 24, 'adasdasdas'),
+(65, 'VT16', 'Xích16', 1, 2, '100015.0000', 16, 1, 25, 'adasdasdas'),
+(66, 'VT17', 'Xích17', 1, 2, '100016.0000', 16, 1, 26, 'adasdasdas'),
+(67, 'VT18', 'Xích18', 1, 2, '100017.0000', 16, 1, 27, 'adasdasdas'),
+(68, 'VT19', 'Xích19', 1, 2, '100018.0000', 16, 1, 28, 'adasdasdas');
 
 -- --------------------------------------------------------
 
@@ -259,7 +343,15 @@ CREATE TABLE IF NOT EXISTS `materialtype1` (
   `id` int(11) NOT NULL COMMENT 'id của loại vật tư 1\\n',
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tên của loại vật tư 1',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `materialtype1`
+--
+
+INSERT INTO `materialtype1` (`id`, `name`, `description`) VALUES
+(1, 'Nhông xích', 'sadadasdn fghgfhfgh'),
+(2, 'Lốp', 'ádadadadasd');
 
 -- --------------------------------------------------------
 
@@ -271,7 +363,15 @@ CREATE TABLE IF NOT EXISTS `materialtype2` (
   `id` int(11) NOT NULL COMMENT 'id của loại vật tư 2\\n',
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tên của loại vật tư 2',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `materialtype2`
+--
+
+INSERT INTO `materialtype2` (`id`, `name`, `description`) VALUES
+(1, 'Sanyo', ''),
+(2, 'SamSung', '');
 
 -- --------------------------------------------------------
 
@@ -329,7 +429,15 @@ CREATE TABLE IF NOT EXISTS `ordertype` (
   `id` int(11) NOT NULL,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Tên loại hóa đơn',
   `description` text COLLATE utf8_unicode_ci COMMENT 'mô tả'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `ordertype`
+--
+
+INSERT INTO `ordertype` (`id`, `name`, `description`) VALUES
+(1, 'Xuất bán', 'adadad fgfg'),
+(2, 'Xuất bán nội bộ', '');
 
 -- --------------------------------------------------------
 
@@ -411,8 +519,8 @@ CREATE TABLE IF NOT EXISTS `stock` (
 --
 
 INSERT INTO `stock` (`id`, `code`, `name`, `idStockType`, `description`) VALUES
-(2, 'KHO 2 sad', 'Kho Cầu Giấy dsad', NULL, 'Mô tả'),
-(16, 'KHO1', 'Kho Mĩ Đình', 108, 'ádadasd');
+(2, 'Kho 1', 'Kho Cầu Giấy dsad', 109, 'sdfsfskdjfksd'),
+(16, 'KHO1', 'Kho Mĩ Đình', 109, 'ádadasd');
 
 -- --------------------------------------------------------
 
@@ -424,14 +532,16 @@ CREATE TABLE IF NOT EXISTS `stocktype` (
   `id` int(11) NOT NULL COMMENT 'id của kho',
   `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL COMMENT 'tên loại kho',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `stocktype`
 --
 
 INSERT INTO `stocktype` (`id`, `name`, `description`) VALUES
-(108, 'Kho hàng tồn', 'Kho chứa hàng tồn');
+(108, 'kkjkj', 'Kho chứa hàng tồn'),
+(109, 'Kho hàng bán', 'Chứa hàng hóa bán'),
+(110, 'fgdfg', 'dfgdfgd');
 
 -- --------------------------------------------------------
 
@@ -442,7 +552,7 @@ INSERT INTO `stocktype` (`id`, `name`, `description`) VALUES
 CREATE TABLE IF NOT EXISTS `unit` (
   `id` int(11) NOT NULL,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `unit`
@@ -450,7 +560,8 @@ CREATE TABLE IF NOT EXISTS `unit` (
 
 INSERT INTO `unit` (`id`, `name`) VALUES
 (1, 'cái'),
-(2, 'lít');
+(6, 'Lít'),
+(7, 'Mét');
 
 --
 -- Indexes for dumped tables
@@ -590,7 +701,7 @@ ALTER TABLE `unit`
 -- AUTO_INCREMENT for table `area`
 --
 ALTER TABLE `area`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `coupon`
 --
@@ -605,37 +716,37 @@ ALTER TABLE `coupondetail`
 -- AUTO_INCREMENT for table `coupontype`
 --
 ALTER TABLE `coupontype`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của khách hàng';
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của khách hàng',AUTO_INCREMENT=54;
 --
 -- AUTO_INCREMENT for table `customertype1`
 --
 ALTER TABLE `customertype1`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `customertype2`
 --
 ALTER TABLE `customertype2`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `material`
 --
 ALTER TABLE `material`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id của vật tư';
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id của vật tư',AUTO_INCREMENT=69;
 --
 -- AUTO_INCREMENT for table `materialtype1`
 --
 ALTER TABLE `materialtype1`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của loại vật tư 1\\n';
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của loại vật tư 1\\n',AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `materialtype2`
 --
 ALTER TABLE `materialtype2`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của loại vật tư 2\\n';
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của loại vật tư 2\\n',AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `money`
 --
@@ -655,7 +766,7 @@ ALTER TABLE `orderdetail`
 -- AUTO_INCREMENT for table `ordertype`
 --
 ALTER TABLE `ordertype`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `receivingbill`
 --
@@ -685,12 +796,12 @@ ALTER TABLE `stock`
 -- AUTO_INCREMENT for table `stocktype`
 --
 ALTER TABLE `stocktype`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của kho',AUTO_INCREMENT=109;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của kho',AUTO_INCREMENT=111;
 --
 -- AUTO_INCREMENT for table `unit`
 --
 ALTER TABLE `unit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- Constraints for dumped tables
 --
