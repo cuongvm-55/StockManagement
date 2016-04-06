@@ -27,7 +27,7 @@ public abstract class EntityImporter extends ExcelImporter{
 
     public EntityImporter(){
         entityAnalyzer = new EntityAnalyzer(getEntityFullPathName());
-        entityDao = new EntityManagerDAO();
+        entityDao = EntityManagerDAO.getInstance();
     }
 
     /**

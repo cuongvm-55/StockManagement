@@ -51,7 +51,7 @@ public abstract class EntityExporter extends ExcelExporter{
 
     @Override
     protected boolean buildContent(List<WritableCell> contents) {
-        EntityManagerDAO entityDAO = new EntityManagerDAO();
+        EntityManagerDAO entityDAO = EntityManagerDAO.getInstance();
         List<Object> entities = entityDAO.findAll(entityAnalyzer.getEntityName());
         List<String> headerList = new ArrayList<String>();
         headerList.addAll(getFieldList().keySet());
