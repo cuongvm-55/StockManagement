@@ -1,5 +1,6 @@
 package com.luvsoft.presenter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,8 @@ import com.luvsoft.entities.Ordertype;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
 
-public class OrderPresenter extends AbstractEntityPresenter implements OrderListener {
+public class OrderPresenter extends AbstractEntityPresenter implements OrderListener, Serializable {
+    private static final long serialVersionUID = -7212035637448304624L;
 
     ////////////////////////////////////////////////////////////////////////////////
     // Declare enums and String converter
@@ -78,6 +80,12 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         if(order == null || order.getOrderCode().equals("")) {
             return;
         }
+
+        orderTypeModel.refreshEntity(order.getOrdertype(), Ordertype.class, order.getOrdertype().getId());
+        if(order.getCustomer() != null) {
+            System.out.println("Refresh customer: " + order.getCustomer().getId() + " " + order.getCustomer().getCode());
+            customerModel.refreshEntity(order.getCustomer(), Customer.class, order.getCustomer().getId());
+        }
         orderModel.addNew(order);
     }
 
@@ -119,25 +127,34 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      * @param options -> component to display order types
      * @param ordertype -> if order already has ordertype, we just fill it to default value of component,
      *                     if not we will get the first item in ordertypelist and set default value for component
-     * @param ordertypeList  -> the list of ordertype
      */
-    public void createOrderTypes(OptionGroup options, Ordertype ordertype, List<Ordertype> ordertypeList) {
+    public void createOrderTypes(OptionGroup options, Ordertype ordertype) {
+        List<Ordertype> ordertypeList = new ArrayList<Ordertype>();
         ordertypeList = orderTypeModel.findAll();
-        if(ordertypeList == null) {
-            return;
+        for (Object object : ordertypeList) {
+            options.addItem(object);
         }
 
-        for (Ordertype ordertype1 : ordertypeList) {
-            options.addItem(ordertype1.getName());
-        }
-
-        if(ordertype == null || ordertype.getId() == -1) {
-            if(ordertypeList != null && !ordertypeList.isEmpty()) {
-                options.setValue(ordertypeList.get(0).getName());
+        // Set default value for options
+        if(!ordertypeList.isEmpty()) {
+            if(ordertype == null || ordertype.getId() == -1) {
+                options.setValue(ordertypeList.get(0));
+            } else {
+                if(ordertypeList.contains(ordertype)) {
+                    options.setValue(ordertype);
+                }
             }
-        } else {
-            options.setValue(ordertype.getName());
         }
+    }
+
+    /**
+     * Find one ordertype by it's id
+     * @param name  -> name of ordertype need to search
+     * @return ordertype
+     */
+    public Ordertype findOrderType(int id) {
+        System.out.println("FindOrderType ID " + id);
+        return orderTypeModel.findById(id);
     }
 
     /**

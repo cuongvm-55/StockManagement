@@ -38,6 +38,10 @@ public abstract class AbstractEntityModel {
         entityManager.remove(getEntityname(), entity.getId());
     }
 
+    public void refreshEntity(AbstractEntity entity, Class<?> classtype, int id) {
+        entityManager.refreshEntity(entity, classtype, id);
+    }
+
     public AbstractEntity getEntityByName(String entityName, String name){
         Object obj = entityManager.findByName(entityName, name);
         return (AbstractEntity)obj;
@@ -45,6 +49,14 @@ public abstract class AbstractEntityModel {
 
     public List<Object> findAll(String entityName) {
         return entityManager.findAll(entityName);
+    }
+
+    public Object findById(String entityName, int id) {
+        return entityManager.findById(entityName, id);
+    }
+
+    public Object findByName(String entityName, String name) {
+        return entityManager.findByName(entityName, name);
     }
 
     public Object findLastItem(String entityName) {

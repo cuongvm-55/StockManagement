@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -105,7 +106,7 @@ public class EntityManagerDAO {
     @SuppressWarnings("unchecked")
     public <T extends AbstractEntity> T findById(String entityName, int id){
         Query query = entitymanager.createQuery("SELECT e FROM " + entityName + " e WHERE id="+id);
-        return (T)query.getSingleResult();
+        return (T)query.getResultList().get(0);
     }
 
     /**
@@ -142,6 +143,7 @@ public class EntityManagerDAO {
         try{
             return query.getSingleResult();
         }catch(Exception e){
+            System.out.println("Exception " + e.getMessage());
             return null;
         }
     }
@@ -226,5 +228,17 @@ public class EntityManagerDAO {
         query.setMaxResults(1);
         List<Object> results = query.getResultList();
         return (results != null && results.size() > 0) ? results.get(0) : null;
+    }
+
+    public void refreshEntity(Object entity, Class<?> classtype, int id) {
+        try {
+            entitymanager.getTransaction( ).begin( );
+            entity = entitymanager.find(classtype, id);
+            entitymanager.refresh(entity);
+            entitymanager.getTransaction( ).commit();
+        }
+        catch (EntityNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

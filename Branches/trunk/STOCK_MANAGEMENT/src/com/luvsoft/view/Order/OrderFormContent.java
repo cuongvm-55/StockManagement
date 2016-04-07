@@ -39,7 +39,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class OrderFormContent extends VerticalLayout implements ClickListener {
     private static final long serialVersionUID = -6147363220520400910L;
     // Information part
-    private OptionGroup orderType; // fetch from OrderType
+    private OptionGroup optionsOrderType; // fetch from OrderType
     private TextField orderNumber; // auto generate
     private TextField orderContent;
     private DateField orderDate;
@@ -56,7 +56,6 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
     private List<SuggestField> filterFields;
     private List<String> tableProperties;
     private HeaderRow filteringHeader;
-    private List<Ordertype> ordertypeList;
 
     // Footer
     private Button printer;
@@ -85,9 +84,9 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         addComponent(centertitle);
 
         // Information part
-        orderType = new OptionGroup(); // fetch from OrderType
-        orderType.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
-        orderType.setCaption("Loại Hóa Đơn");
+        optionsOrderType = new OptionGroup(); // fetch from OrderType
+        optionsOrderType.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
+        optionsOrderType.setCaption("Loại Hóa Đơn");
 
         orderNumber = new TextField(); // auto generate
         orderNumber.setCaption("Số Hóa Đơn");
@@ -121,7 +120,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         ////////////////////////////////////////////////////////////////
         FormLayout wrapper1 = new FormLayout();
         wrapper1.setSizeFull();
-        wrapper1.addComponents(orderType, customerCode, customerAddress);
+        wrapper1.addComponents(optionsOrderType, customerCode, customerAddress);
 
         FormLayout wrapper2 = new FormLayout();
         wrapper2.setSizeFull();
@@ -213,8 +212,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         // If order is not null and doesn't have any id (it is never created)
         // we will generate an unique value for order number
         if(order != null) {
-            ordertypeList = new ArrayList<Ordertype>();
-            presenter.createOrderTypes(orderType, order.getOrdertype(), ordertypeList);
+            presenter.createOrderTypes(optionsOrderType, order.getOrdertype());
             if(order.getId() != -1) {
                 orderNumber.setValue(order.getOrderCode());
                 orderContent.setValue(order.getContent());
@@ -225,6 +223,15 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                 orderDate.setValue(new Date());
             }
         }
+
+        optionsOrderType.addValueChangeListener(new ValueChangeListener() {
+            private static final long serialVersionUID = 9041180115447481664L;
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                order.setOrdertype((Ordertype) event.getProperty().getValue());
+            }
+        });
     }
 
     private void setColumnFiltering(boolean filtered) {
@@ -343,6 +350,15 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
         if(customer != null && !customer.getCode().equals("") && customerCode.getValue() != null) {
             order.setCustomer(customer);
+        } else {
+            order.setCustomer(null);
+        }
+
+        order.setOrdertype((Ordertype) optionsOrderType.getValue());
+        if(order.getOrdertype() == null || order.getOrdertype().getId() == -1) {
+            // Ordertype cannot be null
+            System.out.println("Ordertype is null");
+            return;
         }
 
         if(orderContent.getValue().trim().equals("")) {
@@ -359,16 +375,6 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         order.setContent(orderContent.getValue());
         order.setDate(orderDate.getValue());
         order.setNote(orderNote.getValue());
-
-        if(ordertypeList == null || ordertypeList.isEmpty()) {
-            order.setOrdertype(null);
-        } else {
-            for (Ordertype ordertype : ordertypeList) {
-                if(ordertype.getName().equals(orderType.getValue())) {
-                    order.setOrdertype(ordertype);
-                }
-            }
-        }
 
         // Update orderDetails List
         if(orderDetails != null && !orderDetails.isEmpty()) {
