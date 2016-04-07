@@ -17,7 +17,7 @@ import com.luvsoft.entities.Stocktype;
 import com.luvsoft.entities.Unit;
 
 public abstract class AbstractEntityModel {
-    protected EntityManagerDAO entityManager = new EntityManagerDAO();
+    protected EntityManagerDAO entityManager = EntityManagerDAO.getInstance();
 
     public long getCountData(FilterObject filterObject) {
         // we do not paging when count number of records

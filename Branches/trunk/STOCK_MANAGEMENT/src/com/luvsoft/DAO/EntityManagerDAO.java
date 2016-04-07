@@ -15,11 +15,21 @@ import javax.persistence.Query;
 import com.luvsoft.entities.AbstractEntity;
 
 public class EntityManagerDAO {
+    private static EntityManagerDAO instance;
+    
     private EntityManagerFactory emfactory;
 
     @PersistenceContext
     protected EntityManager entitymanager;
-    public EntityManagerDAO(){
+    
+    public static EntityManagerDAO getInstance(){
+        if( instance == null ){
+            instance = new EntityManagerDAO();
+        }
+
+        return instance;
+    }
+    private EntityManagerDAO(){
         emfactory = Persistence.createEntityManagerFactory( "STOCK_MANAGEMENT" );
         entitymanager = emfactory.createEntityManager( );
     }

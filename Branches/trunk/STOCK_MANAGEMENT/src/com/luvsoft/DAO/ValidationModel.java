@@ -10,7 +10,7 @@ public class ValidationModel<T extends AbstractEntity> {
     private String entityName;
 
     public ValidationModel(Class<T> classType) {
-        entityManager = new EntityManagerDAO();
+        entityManager = EntityManagerDAO.getInstance();
         entityName = EntityNameFactory.createEntityName(classType);
     }
 
