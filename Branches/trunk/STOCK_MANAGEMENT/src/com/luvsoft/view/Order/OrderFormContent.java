@@ -18,8 +18,11 @@ import com.luvsoft.entities.Ordertype;
 import com.luvsoft.presenter.OrderPresenter;
 import com.luvsoft.presenter.OrderPresenter.CustomerConverter;
 import com.luvsoft.presenter.OrderPresenter.MaterialConverter;
+import com.luvsoft.printing.OrderPrintingView;
+import com.luvsoft.stockmanagement.StockManagementUI;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
@@ -75,6 +78,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         create();
     }
 
+    @SuppressWarnings("serial")
     public void create() {
         addStyleName("formlayout-spacing max-textfield-width background-blue");
         setSizeFull();
@@ -181,6 +185,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         footer.setMargin(new MarginInfo(false, true, false, true));
         printer = new Button("In", FontAwesome.PRINT);
         printer.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
         save = new Button("Lưu", FontAwesome.SAVE);
         save.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 
@@ -225,6 +230,49 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                 orderDate.setValue(new Date());
             }
         }
+
+        // Handle printing button
+        BrowserWindowOpener opener = new BrowserWindowOpener(StockManagementUI.class);// "http://google.com"
+        opener.setFeatures("height=50000,width=80000,fullScreen=yes,menubar=no,location=no,resizable=no,scrollbars=no,status=no");
+        opener.setWindowName("_new");// _new, _blank, _top, etc.
+        opener.setParameter("OPEN_REASON", "PRINT");
+        opener.extend(printer);
+        printer.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                if(order == null) {
+                    System.out.println("Has no order to save");
+                    return;
+                }
+
+                // Set data for order
+                order.setOrderCode(orderNumber.getValue());
+                if(customer != null && !customer.getCode().equals("") && customerCode.getValue() != null) {
+                    order.setCustomer(customer);
+                }
+                order.setBuyer(buyer.getValue());
+                order.setContent(orderContent.getValue());
+                order.setDate(orderDate.getValue());
+                order.setNote(orderNote.getValue());
+
+                if(ordertypeList == null || ordertypeList.isEmpty()) {
+                    order.setOrdertype(null);
+                } else {
+                    for (Ordertype ordertype : ordertypeList) {
+                        if(ordertype.getName().equals(orderType.getValue())) {
+                            order.setOrdertype(ordertype);
+                        }
+                    }
+                }
+
+                // Update orderDetails List
+                if(orderDetails != null && !orderDetails.isEmpty()) {
+                    Set<Orderdetail> setOrderdetails = new HashSet<Orderdetail>(orderDetails);
+                    order.setOrderdetails(setOrderdetails);
+                }
+                OrderPrintingView.getInstance().setOrder(order);
+            }
+        });
     }
 
     private void setColumnFiltering(boolean filtered) {

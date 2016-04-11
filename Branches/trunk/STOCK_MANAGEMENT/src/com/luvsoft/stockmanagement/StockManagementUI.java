@@ -2,11 +2,14 @@ package com.luvsoft.stockmanagement;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 
+import com.luvsoft.printing.OrderPrintingView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.ui.JavaScript;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -19,16 +22,38 @@ public class StockManagementUI extends UI {
     private VerticalLayout layout;
     @Override
     protected void init(VaadinRequest request) {
-        layout = new VerticalLayout();
-        layout.setSpacing(true);
-        layout.setSizeFull();
-        setContent(layout);
+        // Local VietNam
+        setLocale(new Locale("vi", "VN"));
 
-        MainMenu menu = new MainMenu();
-        layout.addComponent(menu);
-        layout.setExpandRatio(menu, 2.0f);
+        boolean isRequestPrinting = false;
+        try{
+            if( request != null && request.getParameter("OPEN_REASON").equals("PRINT") ){
+                isRequestPrinting = true;
+            }
+        }
+        catch(Exception e){
+        }
+        
+        if( isRequestPrinting ){
+            OrderPrintingView layout = OrderPrintingView.getInstance();
+            layout.setSpacing(true);
+            layout.buildContent();
+            setContent(layout);
+            setHeight(null);
+            JavaScript.getCurrent().execute("setTimeout(function() {" + " print(); self.close();}, 100);");
+        }
+        else{
+            layout = new VerticalLayout();
+            layout.setSpacing(true);
+            layout.setSizeFull();
+            setContent(layout);
 
-        buildFooter();
+            MainMenu menu = new MainMenu();
+            layout.addComponent(menu);
+            layout.setExpandRatio(menu, 2.0f);
+
+            buildFooter();
+        }
     }
 
     private void buildFooter() {
