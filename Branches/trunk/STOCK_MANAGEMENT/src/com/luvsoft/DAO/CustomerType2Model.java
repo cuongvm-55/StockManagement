@@ -29,7 +29,7 @@ public class CustomerType2Model extends AbstractEntityModel{
     @Override
     public List<Customer> getCustomerListByCustomertype2Name(String couponTypeName){
         List<Customer> entityList = new ArrayList<Customer>();
-        List<String> params = new ArrayList<String>();
+        List<Object> params = new ArrayList<Object>();
         params.add(couponTypeName);
         List<Object> objectlist = entityManager.findByQuery("SELECT e FROM " + Customer.getEntityname() + " e WHERE customertype2.name LIKE :var0", params);
 

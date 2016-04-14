@@ -29,7 +29,7 @@ public class UnitModel extends AbstractEntityModel{
     @Override
     public List<Material> getMaterialListByUnitName(String unitName){
         List<Material> mtList = new ArrayList<Material>();
-        List<String> params = new ArrayList<String>();
+        List<Object> params = new ArrayList<Object>();
         params.add(unitName);
         List<Object> objectlist = entityManager.findByQuery("SELECT e FROM " + Material.getEntityname() + " e WHERE unit.name LIKE :var0", params);
 

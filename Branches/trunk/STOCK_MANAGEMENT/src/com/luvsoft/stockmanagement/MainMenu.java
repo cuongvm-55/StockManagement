@@ -1,5 +1,6 @@
 package com.luvsoft.stockmanagement;
 
+import com.luvsoft.report.InputOutputInventoryReport;
 import com.luvsoft.view.Coupon.CouponTypeView;
 import com.luvsoft.view.Customer.AreaView;
 import com.luvsoft.view.Customer.CustomerType1View;
@@ -22,6 +23,9 @@ import com.vaadin.ui.themes.ValoTheme;
 
 public class MainMenu extends TabSheet implements SelectedTabChangeListener{
     private static final long serialVersionUID = 6290323462935186029L;
+    // Reports
+    private static final String SUB_TAB_REPORT_IN_OUT_INVENTORY = "Xuất-Nhập-Tồn";
+    
     // Sub tab category
     // Stock
     private static final String SUB_TAB_CATEGORY_STOCK = "Kho";
@@ -54,6 +58,9 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
     private MaterialType2View materialType2View;
     private OrderTypeView orderTypeView;
     private UnitView unitView;
+    
+    // reports
+    InputOutputInventoryReport inputOutputInventoryReport;
 
     public MainMenu() {
         super();
@@ -73,6 +80,8 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
         materialType2View = new MaterialType2View();
         orderTypeView = new OrderTypeView();
         unitView = new UnitView();
+
+        inputOutputInventoryReport = new InputOutputInventoryReport();
     }
 
     public void init() {
@@ -95,9 +104,15 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
         subTabFunction.addTab(tab.getWapper(), "Bán Hàng", FontAwesome.DOLLAR);
         addTab(subTabFunction, "Chức Năng", FontAwesome.FOLDER_OPEN);
 
-        VerticalLayout subTabReport = new VerticalLayout();
+        TabSheet subTabReport = new TabSheet();
+        subTabReport.addStyleName(ValoTheme.TABSHEET_FRAMED);
+        subTabReport.addStyleName(ValoTheme.TABSHEET_ICONS_ON_TOP);
+        subTabReport.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
+        subTabReport.setSizeFull();
         addTab(subTabReport, "Báo Cáo", FontAwesome.FILE_EXCEL_O);
-
+        subTabReport.addTab(inputOutputInventoryReport, SUB_TAB_REPORT_IN_OUT_INVENTORY, FontAwesome.INDUSTRY);
+        inputOutputInventoryReport.produce();
+        
         TabSheet subTabCategory = new TabSheet();
         subTabCategory.addStyleName(ValoTheme.TABSHEET_FRAMED);
         subTabCategory.addStyleName(ValoTheme.TABSHEET_ICONS_ON_TOP);
@@ -139,6 +154,7 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
         subTabCategoryGroup_Customer.addTab(areaView.getWrapper(), SUB_TAB_CATEGORY_AREA, FontAwesome.LOCATION_ARROW);
 
         // add listener to tabsheet
+        subTabReport.addSelectedTabChangeListener(this);
         subTabCategoryGroup_Order.addSelectedTabChangeListener(this);
         subTabCategoryGroup_Coupon.addSelectedTabChangeListener(this);
         subTabCategoryGroup_Material.addSelectedTabChangeListener(this);
@@ -166,6 +182,9 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
 
     private void handleTabChangeEvent(String tabCaption){
         switch( tabCaption ){
+        case MainMenu.SUB_TAB_REPORT_IN_OUT_INVENTORY:
+            inputOutputInventoryReport.produce();
+            break;
         case MainMenu.SUB_TAB_CATEGORY_STOCK_TYPE:
             stockTypeView.initView();
             break;

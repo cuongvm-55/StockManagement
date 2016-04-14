@@ -29,7 +29,7 @@ public class CouponTypeModel extends AbstractEntityModel{
     @Override
     public List<Coupon> getCouponListByCouponTypeName(String couponTypeName){
         List<Coupon> couponList = new ArrayList<Coupon>();
-        List<String> params = new ArrayList<String>();
+        List<Object> params = new ArrayList<Object>();
         params.add(couponTypeName);
         List<Object> objectlist = entityManager.findByQuery("SELECT e FROM " + Coupon.getEntityname() + " e WHERE coupontype.name LIKE :var0", params);
 

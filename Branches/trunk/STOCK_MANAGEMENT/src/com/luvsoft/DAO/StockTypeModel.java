@@ -29,7 +29,7 @@ public class StockTypeModel extends AbstractEntityModel{
     @Override
     public List<Stock> getStockListByStockTypeName(String stockTypeName){
         List<Stock> stockList = new ArrayList<Stock>();
-        List<String> params = new ArrayList<String>();
+        List<Object> params = new ArrayList<Object>();
         params.add(stockTypeName);
         List<Object> objectlist = entityManager.findByQuery("SELECT e FROM " + Stock.getEntityname() + " e WHERE stocktype.name LIKE :var0", params);
 

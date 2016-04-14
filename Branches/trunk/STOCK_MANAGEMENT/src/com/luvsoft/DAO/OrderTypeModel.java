@@ -41,7 +41,7 @@ public class OrderTypeModel extends AbstractEntityModel{
     @Override
     public List<Order> getOrderListByOrderTypeName(String typeName){
         List<Order> entityList = new ArrayList<Order>();
-        List<String> params = new ArrayList<String>();
+        List<Object> params = new ArrayList<Object>();
         params.add(typeName);
         List<Object> objectlist = entityManager.findByQuery("SELECT e FROM " + Order.getEntityname() + " e WHERE ordertype.name LIKE :var0", params);
 

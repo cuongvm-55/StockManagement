@@ -29,7 +29,7 @@ public class AreaModel extends AbstractEntityModel{
     @Override
     public List<Customer> getCustomerListByAreaName(String areaName){
         List<Customer> customerList = new ArrayList<Customer>();
-        List<String> params = new ArrayList<String>();
+        List<Object> params = new ArrayList<Object>();
         params.add(areaName);
         List<Object> objectlist = entityManager.findByQuery("SELECT e FROM " + Customer.getEntityname() + " e WHERE area.name LIKE :var0", params);
 

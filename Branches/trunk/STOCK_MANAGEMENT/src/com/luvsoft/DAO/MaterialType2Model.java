@@ -29,7 +29,7 @@ public class MaterialType2Model extends AbstractEntityModel{
     @Override
     public List<Material> getMaterialListByMaterialType2Name(String typeName){
         List<Material> entityList = new ArrayList<Material>();
-        List<String> params = new ArrayList<String>();
+        List<Object> params = new ArrayList<Object>();
         params.add(typeName);
         List<Object> objectlist = entityManager.findByQuery("SELECT e FROM " + Material.getEntityname() + " e WHERE materialtype2.name LIKE :var0", params);
 

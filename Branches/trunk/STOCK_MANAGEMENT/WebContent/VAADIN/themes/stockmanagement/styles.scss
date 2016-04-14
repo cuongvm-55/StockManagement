@@ -102,6 +102,16 @@
         margin-right: 20px;
         margin-left: 20px;
     }
+
+    .margin-left-right-20px .v-slot{
+        margin-right: 20px;
+        margin-left: 20px;
+    }
+    
+    .v-slot-margin-left-right-20px .v-slot{
+        margin-right: 20px;
+        margin-left: 20px;
+    }
     .v-caption-margin-left-right-20px .v-captiontext{
         margin-right: 20px;
         margin-left: 20px;
@@ -120,5 +130,11 @@
     }
     .v-slot-print-header{
         height: 180px !important;
+    }
+
+    .v-caption-date-field-caption {
+        display: inline-block !important;
+        top: 5px;
+        position: relative;
     }
 }

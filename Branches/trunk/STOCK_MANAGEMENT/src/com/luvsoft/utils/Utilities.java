@@ -54,11 +54,24 @@ public class Utilities {
         return cal.getTime();
     }
 
+    /**
+     * Increase/Decrease inputted date by nbrOfDays
+     * @param date
+     * @param nbrOfDays
+     * @return
+     */
+    public static Date addDate(Date date, int nbrOfDays){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, nbrOfDays);
+        return cal.getTime();
+    }
+
     public static NumberFormat getNumberFormat(){
         NumberFormat nf = DecimalFormat.getInstance((Locale.ITALY));
         DecimalFormatSymbols customSymbol = new DecimalFormatSymbols();
-        customSymbol.setDecimalSeparator(',');
-        customSymbol.setGroupingSeparator('.');
+        customSymbol.setDecimalSeparator('.');
+        customSymbol.setGroupingSeparator(',');
         ((DecimalFormat)nf).setDecimalFormatSymbols(customSymbol);
         nf.setGroupingUsed(true);
         return nf;
