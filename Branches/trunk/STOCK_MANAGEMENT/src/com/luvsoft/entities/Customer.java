@@ -1,18 +1,15 @@
 package com.luvsoft.entities;
 
-// Generated Jan 26, 2016 10:06:12 PM by Hibernate Tools 4.3.1
+// Generated Apr 12, 2016 8:18:51 PM by Hibernate Tools 4.3.1
 
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-
 import static javax.persistence.GenerationType.IDENTITY;
-
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -49,7 +46,6 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
     private String bankName;
     private String bankAccount;
     private BigDecimal debt;
-    private Set<Order> orders = new HashSet<Order>(0);
     private Set<Spendingbill> spendingbills = new HashSet<Spendingbill>(0);
     private Set<Coupon> coupons = new HashSet<Coupon>(0);
     private Set<Receivingbill> receivingbills = new HashSet<Receivingbill>(0);
@@ -78,8 +74,8 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
     }
 
     public Customer(Area area, Customertype1 customertype1, Customertype2 customertype2, String code, String name, String address,
-            String phoneNumber, String email, String bankName, String bankAccount, BigDecimal debt, Set<Order> orders,
-            Set<Spendingbill> spendingbills, Set<Coupon> coupons, Set<Receivingbill> receivingbills) {
+            String phoneNumber, String email, String bankName, String bankAccount, BigDecimal debt, Set<Spendingbill> spendingbills,
+            Set<Coupon> coupons, Set<Receivingbill> receivingbills) {
         this.area = area;
         this.customertype1 = customertype1;
         this.customertype2 = customertype2;
@@ -91,7 +87,6 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         this.bankName = bankName;
         this.bankAccount = bankAccount;
         this.debt = debt;
-        this.orders = orders;
         this.spendingbills = spendingbills;
         this.coupons = coupons;
         this.receivingbills = receivingbills;
@@ -100,7 +95,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
     public Customer(Integer id, Area area, Customertype1 customertype1,
             Customertype2 customertype2, String code, String name,
             String address, String phoneNumber, String email, String bankName,
-            String bankAccount, BigDecimal debt, Set<Order> orders,
+            String bankAccount, BigDecimal debt,
             Set<Spendingbill> spendingbills, Set<Coupon> coupons,
             Set<Receivingbill> receivingbills, String frk_area_name,
             String frk_customertype1_name, String frk_customertype2_name) {
@@ -117,7 +112,6 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         this.bankName = bankName;
         this.bankAccount = bankAccount;
         this.debt = debt;
-        this.orders = orders;
         this.spendingbills = spendingbills;
         this.coupons = coupons;
         this.receivingbills = receivingbills;
@@ -148,7 +142,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         
         if( area != null ){
             this.frk_area_name = area.getName();
-        }
+    }
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -162,7 +156,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         
         if( customertype1 != null ){
             this.frk_customertype1_name = customertype1.getName();
-        }
+    }
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -176,7 +170,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         
         if( customertype2 != null ){
             this.frk_customertype2_name = customertype2.getName();
-        }
+    }
     }
 
     @Column(name = "code", nullable = false, length = 45)
@@ -255,15 +249,6 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
-    public Set<Order> getOrders() {
-        return this.orders;
-    }
-
-    public void setOrders(Set<Order> orders) {
-        this.orders = orders;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     public Set<Spendingbill> getSpendingbills() {
         return this.spendingbills;
     }
@@ -324,7 +309,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
                 + ", code=" + code + ", name=" + name + ", address=" + address
                 + ", phoneNumber=" + phoneNumber + ", email=" + email
                 + ", bankName=" + bankName + ", bankAccount=" + bankAccount
-                + ", debt=" + debt + ", orders=" + orders + ", spendingbills="
+                + ", debt=" + debt + ", spendingbills="
                 + spendingbills + ", coupons=" + coupons + ", receivingbills="
                 + receivingbills + "]";
     }
@@ -377,6 +362,6 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public Customer cloneObject() {
-        return new Customer(id, area, customertype1, customertype2, code, name, address, phoneNumber, email, bankName, bankAccount, debt, orders, spendingbills, coupons, receivingbills, frk_area_name, frk_customertype1_name, frk_customertype2_name);
+        return new Customer(id, area, customertype1, customertype2, code, name, address, phoneNumber, email, bankName, bankAccount, debt, spendingbills, coupons, receivingbills, frk_area_name, frk_customertype1_name, frk_customertype2_name);
     }
 }

@@ -1,9 +1,12 @@
 package com.luvsoft.presenter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.vaadin.suggestfield.BeanSuggestionConverter;
 import org.vaadin.suggestfield.SuggestField;
@@ -22,6 +25,12 @@ import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Orderdetail;
 import com.luvsoft.entities.Ordertype;
+import com.luvsoft.view.Order.OrderFormContent;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
+import com.vaadin.shared.Position;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
 
@@ -64,28 +73,25 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    CustomerModel customerModel = new CustomerModel();
-    MaterialModel materialModel = new MaterialModel();
-    OrderTypeModel orderTypeModel = new OrderTypeModel();
-    OrderModel orderModel = new OrderModel();
+    private CustomerModel customerModel = new CustomerModel();
+    private MaterialModel materialModel = new MaterialModel();
+    private OrderTypeModel orderTypeModel = new OrderTypeModel();
+    private OrderModel orderModel = new OrderModel();
 
     private List<Object> listCustomers = new ArrayList<Object>();
     private List<Object> listMaterials = new ArrayList<Object>();
+
+    private OrderFormContent view;
 
     public OrderPresenter() {
         criteriaMap = new HashMap<String, String>();
     }
 
-    public void saveOrder(Order order) {
+    public void saveOrderToDatabase(Order order) {
         if(order == null || order.getOrderCode().equals("")) {
             return;
         }
 
-        orderTypeModel.refreshEntity(order.getOrdertype(), Ordertype.class, order.getOrdertype().getId());
-        if(order.getCustomer() != null) {
-            System.out.println("Refresh customer: " + order.getCustomer().getId() + " " + order.getCustomer().getCode());
-            customerModel.refreshEntity(order.getCustomer(), Customer.class, order.getCustomer().getId());
-        }
         orderModel.addNew(order);
     }
 
@@ -336,9 +342,224 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
 
     }
 
+    /**
+     * This function is used to save an order to database
+     */
+    public void saveOrder() {
+        Order order = view.getOrder();
+        Customer customer = view.getCustomer();
+
+        if(order == null) {
+            System.out.println("Has no order to save");
+            return;
+        }
+
+        // Set data for order
+        order.setOrderCode(view.getOrderNumber().getValue());
+        if(order.getOrderCode().trim().equals("")) {
+            System.out.println("Order code is invalid");
+            return;
+        }
+
+        if(customer != null && !customer.getCode().equals("") && view.getCustomerCode().getValue() != null) {
+            order.setIdCustomer(customer.getId());
+        } else {
+            order.setIdCustomer(0);
+        }
+
+        order.setOrdertype((Ordertype) view.getOptionsOrderType().getValue());
+        if(order.getOrdertype() == null || order.getOrdertype().getId() == -1) {
+            // Ordertype cannot be null
+            System.out.println("Ordertype is null");
+            return;
+        }
+
+        if(view.getOrderContent().getValue().trim().equals("")) {
+            System.out.println("Content cannot be empty");
+            return;
+        }
+
+        if(view.getOrderDate().getValue() == null) {
+            System.out.println("Date cannot be empty");
+            return;
+        }
+
+        order.setBuyer(view.getBuyer().getValue());
+        order.setContent(view.getOrderContent().getValue());
+        order.setDate(view.getOrderDate().getValue());
+        order.setNote(view.getOrderNote().getValue());
+
+        // Update orderDetails List
+        if(view.getOrderDetails() != null && !view.getOrderDetails().isEmpty()) {
+            Set<Orderdetail> setOrderdetails = new HashSet<Orderdetail>(view.getOrderDetails());
+            order.setOrderdetails(setOrderdetails);
+        }
+
+        // Save it to database
+        saveOrderToDatabase(order);
+    }
+
+    /**
+     * Fill default values for orderDetail when it just created
+     * @param orderDetail
+     * @param filter
+     */
+    public void fillDefaultDataForOrderDetail(Orderdetail orderDetail, SuggestField filter) {
+        Material material = (Material)filter.getValue();
+
+        if(material != null) {
+            orderDetail.setMaterial(material);
+            orderDetail.setFrk_material_code(material.getCode());
+            orderDetail.setFrk_material_name(material.getName());
+            orderDetail.setFrk_material_unit(material.getUnit().getName());
+            orderDetail.setFrk_material_stock(material.getStock().getCode());
+            orderDetail.setQuantityNeeded(0);
+            orderDetail.setQuantityDelivered(0);
+            orderDetail.setQuantityLacked(0);
+            orderDetail.setFrk_material_quantity(material.getQuantity());
+            orderDetail.setSaleOff(0);
+            orderDetail.setPrice(material.getPrice());
+    
+            BigDecimal safeOffAmount = material.getPrice().multiply(new BigDecimal(orderDetail.getSaleOff()));
+            orderDetail.setSellingPrice(material.getPrice().subtract(safeOffAmount));
+            orderDetail.setTotalAmount(orderDetail.getSellingPrice().multiply(new BigDecimal(orderDetail.getQuantityDelivered())));
+            orderDetail.setImportPrice(orderDetail.getPrice());
+        }
+        orderDetail.setOrder(view.getOrder());
+    }
+
+    /**
+     * This function is used to change and calculate quantity lacked when change quantity delivered
+     * @param event  ->  value change event of text field
+     */
+    public void calculateQuantityLackedWhenChangeQuantityDelivered(ValueChangeEvent event) {
+        if(event.getProperty().getValue() != null) {
+            int quantityDelivered = Integer.parseInt(event.getProperty().getValue()+"");
+
+            String quantityNeededStr = ((TextField) view.getTableOrderDetails().getColumn("quantityNeeded").getEditorField()).getValue();
+            if(quantityNeededStr == null) {
+                quantityNeededStr = "";
+            }
+            int quantityNeeded = Integer.parseInt(quantityNeededStr == "" ? "0" : quantityNeededStr);
+
+            int quantityLacked = quantityNeeded - quantityDelivered;
+            if(quantityLacked < 0) {
+                quantityLacked = 0;
+            }
+            ((TextField) view.getTableOrderDetails().getColumn("quantityLacked").getEditorField()).setValue(quantityLacked+"");
+        }
+    }
+
+    /**
+     * This function is used to change and calculate total amount when change quantity delivered
+     * @param event  ->  value change event of text field
+     */
+    public void calculateTotalAmountWhenChangeQuantityDelivered(ValueChangeEvent event) {
+        if(event.getProperty().getValue() != null) {
+            String sellingPriceStr = ((TextField) view.getTableOrderDetails().getColumn("sellingPrice").getEditorField()).getValue();
+            if(sellingPriceStr == null) {
+                sellingPriceStr = "";
+            }
+            BigDecimal sellingPrice = new BigDecimal(sellingPriceStr == "" ? "0" : sellingPriceStr);
+
+            String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+
+            BigDecimal totalAmount = sellingPrice.multiply(new BigDecimal(quantityDelivered));
+            ((TextField) view.getTableOrderDetails().getColumn("totalAmount").getEditorField()).setValue(totalAmount.toString());
+        }
+    }
+
+    /**
+     * This function is used to change and calculate quantity lacked when change quantity needed
+     * @param event  ->  value change event of text field
+     */
+    public void calculateQuantityLackedWhenChangeQuantityNeeded(ValueChangeEvent event) {
+        if(event.getProperty().getValue() != null) {
+            int quantityNeeded = Integer.parseInt(event.getProperty().getValue()+"");
+
+            String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+
+            int quantityLacked = quantityNeeded - quantityDelivered;
+            if(quantityLacked < 0) {
+                quantityLacked = 0;
+            }
+            ((TextField) view.getTableOrderDetails().getColumn("quantityLacked").getEditorField()).setValue(quantityLacked+"");
+        }
+    }
+
+    /**
+     * This function is used to change and calculate selling price when change price
+     * @param event  ->  value change event of text field
+     */
+    public void calculateSellingPriceWhenChangePrice(ValueChangeEvent event) {
+        if(event.getProperty().getValue() != null) {
+            String priceStr = event.getProperty().getValue() + "";
+            BigDecimal price = new BigDecimal(priceStr == "" ? "0" : priceStr);
+
+            String saleOffStr = ((TextField) view.getTableOrderDetails().getColumn("saleOff").getEditorField()).getValue();
+            if(saleOffStr == null) {
+                saleOffStr = "";
+            }
+            float saleOff = Float.parseFloat(saleOffStr == "" ? "0" : saleOffStr);
+
+            BigDecimal sellingPrice = price.subtract(price.multiply(new BigDecimal(saleOff))); // sellingPrice = price - price*saleOff
+            ((TextField) view.getTableOrderDetails().getColumn("sellingPrice").getEditorField()).setValue(sellingPrice.toString());
+
+            // Re-caculate the total amount
+            String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
+            if(quantityDeliveredStr == null) {
+                quantityDeliveredStr = "";
+            }
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+
+            BigDecimal totalAmount = sellingPrice.multiply(new BigDecimal(quantityDelivered));
+            ((TextField) view.getTableOrderDetails().getColumn("totalAmount").getEditorField()).setValue(totalAmount.toString());
+        }
+    }
+
+    /**
+     * This function is used to calulate selling price and total amount when change sale off value
+     * @param event  -> value change event of text field
+     */
+    public void calculateSellingPriceWhenChangeSaleOff(ValueChangeEvent event) {
+        if(event.getProperty().getValue() != null) {
+            String saleOffStr = event.getProperty().getValue() + "";
+            float saleOff = Float.parseFloat(saleOffStr == "" ? "0" : saleOffStr);
+
+            String priceStr = ((TextField) view.getTableOrderDetails().getColumn("price").getEditorField()).getValue();
+            if(priceStr == null) {
+                priceStr = "";
+            }
+            BigDecimal price = new BigDecimal(priceStr == "" ? "0" : priceStr);
+
+            BigDecimal sellingPrice = price.subtract(price.multiply(new BigDecimal(saleOff))); // sellingPrice = price - price*saleOff
+            ((TextField) view.getTableOrderDetails().getColumn("sellingPrice").getEditorField()).setValue(sellingPrice.toString());
+
+            // Re-caculate the total amount
+            String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
+            if(quantityDeliveredStr == null) {
+                quantityDeliveredStr = "";
+            }
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+
+            BigDecimal totalAmount = sellingPrice.multiply(new BigDecimal(quantityDelivered));
+            ((TextField) view.getTableOrderDetails().getColumn("totalAmount").getEditorField()).setValue(totalAmount.toString());
+        }
+    }
+
     @Override
     public void updateEntity(AbstractEntity entity) {
         // TODO Auto-generated method stub
         
+    }
+
+    public OrderFormContent getView() {
+        return view;
+    }
+
+    public void setView(OrderFormContent view) {
+        this.view = view;
     }
 }

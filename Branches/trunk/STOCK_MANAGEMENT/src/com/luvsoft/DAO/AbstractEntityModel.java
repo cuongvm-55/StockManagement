@@ -38,10 +38,6 @@ public abstract class AbstractEntityModel {
         entityManager.remove(getEntityname(), entity.getId());
     }
 
-    public void refreshEntity(AbstractEntity entity, Class<?> classtype, int id) {
-        entityManager.refreshEntity(entity, classtype, id);
-    }
-
     public AbstractEntity getEntityByName(String entityName, String name){
         Object obj = entityManager.findByName(entityName, name);
         return (AbstractEntity)obj;

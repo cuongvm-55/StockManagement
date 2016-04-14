@@ -1,6 +1,6 @@
 package com.luvsoft.entities;
 
-// Generated Jan 26, 2016 10:06:12 PM by Hibernate Tools 4.3.1
+// Generated Apr 12, 2016 8:18:51 PM by Hibernate Tools 4.3.1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -34,9 +34,9 @@ public class Order extends AbstractEntity implements java.io.Serializable {
      */
     private static final long serialVersionUID = -7702163142598168598L;
     private Integer id;
-    private Customer customer;
     private Ordertype ordertype;
     private String orderCode;
+    private Integer idCustomer;
     private String buyer;
     private String content;
     private Date date;
@@ -54,11 +54,11 @@ public class Order extends AbstractEntity implements java.io.Serializable {
         this.date = date;
     }
 
-    public Order(Customer customer, Ordertype ordertype, String orderCode, String buyer, String content, Date date, String note,
+    public Order(Ordertype ordertype, String orderCode, Integer idCustomer, String buyer, String content, Date date, String note,
             Set<Receivingbill> receivingbills, Set<Orderdetail> orderdetails) {
-        this.customer = customer;
         this.ordertype = ordertype;
         this.orderCode = orderCode;
+        this.idCustomer = idCustomer;
         this.buyer = buyer;
         this.content = content;
         this.date = date;
@@ -79,16 +79,6 @@ public class Order extends AbstractEntity implements java.io.Serializable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idCustomer")
-    public Customer getCustomer() {
-        return this.customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idOrderType")
     public Ordertype getOrdertype() {
         return this.ordertype;
@@ -105,6 +95,15 @@ public class Order extends AbstractEntity implements java.io.Serializable {
 
     public void setOrderCode(String orderCode) {
         this.orderCode = orderCode;
+    }
+
+    @Column(name = "idCustomer")
+    public Integer getIdCustomer() {
+        return this.idCustomer;
+    }
+
+    public void setIdCustomer(Integer idCustomer) {
+        this.idCustomer = idCustomer;
     }
 
     @Column(name = "buyer", length = 128)
@@ -164,7 +163,7 @@ public class Order extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "Order [id=" + id + ", customer=" + customer + ", ordertype=" + ordertype + ", orderCode=" + orderCode + ", buyer=" + buyer
+        return "Order [id=" + id + ", idCustomer=" + idCustomer + ", ordertype=" + ordertype + ", orderCode=" + orderCode + ", buyer=" + buyer
                 + ", content=" + content + ", date=" + date + ", note=" + note + ", receivingbills=" + receivingbills + ", orderdetails="
                 + orderdetails + "]";
     }
@@ -182,7 +181,7 @@ public class Order extends AbstractEntity implements java.io.Serializable {
     @Override
     public void verifyObject() {
         id = id == null ? -1 : id;
-        customer = customer == null ? new Customer() : customer;
+        idCustomer = idCustomer == null ? 0 : idCustomer;
         ordertype = ordertype == null ? new Ordertype() : ordertype;
         orderCode = orderCode == null ? "" : orderCode;
         buyer = buyer == null ? "" : buyer;
