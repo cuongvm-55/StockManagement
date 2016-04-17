@@ -1,5 +1,6 @@
 package com.luvsoft.DAO;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,9 @@ import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Ordertype;
 
-public class OrderTypeModel extends AbstractEntityModel{
+public class OrderTypeModel extends AbstractEntityModel implements Serializable {
+    private static final long serialVersionUID = -7887472760238754383L;
+
     public List<AbstractEntity> getFilterData(FilterObject filterObject){
         List<AbstractEntity> entityList = new ArrayList<AbstractEntity>();
         List<Object> objectlist = entityManager.searchWithCriteriaWithPagination(getEntityname(), filterObject);
@@ -22,15 +25,20 @@ public class OrderTypeModel extends AbstractEntityModel{
     }
 
     public List<Ordertype> findAll() {
-        List<Ordertype> entityList = new ArrayList<Ordertype>();
+        List<Ordertype> ordertypeList = new ArrayList<Ordertype>();
+
         List<Object> objectlist = findAll(getEntityname());
 
         for (Object object : objectlist) {
             Ordertype entity = (Ordertype) object;
             entity.verifyObject();
-            entityList.add(entity);
+            ordertypeList.add(entity);
         }
-        return entityList;
+        return ordertypeList;
+    }
+
+    public Ordertype findById(int id) {
+        return (Ordertype) findById(getEntityname(), id);
     }
 
     @Override

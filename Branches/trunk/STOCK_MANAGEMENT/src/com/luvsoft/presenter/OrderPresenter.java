@@ -1,7 +1,11 @@
 package com.luvsoft.presenter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.vaadin.suggestfield.BeanSuggestionConverter;
 import org.vaadin.suggestfield.SuggestField;
@@ -20,10 +24,16 @@ import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Orderdetail;
 import com.luvsoft.entities.Ordertype;
+import com.luvsoft.printing.OrderPrintingView;
+import com.luvsoft.utils.Utilities;
+import com.luvsoft.view.Order.OrderFormContent;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
 
-public class OrderPresenter extends AbstractEntityPresenter implements OrderListener {
+public class OrderPresenter extends AbstractEntityPresenter implements OrderListener, Serializable {
+    private static final long serialVersionUID = -7212035637448304624L;
+
     ////////////////////////////////////////////////////////////////////////////////
     // Declare enums and String converter
     ////////////////////////////////////////////////////////////////////////////////
@@ -60,23 +70,32 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    CustomerModel customerModel = new CustomerModel();
-    MaterialModel materialModel = new MaterialModel();
-    OrderTypeModel orderTypeModel = new OrderTypeModel();
-    OrderModel orderModel = new OrderModel();
+    private CustomerModel customerModel = new CustomerModel();
+    private MaterialModel materialModel = new MaterialModel();
+    private OrderTypeModel orderTypeModel = new OrderTypeModel();
 
     private List<Object> listCustomers = new ArrayList<Object>();
     private List<Object> listMaterials = new ArrayList<Object>();
+
+    private OrderFormContent view;
 
     public OrderPresenter() {
         model = new OrderModel();
     }
 
-    public void saveOrder(Order order) {
+    public void saveOrderToDatabase(Order order) {
         if(order == null || order.getOrderCode().equals("")) {
             return;
         }
-        orderModel.addNew(order);
+
+        model.addNew(order);
+        // Update quantity in stock for material
+        List<Orderdetail> orderdetails = new ArrayList<Orderdetail>(order.getOrderdetails());
+        for (Orderdetail orderdetail : orderdetails) {
+            if(orderdetail.getMaterial().getQuantity() != orderdetail.getFrk_material_quantity()) {
+                materialModel.updateQuantityInStock(orderdetail.getFrk_material_quantity(), orderdetail.getMaterial());
+            }
+        }
     }
 
     /**
@@ -107,6 +126,9 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
 
         if(!isExisted) {
             orderdetailList.add(orderdetail);
+            orderdetail.setQuantityDelivered(0);
+            orderdetail.setQuantityLacked(0);
+            orderdetail.setQuantityNeeded(0);
             return true;
         }
         return false;
@@ -117,25 +139,34 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      * @param options -> component to display order types
      * @param ordertype -> if order already has ordertype, we just fill it to default value of component,
      *                     if not we will get the first item in ordertypelist and set default value for component
-     * @param ordertypeList  -> the list of ordertype
      */
-    public void createOrderTypes(OptionGroup options, Ordertype ordertype, List<Ordertype> ordertypeList) {
+    public void createOrderTypes(OptionGroup options, Ordertype ordertype) {
+        List<Ordertype> ordertypeList = new ArrayList<Ordertype>();
         ordertypeList = orderTypeModel.findAll();
-        if(ordertypeList == null) {
-            return;
+        for (Object object : ordertypeList) {
+            options.addItem(object);
         }
 
-        for (Ordertype ordertype1 : ordertypeList) {
-            options.addItem(ordertype1.getName());
-        }
-
-        if(ordertype == null || ordertype.getId() == -1) {
-            if(ordertypeList != null && !ordertypeList.isEmpty()) {
-                options.setValue(ordertypeList.get(0).getName());
+        // Set default value for options
+        if(!ordertypeList.isEmpty()) {
+            if(ordertype == null || ordertype.getId() == -1) {
+                options.setValue(ordertypeList.get(0));
+            } else {
+                if(ordertypeList.contains(ordertype)) {
+                    options.setValue(ordertype);
+                }
             }
-        } else {
-            options.setValue(ordertype.getName());
         }
+    }
+
+    /**
+     * Find one ordertype by it's id
+     * @param name  -> name of ordertype need to search
+     * @return ordertype
+     */
+    public Ordertype findOrderType(int id) {
+        System.out.println("FindOrderType ID " + id);
+        return orderTypeModel.findById(id);
     }
 
     /**
@@ -315,9 +346,255 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
 
     }
 
+    /**
+     * This function is used to save an order to database
+     */
+    public void saveOrder() {
+        // Save it to database
+        Order order = getOrderFromComponents();
+        if(order == null) {
+            System.out.println("Exist saveOrder due to order is invalid");
+            return;
+        }
+        saveOrderToDatabase(order);
+    }
+
+    /**
+     * This function is used to print an order
+     */
+    public void printOrder() {
+        Order order = getOrderFromComponents();
+        if(order == null) {
+            System.out.println("Exist printOrder due to order is invalid");
+            return;
+        }
+        OrderPrintingView.getInstance().setOrder(order);
+    }
+
+    /**
+     * This function is used to fill an order from components
+     * @param order
+     */
+    public Order getOrderFromComponents() {
+        Order order = view.getOrder();
+        Customer customer = view.getCustomer();
+
+        if(order == null) {
+            System.out.println("Has no order to save");
+            return null;
+        }
+
+        // Set data for order
+        order.setOrderCode(view.getOrderNumber().getValue());
+        if(order.getOrderCode().trim().equals("")) {
+            System.out.println("Order code is invalid");
+            return null;
+        }
+
+        if(customer != null && !customer.getCode().equals("") && view.getCustomerCode().getValue() != null) {
+            order.setIdCustomer(customer.getId());
+        } else {
+            order.setIdCustomer(0);
+        }
+
+        order.setOrdertype((Ordertype) view.getOptionsOrderType().getValue());
+        if(order.getOrdertype() == null || order.getOrdertype().getId() == -1) {
+            // Ordertype cannot be null
+            System.out.println("Ordertype is null");
+            return null;
+        }
+
+        if(view.getOrderContent().getValue().trim().equals("")) {
+            System.out.println("Content cannot be empty");
+            return null;
+        }
+
+        if(view.getOrderDate().getValue() == null) {
+            System.out.println("Date cannot be empty");
+            return null;
+        }
+
+        order.setBuyer(view.getBuyer().getValue());
+        order.setContent(view.getOrderContent().getValue());
+        order.setDate(view.getOrderDate().getValue());
+        order.setNote(view.getOrderNote().getValue());
+
+        // Update orderDetails List
+        if(view.getOrderDetails() != null && !view.getOrderDetails().isEmpty()) {
+            Set<Orderdetail> setOrderdetails = new HashSet<Orderdetail>(view.getOrderDetails());
+            order.setOrderdetails(setOrderdetails);
+        }
+
+        return order;
+    }
+
+    /**
+     * Fill default values for orderDetail when it just created
+     * @param orderDetail
+     * @param filter
+     */
+    public void fillDefaultDataForOrderDetail(Orderdetail orderDetail, SuggestField filter) {
+        Material material = (Material)filter.getValue();
+
+        if(material != null) {
+            orderDetail.setMaterial(material);
+            orderDetail.setFrk_material_code(material.getCode());
+            orderDetail.setFrk_material_name(material.getName());
+            orderDetail.setFrk_material_unit(material.getUnit().getName());
+            orderDetail.setFrk_material_stock(material.getStock().getCode());
+            orderDetail.setQuantityNeeded(0);
+            orderDetail.setQuantityDelivered(0);
+            orderDetail.setQuantityLacked(0);
+            orderDetail.setFrk_material_quantity(material.getQuantity());
+            orderDetail.setSaleOff(0.0f);
+            orderDetail.setPrice(material.getPrice());
+            orderDetail.setformattedPrice(orderDetail.getformattedPrice());
+    
+            double safeOffAmount = material.getPrice().doubleValue() * orderDetail.getSaleOff();
+            orderDetail.setSellingPrice(material.getPrice().doubleValue() - safeOffAmount);
+            orderDetail.setTotalAmount(orderDetail.getSellingPrice() * orderDetail.getQuantityDelivered());
+            orderDetail.setImportPrice(orderDetail.getPrice().doubleValue());
+        }
+        orderDetail.setOrder(view.getOrder());
+    }
+
+    /**
+     * This function is used to change and calculate quantity lacked when change quantity delivered
+     * @param event  ->  value change event of text field
+     */
+    public void calculateQuantityLackedWhenChangeQuantityDelivered(ValueChangeEvent event) {
+        if(event.getProperty().getValue() != null) {
+            int quantityDelivered = Integer.parseInt(event.getProperty().getValue()+"");
+
+            String quantityNeededStr = ((TextField) view.getTableOrderDetails().getColumn("quantityNeeded").getEditorField()).getValue();
+            if(quantityNeededStr == null) {
+                quantityNeededStr = "";
+            }
+            int quantityNeeded = Integer.parseInt(quantityNeededStr == "" ? "0" : quantityNeededStr);
+
+            int quantityLacked = quantityNeeded - quantityDelivered;
+            if(quantityLacked < 0) {
+                quantityLacked = 0;
+            }
+            ((TextField) view.getTableOrderDetails().getColumn("quantityLacked").getEditorField()).setValue(quantityLacked+"");
+        }
+    }
+
+    /**
+     * This function is used to change and calculate total amount when change quantity delivered
+     * @param event  ->  value change event of text field
+     */
+    public void calculateTotalAmountWhenChangeQuantityDelivered(ValueChangeEvent event) {
+        if(event.getProperty().getValue() != null) {
+            String sellingPriceStr = ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).getValue();
+            if(sellingPriceStr == null) {
+                sellingPriceStr = "";
+            }
+            double sellingPrice = Utilities.getDoubleValueFromFormattedStr(sellingPriceStr);
+
+            String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+
+            double totalAmount = sellingPrice * quantityDelivered;
+            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
+
+            String quantityInStockStr = ((TextField) view.getTableOrderDetails().getColumn("frk_material_quantity").getEditorField()).getValue();
+            int quantityInStock = Integer.parseInt(quantityInStockStr == "" ? "0" : quantityInStockStr);
+            quantityInStock = quantityInStock - quantityDelivered;
+            ((TextField) view.getTableOrderDetails().getColumn("frk_material_quantity").getEditorField()).setValue(quantityInStock+"");
+        }
+    }
+
+    /**
+     * This function is used to change and calculate quantity lacked when change quantity needed
+     * @param event  ->  value change event of text field
+     */
+    public void calculateQuantityLackedWhenChangeQuantityNeeded(ValueChangeEvent event) {
+        if(event.getProperty().getValue() != null) {
+            int quantityNeeded = Integer.parseInt(event.getProperty().getValue()+"");
+
+            String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+
+            int quantityLacked = quantityNeeded - quantityDelivered;
+            if(quantityLacked < 0) {
+                quantityLacked = 0;
+            }
+            ((TextField) view.getTableOrderDetails().getColumn("quantityLacked").getEditorField()).setValue(quantityLacked+"");
+        }
+    }
+
+    /**
+     * This function is used to change and calculate selling price when change price
+     * @param event  ->  value change event of text field
+     */
+    public void calculateSellingPriceWhenChangePrice(ValueChangeEvent event) {
+        if(event.getProperty().getValue() != null) {
+            String priceStr = event.getProperty().getValue() + "";
+            double price = Utilities.getDoubleValueFromFormattedStr(priceStr);
+
+            String saleOffStr = ((TextField) view.getTableOrderDetails().getColumn("saleOff").getEditorField()).getValue();
+            if(saleOffStr == null) {
+                saleOffStr = "";
+            }
+            float saleOff = Utilities.convertPercentageStringToFloat(saleOffStr == "" ? "0" : saleOffStr);
+
+            double sellingPrice = price - (price * saleOff) / 100.0f;
+            ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).setValue(Utilities.getNumberFormat().format(sellingPrice));
+
+            // Re-caculate the total amount
+            String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
+            if(quantityDeliveredStr == null) {
+                quantityDeliveredStr = "";
+            }
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+
+            double totalAmount = sellingPrice * quantityDelivered;
+            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
+        }
+    }
+
+    /**
+     * This function is used to calulate selling price and total amount when change sale off value
+     * @param event  -> value change event of text field
+     */
+    public void calculateSellingPriceWhenChangeSaleOff(ValueChangeEvent event) {
+        if(event.getProperty().getValue() != null) {
+            String saleOffStr = event.getProperty().getValue() + "";
+            float saleOff = Utilities.convertPercentageStringToFloat(saleOffStr == "" ? "0" : saleOffStr);
+
+            String priceStr = ((TextField) view.getTableOrderDetails().getColumn("formattedPrice").getEditorField()).getValue();
+            if(priceStr == null) {
+                priceStr = "";
+            }
+            double price = Utilities.getDoubleValueFromFormattedStr(priceStr);
+
+            double sellingPrice = price - (price * saleOff) / 100.0f;
+            ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).setValue(Utilities.getNumberFormat().format(sellingPrice));
+
+            // Re-caculate the total amount
+            String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
+            if(quantityDeliveredStr == null) {
+                quantityDeliveredStr = "";
+            }
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+
+            double totalAmount = sellingPrice * quantityDelivered;
+            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
+        }
+    }
+
     @Override
     public void updateEntity(AbstractEntity entity) {
         // TODO Auto-generated method stub
         
+    }
+
+    public OrderFormContent getView() {
+        return view;
+    }
+
+    public void setView(OrderFormContent view) {
+        this.view = view;
     }
 }

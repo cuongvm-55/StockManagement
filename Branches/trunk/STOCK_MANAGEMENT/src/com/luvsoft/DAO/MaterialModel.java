@@ -82,4 +82,15 @@ public class MaterialModel extends AbstractEntityModel {
         return list;
     }
 
+    /**
+     * 
+     * @param newQuantity
+     * @param material
+     */
+    public void updateQuantityInStock(int newQuantity, Material material) {
+        if(newQuantity >= 0) {
+            material.setQuantity(newQuantity);
+        }
+        entityManager.update(material);
+    }
 }

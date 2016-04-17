@@ -1,27 +1,30 @@
 package com.luvsoft.view.Order;
 
-import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Locale;
 
 import org.vaadin.suggestfield.SuggestField;
 import org.vaadin.viritin.grid.MGrid;
 
 import com.luvsoft.entities.Customer;
-import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Orderdetail;
 import com.luvsoft.entities.Ordertype;
 import com.luvsoft.presenter.OrderPresenter;
 import com.luvsoft.presenter.OrderPresenter.CustomerConverter;
 import com.luvsoft.presenter.OrderPresenter.MaterialConverter;
-import com.luvsoft.printing.OrderPrintingView;
 import com.luvsoft.stockmanagement.StockManagementUI;
+import com.luvsoft.utils.Utilities;
+import com.luvsoft.view.validator.LuvsoftOrderDetailValidator;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitEvent;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitHandler;
+import com.vaadin.data.util.converter.StringToFloatConverter;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
@@ -42,7 +45,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class OrderFormContent extends VerticalLayout implements ClickListener {
     private static final long serialVersionUID = -6147363220520400910L;
     // Information part
-    private OptionGroup orderType; // fetch from OrderType
+    private OptionGroup optionsOrderType; // fetch from OrderType
     private TextField orderNumber; // auto generate
     private TextField orderContent;
     private DateField orderDate;
@@ -59,7 +62,6 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
     private List<SuggestField> filterFields;
     private List<String> tableProperties;
     private HeaderRow filteringHeader;
-    private List<Ordertype> ordertypeList;
 
     // Footer
     private Button printer;
@@ -89,9 +91,9 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         addComponent(centertitle);
 
         // Information part
-        orderType = new OptionGroup(); // fetch from OrderType
-        orderType.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
-        orderType.setCaption("Loại Hóa Đơn");
+        optionsOrderType = new OptionGroup(); // fetch from OrderType
+        optionsOrderType.addStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
+        optionsOrderType.setCaption("Loại Hóa Đơn");
 
         orderNumber = new TextField(); // auto generate
         orderNumber.setCaption("Số Hóa Đơn");
@@ -116,16 +118,16 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         orderNote.setRows(1);
         orderNote.setColumns(61);
 
-        ////////////////////////////////////////////////////////////////
-        //| wrapper1         || wrapper2         || wrapper3         |//
-        //|                  ||                  ||                  |//
-        //|                  ||                  ||                  |//
-        ////////////////////////////////////////////////////////////////
-        //|                         wrapper4                          //
-        ////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////
+        // | wrapper1 || wrapper2 || wrapper3 |//
+        // | || || |//
+        // | || || |//
+        // //////////////////////////////////////////////////////////////
+        // | wrapper4 //
+        // //////////////////////////////////////////////////////////////
         FormLayout wrapper1 = new FormLayout();
         wrapper1.setSizeFull();
-        wrapper1.addComponents(orderType, customerCode, customerAddress);
+        wrapper1.addComponents(optionsOrderType, customerCode, customerAddress);
 
         FormLayout wrapper2 = new FormLayout();
         wrapper2.setSizeFull();
@@ -146,7 +148,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         contentPart.setExpandRatio(wrapper1, 0.8f);
         contentPart.setExpandRatio(wrapper2, 0.6f);
         contentPart.setExpandRatio(wrapper3, 0.6f);
-        ////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////
 
         // The table of orderDetails
         VerticalLayout centerPart = new VerticalLayout();
@@ -161,24 +163,126 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         tableOrderDetails = new MGrid<Orderdetail>(Orderdetail.class);
         tableOrderDetails.setEditorEnabled(true);
         tableOrderDetails.setSizeFull();
-        tableOrderDetails.withProperties("frk_material_code", "frk_material_name");
+        tableOrderDetails.setEditorSaveCaption("Lưu");
+        tableOrderDetails.setEditorCancelCaption("Hủy");
+        tableOrderDetails.withProperties("frk_material_code", "frk_material_name", "frk_material_unit", "frk_material_stock", "quantityNeeded",
+                "quantityDelivered", "quantityLacked", "frk_material_quantity", "formattedPrice", "saleOff", "formattedSellingPrice",
+                "formattedTotalAmount", "formattedImportPrice");
 
-        tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_code").setHtml("Mã Hàng");
-        tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_name").setHtml("Tên Hàng");
+        tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_code").setHtml("<b>Mã Hàng</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_name").setHtml("<b>Tên Hàng</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_unit").setHtml("<b>Đơn Vị</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_stock").setHtml("<b>Mã Kho</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("quantityNeeded").setHtml("<b>SL Đặt Hàng</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("quantityDelivered").setHtml("<b>SL Xuất</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("quantityLacked").setHtml("<b>SL Thiếu</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_quantity").setHtml("<b>Tồn Cuối</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("formattedPrice").setHtml("<b>Giá Chuẩn</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("saleOff").setHtml("<b>Chiết Khấu</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("formattedSellingPrice").setHtml("<b>Giá Bán</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("formattedTotalAmount").setHtml("<b>Thành Tiền</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("formattedImportPrice").setHtml("<b>Giá Nhập</b>");
         setColumnFiltering(true);
 
         orderDetails = new ArrayList<Orderdetail>();
         tableOrderDetails.setRows(orderDetails);
 
+        // Handle value change for some text fields
+        tableOrderDetails.getColumn("quantityLacked").setEditorField(new TextField());
+        tableOrderDetails.getColumn("quantityDelivered").setEditorField(new TextField());
+        tableOrderDetails.getColumn("quantityNeeded").setEditorField(new TextField());
+        tableOrderDetails.getColumn("frk_material_quantity").setEditorField(new TextField());
+        tableOrderDetails.getColumn("formattedPrice").setEditorField(new TextField());
+        tableOrderDetails.getColumn("formattedSellingPrice").setEditorField(new TextField());
+        tableOrderDetails.getColumn("formattedTotalAmount").setEditorField(new TextField());
+
+        TextField txtTableSaleOff = new TextField();
+        txtTableSaleOff.setConverter(new StringToFloatConverter() {
+            private static final long serialVersionUID = 3312602926285681764L;
+
+            @Override
+            protected NumberFormat getFormat(Locale locale) {
+                return Utilities.getPercentageFormat();
+            }
+        });
+
+        tableOrderDetails.getColumn("saleOff").setEditorField(txtTableSaleOff);
+        tableOrderDetails.getColumn("saleOff").setConverter(new StringToFloatConverter() {
+            private static final long serialVersionUID = 3312602926285681764L;
+
+            @Override
+            protected NumberFormat getFormat(Locale locale) {
+                return Utilities.getPercentageFormat();
+            }
+        });
+
+        tableOrderDetails.getColumn("quantityNeeded").getEditorField().addValueChangeListener(new ValueChangeListener() {
+            private static final long serialVersionUID = 9041180115447481664L;
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                presenter.calculateQuantityLackedWhenChangeQuantityNeeded(event);
+            }
+        });
+
+        tableOrderDetails.getColumn("quantityDelivered").getEditorField().addValueChangeListener(new ValueChangeListener() {
+            private static final long serialVersionUID = 7100286762666013961L;
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                presenter.calculateQuantityLackedWhenChangeQuantityDelivered(event);
+                presenter.calculateTotalAmountWhenChangeQuantityDelivered(event);
+            }
+        });
+
+        tableOrderDetails.getColumn("formattedPrice").getEditorField().addValueChangeListener(new ValueChangeListener() {
+            private static final long serialVersionUID = 5675838268905015025L;
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                presenter.calculateSellingPriceWhenChangePrice(event);
+            }
+
+        });
+
+        tableOrderDetails.getColumn("saleOff").getEditorField().addValueChangeListener(new ValueChangeListener() {
+            private static final long serialVersionUID = 2922146168876632193L;
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                presenter.calculateSellingPriceWhenChangeSaleOff(event);
+            }
+
+        });
+
+        LuvsoftOrderDetailValidator orderdetailValidator = new LuvsoftOrderDetailValidator("quantityDelivered");
+        tableOrderDetails.getColumn("quantityDelivered").getEditorField().addValidator(orderdetailValidator);
+
+        tableOrderDetails.getEditorFieldGroup().addCommitHandler(new CommitHandler() {
+            private static final long serialVersionUID = 5721445674624128951L;
+
+            @Override
+            public void preCommit(CommitEvent commitEvent) throws CommitException {
+                orderdetailValidator.setEntity((Orderdetail) tableOrderDetails.getEditedItemId());
+                orderdetailValidator.setCalledByPreCommit(true);
+                tableOrderDetails.getEditorFieldGroup().isValid();
+            }
+
+            @Override
+            public void postCommit(CommitEvent commitEvent) throws CommitException {
+                // TODO Auto-generated method stub
+            }
+        });
+
         // Footer
-        ////////////////////////////////////////////////////////////
-        //|                    totalwrapper                      |//
-        ////////////////////////////////////////////////////////////
-        //|                     footer                           |//
-        //|   _______                          _______      ____ |//
-        //|  |printer|                        |discard|    |save||//
-        //|   -------                          -------      ---- |//
-        ////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////
+        // | totalwrapper |//
+        // //////////////////////////////////////////////////////////
+        // | footer |//
+        // | _______ _______ ____ |//
+        // | |printer| |discard| |save||//
+        // | ------- ------- ---- |//
+        // //////////////////////////////////////////////////////////
         HorizontalLayout footer = new HorizontalLayout();
         footer.setSpacing(true);
         footer.setSizeFull();
@@ -213,14 +317,13 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         printer.addClickListener(this);
 
         // Fill data
-        // If order is not null and has an id (it is already created) 
+        // If order is not null and has an id (it is already created)
         // we will fill data for components by data of this order
         // If order is not null and doesn't have any id (it is never created)
         // we will generate an unique value for order number
-        if(order != null) {
-            ordertypeList = new ArrayList<Ordertype>();
-            presenter.createOrderTypes(orderType, order.getOrdertype(), ordertypeList);
-            if(order.getId() != -1) {
+        if (order != null) {
+            presenter.createOrderTypes(optionsOrderType, order.getOrdertype());
+            if (order.getId() != -1) {
                 orderNumber.setValue(order.getOrderCode());
                 orderContent.setValue(order.getContent());
                 orderDate.setValue(order.getDate());
@@ -231,6 +334,15 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
             }
         }
 
+        optionsOrderType.addValueChangeListener(new ValueChangeListener() {
+            private static final long serialVersionUID = 9041180115447481664L;
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                order.setOrdertype((Ordertype) event.getProperty().getValue());
+            }
+        });
+
         // Handle printing button
         BrowserWindowOpener opener = new BrowserWindowOpener(StockManagementUI.class);// "http://google.com"
         opener.setFeatures("height=50000,width=80000,fullScreen=yes,menubar=no,location=no,resizable=no,scrollbars=no,status=no");
@@ -240,37 +352,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         printer.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(ClickEvent event) {
-                if(order == null) {
-                    System.out.println("Has no order to save");
-                    return;
-                }
-
-                // Set data for order
-                order.setOrderCode(orderNumber.getValue());
-                if(customer != null && !customer.getCode().equals("") && customerCode.getValue() != null) {
-                    order.setCustomer(customer);
-                }
-                order.setBuyer(buyer.getValue());
-                order.setContent(orderContent.getValue());
-                order.setDate(orderDate.getValue());
-                order.setNote(orderNote.getValue());
-
-                if(ordertypeList == null || ordertypeList.isEmpty()) {
-                    order.setOrdertype(null);
-                } else {
-                    for (Ordertype ordertype : ordertypeList) {
-                        if(ordertype.getName().equals(orderType.getValue())) {
-                            order.setOrdertype(ordertype);
-                        }
-                    }
-                }
-
-                // Update orderDetails List
-                if(orderDetails != null && !orderDetails.isEmpty()) {
-                    Set<Orderdetail> setOrderdetails = new HashSet<Orderdetail>(orderDetails);
-                    order.setOrderdetails(setOrderdetails);
-                }
-                OrderPrintingView.getInstance().setOrder(order);
+                presenter.printOrder();
             }
         });
     }
@@ -278,8 +360,8 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
     private void setColumnFiltering(boolean filtered) {
         if (filtered && filteringHeader == null) {
             filteringHeader = tableOrderDetails.appendHeaderRow();
-            for( String property : tableProperties ){
-     
+            for (String property : tableProperties) {
+
                 // Add new TextFields to each column which filters the data from
                 // that column
                 String columnId = property;
@@ -289,9 +371,9 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                 filter.setImmediate(true);
                 filter.setMinimumQueryCharacters(2);
 
-                if(property.equals("frk_material_code")) {
+                if (property.equals("frk_material_code")) {
                     presenter.setUpSuggestFieldForMaterial(filter, MaterialConverter.BY_CODE);
-                } else if(property.equals("frk_material_name")) {
+                } else if (property.equals("frk_material_name")) {
                     presenter.setUpSuggestFieldForMaterial(filter, MaterialConverter.BY_NAME);
                 }
 
@@ -301,18 +383,9 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                     @Override
                     public void valueChange(ValueChangeEvent event) {
                         Orderdetail orderDetail = new Orderdetail();
-                        orderDetail.setMaterial((Material)filter.getValue());
-                        orderDetail.setFrk_material_code(orderDetail.getMaterial().getCode());
-                        orderDetail.setFrk_material_name(orderDetail.getMaterial().getName());
-                        orderDetail.setOrder(order);
-
-                        // Set some default value
-                        orderDetail.setQuantityNeeded(10);
-                        orderDetail.setQuantityDelivered(10);
-                        orderDetail.setPrice(new BigDecimal("250000"));
-
+                        presenter.fillDefaultDataForOrderDetail(orderDetail, filter);
                         // Add orderdetail to table
-                        if(presenter.addToOrderDetailList(orderDetail, orderDetails)) {
+                        if (presenter.addToOrderDetailList(orderDetail, orderDetails)) {
                             tableOrderDetails.setRows(orderDetails);
                         }
                     }
@@ -320,7 +393,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
                 filteringHeader.getCell(columnId).setComponent(filter);
                 filteringHeader.getCell(columnId).setStyleName("filter-header");
-    
+
                 // save to handle filter box
                 filterFields.add(filter);
             }
@@ -331,7 +404,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
     }
 
     private void fillTextFieldByCustomer(Customer customer) {
-        if(customer == null) {
+        if (customer == null) {
             System.out.println("Customer is null");
             return;
         }
@@ -355,6 +428,11 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 customer = (Customer) search.getValue();
+
+                if(order != null) {
+                    order.setCustomer(customer);
+                }
+
                 fillTextFieldByCustomer(customer);
             }
         });
@@ -371,60 +449,168 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
     @Override
     public void buttonClick(ClickEvent event) {
-        if(event.getButton().equals(save)) {
-            saveOrder();
+        if (event.getButton().equals(save)) {
+            presenter.saveOrder();
         }
     }
 
-    private void saveOrder() {
-        if(order == null) {
-            System.out.println("Has no order to save");
-            return;
-        }
+    public OptionGroup getOptionsOrderType() {
+        return optionsOrderType;
+    }
 
-        // Set data for order
-        order.setOrderCode(orderNumber.getValue());
-        if(order.getOrderCode().trim().equals("")) {
-            System.out.println("Order code is invalid");
-            return;
-        }
+    public void setOptionsOrderType(OptionGroup optionsOrderType) {
+        this.optionsOrderType = optionsOrderType;
+    }
 
-        if(customer != null && !customer.getCode().equals("") && customerCode.getValue() != null) {
-            order.setCustomer(customer);
-        }
+    public TextField getOrderNumber() {
+        return orderNumber;
+    }
 
-        if(orderContent.getValue().trim().equals("")) {
-            System.out.println("Content cannot be empty");
-            return;
-        }
+    public void setOrderNumber(TextField orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
-        if(orderDate.getValue() == null) {
-            System.out.println("Date cannot be empty");
-            return;
-        }
+    public TextField getOrderContent() {
+        return orderContent;
+    }
 
-        order.setBuyer(buyer.getValue());
-        order.setContent(orderContent.getValue());
-        order.setDate(orderDate.getValue());
-        order.setNote(orderNote.getValue());
+    public void setOrderContent(TextField orderContent) {
+        this.orderContent = orderContent;
+    }
 
-        if(ordertypeList == null || ordertypeList.isEmpty()) {
-            order.setOrdertype(null);
-        } else {
-            for (Ordertype ordertype : ordertypeList) {
-                if(ordertype.getName().equals(orderType.getValue())) {
-                    order.setOrdertype(ordertype);
-                }
-            }
-        }
+    public DateField getOrderDate() {
+        return orderDate;
+    }
 
-        // Update orderDetails List
-        if(orderDetails != null && !orderDetails.isEmpty()) {
-            Set<Orderdetail> setOrderdetails = new HashSet<Orderdetail>(orderDetails);
-            order.setOrderdetails(setOrderdetails);
-        }
+    public void setOrderDate(DateField orderDate) {
+        this.orderDate = orderDate;
+    }
 
-        // Save it to database
-        presenter.saveOrder(order);
+    public TextArea getOrderNote() {
+        return orderNote;
+    }
+
+    public void setOrderNote(TextArea orderNote) {
+        this.orderNote = orderNote;
+    }
+
+    public SuggestField getCustomerCode() {
+        return customerCode;
+    }
+
+    public void setCustomerCode(SuggestField customerCode) {
+        this.customerCode = customerCode;
+    }
+
+    public SuggestField getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(SuggestField customerName) {
+        this.customerName = customerName;
+    }
+
+    public SuggestField getCustomerPhoneNumber() {
+        return customerPhoneNumber;
+    }
+
+    public void setCustomerPhoneNumber(SuggestField customerPhoneNumber) {
+        this.customerPhoneNumber = customerPhoneNumber;
+    }
+
+    public TextField getCustomerAddress() {
+        return customerAddress;
+    }
+
+    public void setCustomerAddress(TextField customerAddress) {
+        this.customerAddress = customerAddress;
+    }
+
+    public TextField getBuyer() {
+        return buyer;
+    }
+
+    public void setBuyer(TextField buyer) {
+        this.buyer = buyer;
+    }
+
+    public MGrid<Orderdetail> getTableOrderDetails() {
+        return tableOrderDetails;
+    }
+
+    public void setTableOrderDetails(MGrid<Orderdetail> tableOrderDetails) {
+        this.tableOrderDetails = tableOrderDetails;
+    }
+
+    public List<Orderdetail> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(List<Orderdetail> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
+
+    public List<SuggestField> getFilterFields() {
+        return filterFields;
+    }
+
+    public void setFilterFields(List<SuggestField> filterFields) {
+        this.filterFields = filterFields;
+    }
+
+    public List<String> getTableProperties() {
+        return tableProperties;
+    }
+
+    public void setTableProperties(List<String> tableProperties) {
+        this.tableProperties = tableProperties;
+    }
+
+    public HeaderRow getFilteringHeader() {
+        return filteringHeader;
+    }
+
+    public void setFilteringHeader(HeaderRow filteringHeader) {
+        this.filteringHeader = filteringHeader;
+    }
+
+    public Button getPrinter() {
+        return printer;
+    }
+
+    public void setPrinter(Button printer) {
+        this.printer = printer;
+    }
+
+    public Button getSave() {
+        return save;
+    }
+
+    public void setSave(Button save) {
+        this.save = save;
+    }
+
+    public Button getDiscard() {
+        return discard;
+    }
+
+    public void setDiscard(Button discard) {
+        this.discard = discard;
+    }
+
+    public OrderPresenter getPresenter() {
+        return presenter;
+    }
+
+    public void setPresenter(OrderPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

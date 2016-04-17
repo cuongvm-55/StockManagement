@@ -43,6 +43,8 @@ public class GenericTabFunction implements ClickListener {
         Order order = new Order();
         order.verifyObject();
         centerPart = new OrderFormContent(presenter, order);
+        presenter.setView(centerPart);
+
         wrapper.addComponent(centerPart);
 
         wrapper.setExpandRatio(centerPart, 1.0f);

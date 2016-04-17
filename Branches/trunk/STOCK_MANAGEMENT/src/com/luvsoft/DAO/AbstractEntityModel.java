@@ -47,6 +47,14 @@ public abstract class AbstractEntityModel {
         return entityManager.findAll(entityName);
     }
 
+    public Object findById(String entityName, int id) {
+        return entityManager.findById(entityName, id);
+    }
+
+    public Object findByName(String entityName, String name) {
+        return entityManager.findByName(entityName, name);
+    }
+
     public Object findLastItem(String entityName) {
         return entityManager.findLastItem(entityName);
     }

@@ -86,4 +86,27 @@ public class Utilities {
         }
         return 0.00d;
     }
+
+    public static NumberFormat getPercentageFormat() {
+        NumberFormat nf = NumberFormat.getPercentInstance();
+        nf.setMinimumFractionDigits(1);
+        nf.setMaximumFractionDigits(1);
+        nf.setGroupingUsed(true);
+        return nf;
+    }
+
+    public static Float convertPercentageStringToFloat(String percentage) {
+        try{
+            System.out.println("Percentage " + percentage);
+            if(percentage.endsWith("%")) {
+                percentage = percentage.replace("%", "");
+            }
+            System.out.println("Percentage " + percentage);
+            return Float.parseFloat(percentage);
+        }
+        catch(Exception exception) {
+            System.out.println("Fail to parse from String to Float ...");
+        }
+        return 0.0f;
+    }
 }

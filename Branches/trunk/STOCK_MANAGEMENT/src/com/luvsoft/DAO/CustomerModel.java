@@ -1,5 +1,6 @@
 package com.luvsoft.DAO;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,8 @@ import com.luvsoft.entities.Customer;
 import com.luvsoft.entities.Customertype1;
 import com.luvsoft.entities.Customertype2;
 
-public class CustomerModel extends AbstractEntityModel {
+public class CustomerModel extends AbstractEntityModel implements Serializable {
+    private static final long serialVersionUID = 9039853667617179984L;
 
     public List<Object> getCustomers() {
         return entityManager.findAll(getEntityname());
