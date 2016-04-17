@@ -143,16 +143,16 @@ public abstract class AbstractEntityPresenter implements UpdateEntityListener{
     public String generateEntityCode(String entityName){
         Object obj = model.findLastItem(entityName);
         AbstractEntity lastEntity = (obj != null) ? (AbstractEntity)obj : null;
-        int nextId = ( ((lastEntity != null ) ? lastEntity.getId() : 0) + 1 ) + (int)(Math.random()*50000 + 1);
+        String nextIdStr = "" + ( ((lastEntity != null ) ? lastEntity.getId() : 0) + 1 ) + (int)(Math.random()*50000);
         switch(entityName){
         case "Customer":
-            return "KH" + nextId;
+            return "KH" + nextIdStr;
         case "Material":
-            return "VT" + nextId;
+            return "VT" + nextIdStr;
         case "Order":
-            return "HD" + nextId;
+            return "HD" + nextIdStr;
         case "Coupon":
-            return "PH" + nextId;
+            return "PH" + nextIdStr;
         }
         return "";
     }
