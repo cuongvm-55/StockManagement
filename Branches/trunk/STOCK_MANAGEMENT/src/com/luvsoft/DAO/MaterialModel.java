@@ -1,10 +1,13 @@
 package com.luvsoft.DAO;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Material;
+import com.luvsoft.entities.Materialoutputhistory;
 import com.luvsoft.entities.Materialtype1;
 import com.luvsoft.entities.Materialtype2;
 import com.luvsoft.entities.Stock;
@@ -92,5 +95,38 @@ public class MaterialModel extends AbstractEntityModel {
             material.setQuantity(newQuantity);
         }
         entityManager.update(material);
+    }
+
+    /**
+     * This function is used to update output history table for material when update quantity of any material
+     * @param outputQuantity   ->   quantity needed to increase
+     * @param outputPrice      ->   new price of material
+     * @param material
+     */
+    public void updateMaterialOutputHistory(int outputQuantity, BigDecimal outputPrice, Material material) {
+        // Check this material is existed in history table today or not?
+        Date today = new Date();
+        String query = "SELECT e FROM " + Materialoutputhistory.getEntityname() + " e WHERE e.date =:var0 AND material.id =:var1";
+        List<Object> listParameters = new ArrayList<Object>();
+        listParameters.add(today);
+        listParameters.add(material.getId());
+        List<Object> listResult = entityManager.findByQuery(query, listParameters);
+
+        if(listResult.isEmpty()) {
+            // There is no material existed in history table today
+            // Create new field in history table
+            Materialoutputhistory outputHistory = new Materialoutputhistory();
+            outputHistory.setDate(today);
+            outputHistory.setMaterial(material);
+            outputHistory.setOutputPrice(outputPrice);
+            outputHistory.setQuantity(outputQuantity);
+            entityManager.addNew(outputHistory);
+        } else {
+            // There is at least one material existed in history table today
+            Materialoutputhistory outputHistory = (Materialoutputhistory) listResult.get(0);
+            outputHistory.setQuantity(outputHistory.getQuantity() + outputQuantity);
+            outputHistory.setOutputPrice(outputPrice);
+            entityManager.update(outputHistory);
+        }
     }
 }

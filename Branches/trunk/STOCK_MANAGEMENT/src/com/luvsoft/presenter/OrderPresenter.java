@@ -102,7 +102,12 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         List<Orderdetail> orderdetails = new ArrayList<Orderdetail>(order.getOrderdetails());
         for (Orderdetail orderdetail : orderdetails) {
             if(orderdetail.getMaterial().getQuantity() != orderdetail.getFrk_material_quantity()) {
-                materialModel.updateQuantityInStock(orderdetail.getFrk_material_quantity(), orderdetail.getMaterial());
+                int newQuantity = orderdetail.getFrk_material_quantity();
+                int oldQuantity = orderdetail.getMaterial().getQuantity();
+                materialModel.updateQuantityInStock(newQuantity, orderdetail.getMaterial());
+
+                // Backup history of material to the Materialoutputhistory
+                materialModel.updateMaterialOutputHistory(oldQuantity - newQuantity, new BigDecimal(orderdetail.getSellingPrice()), orderdetail.getMaterial());
             }
         }
     }
