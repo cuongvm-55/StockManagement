@@ -1,5 +1,6 @@
 package com.luvsoft.presenter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,12 @@ public abstract class AbstractEntityPresenter implements UpdateEntityListener{
     protected int currentPage = 0;
 
     protected Map<String, String> criteriaMap;
-    
+
+    AbstractEntityPresenter(){
+        criteriaMap = new HashMap<String, String>();
+        action = ACTION.UNKNOWN;
+    }
+
     /**
      * Do the filter when value of one of TextField in textFields list changed
      * We expect that the index of TextField is always corresponding to the index of table property
@@ -132,6 +138,23 @@ public abstract class AbstractEntityPresenter implements UpdateEntityListener{
 
     public AbstractEntity getEntityByName(String entityName, String name){
         return model.getEntityByName(entityName, name);
+    }
+
+    public String generateEntityCode(String entityName){
+        Object obj = model.findLastItem(entityName);
+        AbstractEntity lastEntity = (obj != null) ? (AbstractEntity)obj : null;
+        int nextId = ( ((lastEntity != null ) ? lastEntity.getId() : 0) + 1 ) + (int)(Math.random()*50000 + 1);
+        switch(entityName){
+        case "Customer":
+            return "KH" + nextId;
+        case "Material":
+            return "VT" + nextId;
+        case "Order":
+            return "HD" + nextId;
+        case "Coupon":
+            return "PH" + nextId;
+        }
+        return "";
     }
 
     // abstract functions

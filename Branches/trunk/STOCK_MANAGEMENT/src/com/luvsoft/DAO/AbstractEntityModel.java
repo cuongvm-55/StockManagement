@@ -88,4 +88,9 @@ public abstract class AbstractEntityModel {
     // abstract functions
     public abstract String getEntityname();
     public abstract List<AbstractEntity> getFilterData(FilterObject filterObject);
+
+    public boolean isOrderExisted(Order order) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

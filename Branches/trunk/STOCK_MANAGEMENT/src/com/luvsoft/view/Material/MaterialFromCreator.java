@@ -63,6 +63,10 @@ public class MaterialFromCreator{
 
         // Because Java use reference type, so we clone this object and work on copy entity to be sure
         // that there are no stupid modifications on original object
+        // auto generate code field if it's empty
+        if( entity.getCode().equals("") ){
+            entity.setCode(presenter.generateEntityCode(Material.getEntityname()));
+        }
         form.setEntity(entity.cloneObject());
         form.openInModalPopup();
         form.handleSaveAndResetOperations();

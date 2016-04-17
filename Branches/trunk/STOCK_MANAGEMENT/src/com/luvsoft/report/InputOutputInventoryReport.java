@@ -212,7 +212,7 @@ public class InputOutputInventoryReport extends VerticalLayout{
      * @param to
      * @return
      */
-    private List<Materialinputhistory> extractInputHistoryInDateRange(Date from, Date to, Integer materialId){
+    public List<Materialinputhistory> extractInputHistoryInDateRange(Date from, Date to, Integer materialId){
         List<Materialinputhistory> ret = new ArrayList<Materialinputhistory>();
         String QUERY = ""
                 + "SELECT e "
@@ -240,7 +240,7 @@ public class InputOutputInventoryReport extends VerticalLayout{
      * @param to
      * @return
      */
-    private List<Materialoutputhistory> extractOutputHistoryInDateRange(Date from, Date to, Integer materialId){
+    public List<Materialoutputhistory> extractOutputHistoryInDateRange(Date from, Date to, Integer materialId){
         List<Materialoutputhistory> ret = new ArrayList<Materialoutputhistory>();
         String QUERY = ""
                 + "SELECT e "

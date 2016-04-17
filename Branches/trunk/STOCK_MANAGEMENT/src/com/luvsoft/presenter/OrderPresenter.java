@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,7 +80,6 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     private CustomerModel customerModel = new CustomerModel();
     private MaterialModel materialModel = new MaterialModel();
     private OrderTypeModel orderTypeModel = new OrderTypeModel();
-    private OrderModel orderModel = new OrderModel();
 
     private List<Object> listCustomers = new ArrayList<Object>();
     private List<Object> listMaterials = new ArrayList<Object>();
@@ -89,7 +87,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     private OrderFormContent view;
 
     public OrderPresenter() {
-        criteriaMap = new HashMap<String, String>();
+        model = new OrderModel();
     }
 
     public void saveOrderToDatabase(Order order) {
@@ -97,7 +95,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             return;
         }
 
-        orderModel.addNew(order);
+        model.addNew(order);
         // Update quantity in stock for material
         List<Orderdetail> orderdetails = new ArrayList<Orderdetail>(order.getOrderdetails());
         for (Orderdetail orderdetail : orderdetails) {
@@ -207,9 +205,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      * @param Textfield orderCode
      */
     public void generateOrderCode(TextField orderCode) {
-        Order lastOrder = orderModel.findLastItem();
-        Integer lastItem = (lastOrder != null ) ? lastOrder.getId() : 0; 
-        orderCode.setValue("HD" + (lastItem + 1) + (int) (Math.random() * 50000 + 1));
+        orderCode.setValue(generateEntityCode(Order.getEntityname()));
     }
 
     public List<Object> doFilter(String foreignKey, String value, AbstractEntityModel model){
@@ -417,7 +413,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             return;
         }
 
-        if(!orderModel.isOrderExisted(order)) {
+        if(!model.isOrderExisted(order)) {
             saveOrderToDatabase(order);
         }
 

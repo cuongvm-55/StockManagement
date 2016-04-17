@@ -1,6 +1,5 @@
 package com.luvsoft.presenter;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.luvsoft.DAO.CustomerType2Model;
@@ -14,8 +13,6 @@ public class CustomerType2Presenter extends AbstractEntityPresenter {
     public CustomerType2Presenter(CustomerType2View view) {
         this.view = view;
         model = new CustomerType2Model();
-        criteriaMap = new HashMap<String, String>();
-        action = ACTION.UNKNOWN;
     }
     
     public void updateEntity(AbstractEntity entity) {
