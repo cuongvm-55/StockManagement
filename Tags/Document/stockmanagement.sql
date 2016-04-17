@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 14, 2016 at 06:55 PM
+-- Generation Time: Apr 17, 2016 at 05:29 AM
 -- Server version: 5.6.26-log
 -- PHP Version: 5.6.8
 
@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `area` (
 --
 
 INSERT INTO `area` (`id`, `name`, `description`) VALUES
-(1, 'Mĩ Đình', 'Khu vực Mĩ Đình - Từ Liêm - Hà Nội 1'),
+(1, 'Mĩ Đình', 'Khu vực Mĩ Đình - Từ Liêm - Hà Nội'),
 (3, 'Cầu Giấy', 'Khu vực quận Cầu Giấy - Hà Nội');
 
 -- --------------------------------------------------------
@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS `customer` (
   `debt` decimal(19,4) NOT NULL DEFAULT '0.0000' COMMENT 'Công nợ. Nếu công nợ là số dương thì khách hàng đang nợ mình, ngược lại mình nợ khách hàng',
   `idCustomerType1` int(11) DEFAULT NULL COMMENT 'FK: id nhóm khách hàng 1',
   `idCustomerType2` int(11) DEFAULT NULL COMMENT 'FK: id nhóm khách hàng 2'
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `customer`
@@ -228,13 +228,7 @@ CREATE TABLE IF NOT EXISTS `customer` (
 
 INSERT INTO `customer` (`id`, `code`, `name`, `address`, `phoneNumber`, `idArea`, `email`, `bankName`, `bankAccount`, `debt`, `idCustomerType1`, `idCustomerType2`) VALUES
 (33, 'KH002', 'Vy Mạnh Cường', 'Mĩ Đình', '01663724852', 1, 'cuongvm.55@gmail.com', 'Tiên Phong Bank', '00352078001', '100000.0000', 3, 1),
-(34, 'KH1', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329830', 1, 'datnq.55@gmail.com', 'TP Bank', '21231', '5000000.0000', 1, 2),
-(35, 'KH002', 'Vy Mạnh Cường', 'Mĩ Đình', '01663724852', 1, 'cuongvm.55@gmail.com', 'Tiên Phong Bank', '00352078001', '100000.0000', 3, 1),
-(36, 'KH1', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329830', 1, 'datnq.55@gmail.com', 'TP Bank', '21231', '5000000.0000', 1, 2),
-(37, 'KH2', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329831', 1, 'datnq.55@gmail.com', 'TP Bank', '21232', '5000001.0000', 3, 2),
-(38, 'KH3', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329832', 1, 'datnq.55@gmail.com', 'TP Bank', '21233', '5000002.0000', 3, 1),
-(39, 'KH4', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329833', 1, 'datnq.55@gmail.com', 'TP Bank', '21234', '5000003.0000', NULL, NULL),
-(40, 'KH5', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329834', 1, 'datnq.55@gmail.com', 'TP Bank', '21235', '5000004.0000', NULL, NULL);
+(34, 'KH1', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329830', 1, 'datnq.55@gmail.com', 'TP Bank', '21231', '5000000.0000', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -293,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `material` (
   `idUnit` int(11) DEFAULT NULL COMMENT 'Đơn vị tính',
   `quantity` int(11) NOT NULL DEFAULT '0' COMMENT 'Số lượng',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB AUTO_INCREMENT=202 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `material`
@@ -427,7 +421,7 @@ CREATE TABLE IF NOT EXISTS `order` (
   `id` int(11) NOT NULL,
   `orderCode` varchar(45) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Mã hóa đơn - số hóa đơn',
   `idOrderType` int(11) DEFAULT NULL COMMENT 'FK: Loại hóa đơn: xuất bán, xuất bán nội bộ',
-  `idCustomer` int(11) DEFAULT NULL COMMENT 'FK: Mã khách hàng',
+  `idCustomer` int(11) DEFAULT '0' COMMENT 'FK: Mã khách hàng',
   `buyer` varchar(128) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Tên người mua hàng\\nMặc định là tên khách hàng, nhưng có thể thay đổi được',
   `content` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Diễn giải: Mặc định là: Xuất bán hàng cho khách nhưng có thể sửa được',
   `date` datetime NOT NULL COMMENT 'Ngày - giờ tạo hóa đơn',
@@ -447,7 +441,7 @@ CREATE TABLE IF NOT EXISTS `orderdetail` (
   `quantityNeeded` int(11) NOT NULL COMMENT 'Số lượng đặt hàng',
   `quantityDelivered` int(11) NOT NULL COMMENT 'Số lượng hàng đã xuất',
   `price` decimal(19,4) NOT NULL COMMENT 'Giá chuẩn, mặc định là lấy giá vật tư nhưng có thể sửa được',
-  `saleOff` int(11) DEFAULT NULL COMMENT 'Chiết khấu, tính theo phần trăm. Là phần trăm giảm giá trên giá gốc'
+  `saleOff` float DEFAULT '0' COMMENT 'Chiết khấu, tính theo phần trăm. Là phần trăm giảm giá trên giá gốc'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -763,7 +757,7 @@ ALTER TABLE `coupontype`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của khách hàng',AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của khách hàng',AUTO_INCREMENT=35;
 --
 -- AUTO_INCREMENT for table `customertype1`
 --
@@ -778,7 +772,7 @@ ALTER TABLE `customertype2`
 -- AUTO_INCREMENT for table `material`
 --
 ALTER TABLE `material`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id của vật tư',AUTO_INCREMENT=202;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id của vật tư',AUTO_INCREMENT=69;
 --
 -- AUTO_INCREMENT for table `materialinputhistory`
 --
@@ -905,7 +899,6 @@ ADD CONSTRAINT `fk_material_id2` FOREIGN KEY (`idMaterial`) REFERENCES `material
 -- Constraints for table `order`
 --
 ALTER TABLE `order`
-ADD CONSTRAINT `fk_Order_Customer1` FOREIGN KEY (`idCustomer`) REFERENCES `customer` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
 ADD CONSTRAINT `fk_Order_OrderType1` FOREIGN KEY (`idOrderType`) REFERENCES `ordertype` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
