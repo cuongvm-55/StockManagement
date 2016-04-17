@@ -16,7 +16,8 @@ import com.luvsoft.entities.Ordertype;
 import com.luvsoft.presenter.OrderPresenter;
 import com.luvsoft.presenter.OrderPresenter.CustomerConverter;
 import com.luvsoft.presenter.OrderPresenter.MaterialConverter;
-import com.luvsoft.utils.LuvsoftNumberFormat;
+import com.luvsoft.stockmanagement.StockManagementUI;
+import com.luvsoft.utils.Utilities;
 import com.luvsoft.view.validator.LuvsoftOrderDetailValidator;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -24,6 +25,7 @@ import com.vaadin.data.fieldgroup.FieldGroup.CommitEvent;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitHandler;
 import com.vaadin.data.util.converter.StringToFloatConverter;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
@@ -78,6 +80,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         create();
     }
 
+    @SuppressWarnings("serial")
     public void create() {
         addStyleName("formlayout-spacing max-textfield-width background-blue");
         setSizeFull();
@@ -115,13 +118,13 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         orderNote.setRows(1);
         orderNote.setColumns(61);
 
-        ////////////////////////////////////////////////////////////////
-        //| wrapper1         || wrapper2         || wrapper3         |//
-        //|                  ||                  ||                  |//
-        //|                  ||                  ||                  |//
-        ////////////////////////////////////////////////////////////////
-        //|                         wrapper4                          //
-        ////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////
+        // | wrapper1 || wrapper2 || wrapper3 |//
+        // | || || |//
+        // | || || |//
+        // //////////////////////////////////////////////////////////////
+        // | wrapper4 //
+        // //////////////////////////////////////////////////////////////
         FormLayout wrapper1 = new FormLayout();
         wrapper1.setSizeFull();
         wrapper1.addComponents(optionsOrderType, customerCode, customerAddress);
@@ -145,7 +148,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         contentPart.setExpandRatio(wrapper1, 0.8f);
         contentPart.setExpandRatio(wrapper2, 0.6f);
         contentPart.setExpandRatio(wrapper3, 0.6f);
-        ////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////
 
         // The table of orderDetails
         VerticalLayout centerPart = new VerticalLayout();
@@ -162,11 +165,10 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         tableOrderDetails.setSizeFull();
         tableOrderDetails.setEditorSaveCaption("Lưu");
         tableOrderDetails.setEditorCancelCaption("Hủy");
-        tableOrderDetails.withProperties("frk_material_code", "frk_material_name", "frk_material_unit",
-                                         "frk_material_stock", "quantityNeeded", "quantityDelivered",
-                                         "quantityLacked", "frk_material_quantity", "formattedPrice", "saleOff",
-                                         "formattedSellingPrice", "formattedTotalAmount", "formattedImportPrice");
-                
+        tableOrderDetails.withProperties("frk_material_code", "frk_material_name", "frk_material_unit", "frk_material_stock", "quantityNeeded",
+                "quantityDelivered", "quantityLacked", "frk_material_quantity", "formattedPrice", "saleOff", "formattedSellingPrice",
+                "formattedTotalAmount", "formattedImportPrice");
+
         tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_code").setHtml("<b>Mã Hàng</b>");
         tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_name").setHtml("<b>Tên Hàng</b>");
         tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_unit").setHtml("<b>Đơn Vị</b>");
@@ -197,20 +199,22 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         tableOrderDetails.getColumn("formattedTotalAmount").setEditorField(new TextField());
 
         TextField txtTableSaleOff = new TextField();
-        txtTableSaleOff.setConverter(new StringToFloatConverter(){
+        txtTableSaleOff.setConverter(new StringToFloatConverter() {
             private static final long serialVersionUID = 3312602926285681764L;
+
             @Override
             protected NumberFormat getFormat(Locale locale) {
-                return LuvsoftNumberFormat.getPercentageFormat();
+                return Utilities.getPercentageFormat();
             }
         });
 
         tableOrderDetails.getColumn("saleOff").setEditorField(txtTableSaleOff);
-        tableOrderDetails.getColumn("saleOff").setConverter(new StringToFloatConverter(){
+        tableOrderDetails.getColumn("saleOff").setConverter(new StringToFloatConverter() {
             private static final long serialVersionUID = 3312602926285681764L;
+
             @Override
             protected NumberFormat getFormat(Locale locale) {
-                return LuvsoftNumberFormat.getPercentageFormat();
+                return Utilities.getPercentageFormat();
             }
         });
 
@@ -240,7 +244,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
             public void valueChange(ValueChangeEvent event) {
                 presenter.calculateSellingPriceWhenChangePrice(event);
             }
-            
+
         });
 
         tableOrderDetails.getColumn("saleOff").getEditorField().addValueChangeListener(new ValueChangeListener() {
@@ -250,7 +254,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
             public void valueChange(ValueChangeEvent event) {
                 presenter.calculateSellingPriceWhenChangeSaleOff(event);
             }
-            
+
         });
 
         LuvsoftOrderDetailValidator orderdetailValidator = new LuvsoftOrderDetailValidator("quantityDelivered");
@@ -265,7 +269,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                 orderdetailValidator.setCalledByPreCommit(true);
                 tableOrderDetails.getEditorFieldGroup().isValid();
             }
-            
+
             @Override
             public void postCommit(CommitEvent commitEvent) throws CommitException {
                 // TODO Auto-generated method stub
@@ -273,20 +277,21 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         });
 
         // Footer
-        ////////////////////////////////////////////////////////////
-        //|                    totalwrapper                      |//
-        ////////////////////////////////////////////////////////////
-        //|                     footer                           |//
-        //|   _______                          _______      ____ |//
-        //|  |printer|                        |discard|    |save||//
-        //|   -------                          -------      ---- |//
-        ////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////
+        // | totalwrapper |//
+        // //////////////////////////////////////////////////////////
+        // | footer |//
+        // | _______ _______ ____ |//
+        // | |printer| |discard| |save||//
+        // | ------- ------- ---- |//
+        // //////////////////////////////////////////////////////////
         HorizontalLayout footer = new HorizontalLayout();
         footer.setSpacing(true);
         footer.setSizeFull();
         footer.setMargin(new MarginInfo(false, true, false, true));
         printer = new Button("In", FontAwesome.PRINT);
         printer.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
         save = new Button("Lưu", FontAwesome.SAVE);
         save.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 
@@ -314,13 +319,13 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         printer.addClickListener(this);
 
         // Fill data
-        // If order is not null and has an id (it is already created) 
+        // If order is not null and has an id (it is already created)
         // we will fill data for components by data of this order
         // If order is not null and doesn't have any id (it is never created)
         // we will generate an unique value for order number
-        if(order != null) {
+        if (order != null) {
             presenter.createOrderTypes(optionsOrderType, order.getOrdertype());
-            if(order.getId() != -1) {
+            if (order.getId() != -1) {
                 orderNumber.setValue(order.getOrderCode());
                 orderContent.setValue(order.getContent());
                 orderDate.setValue(order.getDate());
@@ -339,13 +344,26 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                 order.setOrdertype((Ordertype) event.getProperty().getValue());
             }
         });
+
+        // Handle printing button
+        BrowserWindowOpener opener = new BrowserWindowOpener(StockManagementUI.class);// "http://google.com"
+        opener.setFeatures("height=50000,width=80000,fullScreen=yes,menubar=no,location=no,resizable=no,scrollbars=no,status=no");
+        opener.setWindowName("_new");// _new, _blank, _top, etc.
+        opener.setParameter("OPEN_REASON", "PRINT");
+        opener.extend(printer);
+        printer.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                presenter.printOrder();
+            }
+        });
     }
 
     private void setColumnFiltering(boolean filtered) {
         if (filtered && filteringHeader == null) {
             filteringHeader = tableOrderDetails.appendHeaderRow();
-            for( String property : tableProperties ){
-     
+            for (String property : tableProperties) {
+
                 // Add new TextFields to each column which filters the data from
                 // that column
                 String columnId = property;
@@ -355,9 +373,9 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                 filter.setImmediate(true);
                 filter.setMinimumQueryCharacters(2);
 
-                if(property.equals("frk_material_code")) {
+                if (property.equals("frk_material_code")) {
                     presenter.setUpSuggestFieldForMaterial(filter, MaterialConverter.BY_CODE);
-                } else if(property.equals("frk_material_name")) {
+                } else if (property.equals("frk_material_name")) {
                     presenter.setUpSuggestFieldForMaterial(filter, MaterialConverter.BY_NAME);
                 }
 
@@ -368,9 +386,8 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                     public void valueChange(ValueChangeEvent event) {
                         Orderdetail orderDetail = new Orderdetail();
                         presenter.fillDefaultDataForOrderDetail(orderDetail, filter);
-
                         // Add orderdetail to table
-                        if(presenter.addToOrderDetailList(orderDetail, orderDetails)) {
+                        if (presenter.addToOrderDetailList(orderDetail, orderDetails)) {
                             tableOrderDetails.setRows(orderDetails);
                         }
                     }
@@ -378,7 +395,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
                 filteringHeader.getCell(columnId).setComponent(filter);
                 filteringHeader.getCell(columnId).setStyleName("filter-header");
-    
+
                 // save to handle filter box
                 filterFields.add(filter);
             }
@@ -389,7 +406,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
     }
 
     private void fillTextFieldByCustomer(Customer customer) {
-        if(customer == null) {
+        if (customer == null) {
             System.out.println("Customer is null");
             return;
         }
@@ -413,6 +430,11 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
             @Override
             public void valueChange(ValueChangeEvent event) {
                 customer = (Customer) search.getValue();
+
+                if(order != null) {
+                    order.setCustomer(customer);
+                }
+
                 fillTextFieldByCustomer(customer);
             }
         });
@@ -429,7 +451,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
     @Override
     public void buttonClick(ClickEvent event) {
-        if(event.getButton().equals(save)) {
+        if (event.getButton().equals(save)) {
             presenter.saveOrder();
         }
     }

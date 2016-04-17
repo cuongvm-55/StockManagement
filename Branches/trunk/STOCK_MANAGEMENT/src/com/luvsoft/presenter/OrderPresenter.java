@@ -24,7 +24,8 @@ import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Orderdetail;
 import com.luvsoft.entities.Ordertype;
-import com.luvsoft.utils.LuvsoftNumberFormat;
+import com.luvsoft.printing.OrderPrintingView;
+import com.luvsoft.utils.Utilities;
 import com.luvsoft.view.Order.OrderFormContent;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.OptionGroup;
@@ -122,23 +123,6 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             orderdetail.setQuantityDelivered(0);
             orderdetail.setQuantityLacked(0);
             orderdetail.setQuantityNeeded(0);
-
-//            view.getTableOrderDetails().addRow(
-//                    //orderdetail.getId(),
-//                    orderdetail.getFrk_material_code(),
-//                    orderdetail.getFrk_material_name(),
-//                    orderdetail.getFrk_material_unit(),
-//                    orderdetail.getFrk_material_stock(),
-//                    orderdetail.getQuantityNeeded(),
-//                    orderdetail.getQuantityDelivered(),
-//                    orderdetail.getQuantityLacked(),
-//                    orderdetail.getMaterial().getQuantity(),
-//                    LuvsoftNumberFormat.getNumberFormat().format(orderdetail.getPrice().doubleValue()),
-//                    LuvsoftNumberFormat.getPercentageFormat().format(orderdetail.getSaleOff()),
-//                    LuvsoftNumberFormat.getNumberFormat().format(orderdetail.getSellingPrice()),
-//                    LuvsoftNumberFormat.getNumberFormat().format(orderdetail.getTotalAmount()),
-//                    LuvsoftNumberFormat.getNumberFormat().format(orderdetail.getImportPrice())
-//                    );
             return true;
         }
         return false;
@@ -362,7 +346,27 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      * This function is used to save an order to database
      */
     public void saveOrder() {
-        Order order = view.getOrder();
+        // Save it to database
+        Order order = null;
+        getOrderFromComponents(order);
+        saveOrderToDatabase(order);
+    }
+
+    /**
+     * This function is used to print an order
+     */
+    public void printOrder() {
+        Order order = null;
+        getOrderFromComponents(order);
+        OrderPrintingView.getInstance().setOrder(order);
+    }
+
+    /**
+     * This function is used to fill an order from components
+     * @param order
+     */
+    public void getOrderFromComponents(Order order) {
+        order = view.getOrder();
         Customer customer = view.getCustomer();
 
         if(order == null) {
@@ -410,9 +414,6 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             Set<Orderdetail> setOrderdetails = new HashSet<Orderdetail>(view.getOrderDetails());
             order.setOrderdetails(setOrderdetails);
         }
-
-        // Save it to database
-        saveOrderToDatabase(order);
     }
 
     /**
@@ -477,13 +478,13 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             if(sellingPriceStr == null) {
                 sellingPriceStr = "";
             }
-            double sellingPrice = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(sellingPriceStr);
+            double sellingPrice = Utilities.getDoubleValueFromFormattedStr(sellingPriceStr);
 
             String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
             int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
 
             double totalAmount = sellingPrice * quantityDelivered;
-            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(LuvsoftNumberFormat.getNumberFormat().format(totalAmount));
+            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
         }
     }
 
@@ -513,16 +514,16 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     public void calculateSellingPriceWhenChangePrice(ValueChangeEvent event) {
         if(event.getProperty().getValue() != null) {
             String priceStr = event.getProperty().getValue() + "";
-            double price = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(priceStr);
+            double price = Utilities.getDoubleValueFromFormattedStr(priceStr);
 
             String saleOffStr = ((TextField) view.getTableOrderDetails().getColumn("saleOff").getEditorField()).getValue();
             if(saleOffStr == null) {
                 saleOffStr = "";
             }
-            float saleOff = LuvsoftNumberFormat.convertPercentageStringToFloat(saleOffStr == "" ? "0" : saleOffStr);
+            float saleOff = Utilities.convertPercentageStringToFloat(saleOffStr == "" ? "0" : saleOffStr);
 
             double sellingPrice = price - (price * saleOff) / 100.0f;
-            ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).setValue(LuvsoftNumberFormat.getNumberFormat().format(sellingPrice));
+            ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).setValue(Utilities.getNumberFormat().format(sellingPrice));
 
             // Re-caculate the total amount
             String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
@@ -532,7 +533,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
 
             double totalAmount = sellingPrice * quantityDelivered;
-            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(LuvsoftNumberFormat.getNumberFormat().format(totalAmount));
+            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
         }
     }
 
@@ -543,16 +544,16 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     public void calculateSellingPriceWhenChangeSaleOff(ValueChangeEvent event) {
         if(event.getProperty().getValue() != null) {
             String saleOffStr = event.getProperty().getValue() + "";
-            float saleOff = LuvsoftNumberFormat.convertPercentageStringToFloat(saleOffStr == "" ? "0" : saleOffStr);
+            float saleOff = Utilities.convertPercentageStringToFloat(saleOffStr == "" ? "0" : saleOffStr);
 
             String priceStr = ((TextField) view.getTableOrderDetails().getColumn("formattedPrice").getEditorField()).getValue();
             if(priceStr == null) {
                 priceStr = "";
             }
-            double price = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(priceStr);
+            double price = Utilities.getDoubleValueFromFormattedStr(priceStr);
 
             double sellingPrice = price - (price * saleOff) / 100.0f;
-            ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).setValue(LuvsoftNumberFormat.getNumberFormat().format(sellingPrice));
+            ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).setValue(Utilities.getNumberFormat().format(sellingPrice));
 
             // Re-caculate the total amount
             String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
@@ -562,7 +563,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
 
             double totalAmount = sellingPrice * quantityDelivered;
-            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(LuvsoftNumberFormat.getNumberFormat().format(totalAmount));
+            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
         }
     }
 

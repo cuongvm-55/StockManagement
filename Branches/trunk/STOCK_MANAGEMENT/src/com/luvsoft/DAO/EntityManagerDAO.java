@@ -179,12 +179,13 @@ public class EntityManagerDAO {
                 sqlStr += " WHERE ";
                 while( index < fields.size() ){
                     // support first letters filter
-                    sqlStr+= "isFirstLettersMatched("+ fields.get(index) + ",:var"+ fields.get(index).replace(".", "") +")=1";
+                    sqlStr+= "isFirstLettersMatched("+ fields.get(index) + ",:var"+ fields.get(index).replace(".", "") +")=1 ";
                     if( fields.size() > 1  && index < fields.size()-1 ){
                         sqlStr+=" AND "; // we combine the condition to get field value that closely matches the criteria
                     }
                     index++;
                 }
+                sqlStr+= " ORDER BY " + fields.get(0) + " ASC"; // ascending order by first field
                 query = entitymanager.createQuery(sqlStr);
                 for( String field : fields ){
                     query.setParameter("var"+field.replace(".", ""), criteria.get(field));
@@ -223,7 +224,7 @@ public class EntityManagerDAO {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public List<Object> findByQuery(String queryStr, List<String> params){
+    public List<Object> findByQuery(String queryStr, List<Object> params){
         Query query = entitymanager.createQuery(queryStr);
         System.out.println(queryStr);
         for(int i=0;i<params.size();i++){

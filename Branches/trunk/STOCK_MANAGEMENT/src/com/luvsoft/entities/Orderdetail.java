@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.luvsoft.utils.LuvsoftNumberFormat;
+import com.luvsoft.utils.Utilities;
 import com.luvsoft.view.component.anotations.DoNotGreaterThanQuantityInStock;
 
 /**
@@ -131,7 +131,7 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-        this.formattedPrice = LuvsoftNumberFormat.getNumberFormat().format(price);
+        this.formattedPrice = Utilities.getNumberFormat().format(price);
     }
 
     @Column(name = "saleOff", precision = 12, scale = 0)
@@ -203,7 +203,7 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
     }
 
     public void setSellingPrice(double sellingPrice) {
-        this.formattedSellingPrice = LuvsoftNumberFormat.getNumberFormat().format(sellingPrice);
+        this.formattedSellingPrice = Utilities.getNumberFormat().format(sellingPrice);
         this.sellingPrice = sellingPrice;
     }
 
@@ -213,7 +213,7 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
     }
 
     public void setTotalAmount(double totalAmount) {
-        this.formattedTotalAmount = LuvsoftNumberFormat.getNumberFormat().format(totalAmount);
+        this.formattedTotalAmount = Utilities.getNumberFormat().format(totalAmount);
         this.totalAmount = totalAmount;
     }
 
@@ -223,51 +223,51 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
     }
 
     public void setImportPrice(double importPrice) {
-        this.formattedImportPrice = LuvsoftNumberFormat.getNumberFormat().format(importPrice);
+        this.formattedImportPrice = Utilities.getNumberFormat().format(importPrice);
         this.importPrice = importPrice;
     }
 
     @Transient
     public String getformattedPrice() {
-        formattedPrice = LuvsoftNumberFormat.getNumberFormat().format(price.doubleValue());
+        formattedPrice = Utilities.getNumberFormat().format(price.doubleValue());
         return formattedPrice;
     }
 
     public void setformattedPrice(String formattedPrice) {
-        price = new BigDecimal(LuvsoftNumberFormat.getDoubleValueFromFormattedStr(formattedPrice));
+        price = new BigDecimal(Utilities.getDoubleValueFromFormattedStr(formattedPrice));
         this.formattedPrice = formattedPrice;
     }
 
     @Transient
     public String getFormattedSellingPrice() {
-        formattedSellingPrice = LuvsoftNumberFormat.getNumberFormat().format(sellingPrice);
+        formattedSellingPrice = Utilities.getNumberFormat().format(sellingPrice);
         return formattedSellingPrice;
     }
 
     public void setFormattedSellingPrice(String formattedSellingPrice) {
-        sellingPrice = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(formattedSellingPrice);
+        sellingPrice = Utilities.getDoubleValueFromFormattedStr(formattedSellingPrice);
         this.formattedSellingPrice = formattedSellingPrice;
     }
 
     @Transient
     public String getFormattedTotalAmount() {
-        formattedTotalAmount = LuvsoftNumberFormat.getNumberFormat().format(totalAmount);
+        formattedTotalAmount = Utilities.getNumberFormat().format(totalAmount);
         return formattedTotalAmount;
     }
 
     public void setFormattedTotalAmount(String formattedTotalAmount) {
-        totalAmount = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(formattedTotalAmount);
+        totalAmount = Utilities.getDoubleValueFromFormattedStr(formattedTotalAmount);
         this.formattedTotalAmount = formattedTotalAmount;
     }
 
     @Transient
     public String getFormattedImportPrice() {
-        formattedImportPrice = LuvsoftNumberFormat.getNumberFormat().format(importPrice);
+        formattedImportPrice = Utilities.getNumberFormat().format(importPrice);
         return formattedImportPrice;
     }
 
     public void setFormattedImportPrice(String formattedImportPrice) {
-        importPrice = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(formattedImportPrice);
+        importPrice = Utilities.getDoubleValueFromFormattedStr(formattedImportPrice);
         this.formattedImportPrice = formattedImportPrice;
     }
 

@@ -23,6 +23,8 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/x
 	    <class>com.luvsoft.entities.Stock</class>
 	    <class>com.luvsoft.entities.Stocktype</class>
 	    <class>com.luvsoft.entities.Unit</class>
+	    <class>com.luvsoft.entities.Materialinputhistory</class>
+	    <class>com.luvsoft.entities.Materialoutputhistory</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>

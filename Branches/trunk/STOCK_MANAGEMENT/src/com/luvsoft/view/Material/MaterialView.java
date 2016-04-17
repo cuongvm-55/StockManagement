@@ -60,7 +60,7 @@ public class MaterialView extends GenericTabCategory<Material> {
         .withHeaderNames("frk_stock_name","<b>Tên Kho</b>")
         .withHeaderNames("frk_materialtype1_name","<b>Loại Vật Tư 1</b>")
         .withHeaderNames("frk_materialtype2_name","<b>Loại Vật Tư 2</b>")
-        .withHeaderNames("description", "Mô Tả");
+        .withHeaderNames("description", "<b>Mô Tả</b>");
 
         for(TextField filter : this.getFilterFields()){
             filter.addTextChangeListener(new TextChangeListener() {
