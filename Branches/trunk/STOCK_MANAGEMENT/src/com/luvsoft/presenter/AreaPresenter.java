@@ -1,6 +1,5 @@
 package com.luvsoft.presenter;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.luvsoft.DAO.AreaModel;
@@ -14,8 +13,6 @@ public class AreaPresenter extends AbstractEntityPresenter {
     public AreaPresenter(AreaView view) {
         this.view = view;
         model = new AreaModel();
-        criteriaMap = new HashMap<String, String>();
-        action = ACTION.UNKNOWN;
     }
     
     public void updateEntity(AbstractEntity entity) {

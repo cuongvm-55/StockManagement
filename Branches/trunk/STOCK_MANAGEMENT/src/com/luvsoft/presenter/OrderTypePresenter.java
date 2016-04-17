@@ -1,6 +1,5 @@
 package com.luvsoft.presenter;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.luvsoft.DAO.OrderTypeModel;
@@ -14,8 +13,6 @@ public class OrderTypePresenter extends AbstractEntityPresenter {
     public OrderTypePresenter(OrderTypeView view) {
         this.view = view;
         model = new OrderTypeModel();
-        criteriaMap = new HashMap<String, String>();
-        action = ACTION.UNKNOWN;
     }
     
     public void updateEntity(AbstractEntity entity) {

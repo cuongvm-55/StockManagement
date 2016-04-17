@@ -32,7 +32,7 @@ public class CustomerForm<T extends AbstractEntity> extends LuvsoftAbstractForm<
         code.setCaption("Mã KH");
         listComponents.add(code);
         listValidators.add(new LuvsoftFormBeanValidator<AbstractEntity>(Customer.class, "code"));
-        
+
         // name
         name = new TextField();
         name.setCaption("Tên KH");
@@ -104,7 +104,11 @@ public class CustomerForm<T extends AbstractEntity> extends LuvsoftAbstractForm<
     public MVerticalLayout buildFieldLayouts(){
         MVerticalLayout layout = new MVerticalLayout();
 
-        layout.addComponents(code, name, email, area);
+        layout.addComponents(code, name);
+
+        MHorizontalLayout hz = new MHorizontalLayout();
+        hz.addComponents(email, area);
+        layout.addComponent(hz);
 
         MHorizontalLayout hz1 = new MHorizontalLayout();
         hz1.addComponents(address, phoneNumber);

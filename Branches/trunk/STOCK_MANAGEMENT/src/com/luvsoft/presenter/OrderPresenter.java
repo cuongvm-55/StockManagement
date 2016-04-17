@@ -1,7 +1,6 @@
 package com.luvsoft.presenter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.vaadin.suggestfield.BeanSuggestionConverter;
@@ -25,7 +24,6 @@ import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
 
 public class OrderPresenter extends AbstractEntityPresenter implements OrderListener {
-
     ////////////////////////////////////////////////////////////////////////////////
     // Declare enums and String converter
     ////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +69,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     private List<Object> listMaterials = new ArrayList<Object>();
 
     public OrderPresenter() {
-        criteriaMap = new HashMap<String, String>();
+        model = new OrderModel();
     }
 
     public void saveOrder(Order order) {
@@ -145,9 +143,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      * @param Textfield orderCode
      */
     public void generateOrderCode(TextField orderCode) {
-        Order lastOrder = orderModel.findLastItem();
-        Integer lastItem = (lastOrder != null ) ? lastOrder.getId() : 0; 
-        orderCode.setValue("HD" + (lastItem + 1) + (int) (Math.random() * 50000 + 1));
+        orderCode.setValue(generateEntityCode(Order.getEntityname()));
     }
 
     public List<Object> doFilter(String foreignKey, String value, AbstractEntityModel model){

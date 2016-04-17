@@ -1,6 +1,5 @@
 package com.luvsoft.presenter;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.luvsoft.DAO.StockTypeModel;
@@ -14,8 +13,6 @@ public class StockTypePresenter extends AbstractEntityPresenter {
     public StockTypePresenter(StockTypeView view) {
         this.view = view;
         model = new StockTypeModel();
-        criteriaMap = new HashMap<String, String>();
-        action = ACTION.UNKNOWN;
     }
     
     public void updateEntity(AbstractEntity entity) {

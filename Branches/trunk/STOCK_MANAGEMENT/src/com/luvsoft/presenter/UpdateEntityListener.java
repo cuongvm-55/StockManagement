@@ -7,4 +7,5 @@ public interface UpdateEntityListener {
     public void updateEntity(AbstractEntity entity);
     public void deleteEntity(AbstractEntity entity);
     public void setAction(ACTION action);
+    public String generateEntityCode(String entityName);
 }

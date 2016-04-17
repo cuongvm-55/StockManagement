@@ -1,6 +1,5 @@
 package com.luvsoft.presenter;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.luvsoft.DAO.MaterialModel;
@@ -17,8 +16,6 @@ public class MaterialPresenter extends AbstractEntityPresenter {
     public MaterialPresenter(MaterialView view) {
         this.view = view;
         model = new MaterialModel();
-        criteriaMap = new HashMap<String, String>();
-        action = ACTION.UNKNOWN;
     }
 
     public void updateEntity(AbstractEntity entity) {
