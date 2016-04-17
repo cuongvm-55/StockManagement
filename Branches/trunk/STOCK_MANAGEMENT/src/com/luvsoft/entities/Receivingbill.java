@@ -1,18 +1,20 @@
 package com.luvsoft.entities;
 
-// Generated Apr 17, 2016 4:51:03 PM by Hibernate Tools 4.3.1
+// Generated Apr 17, 2016 5:39:08 PM by Hibernate Tools 4.3.1
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -30,13 +32,13 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
      */
     private static final long serialVersionUID = 996658298117657862L;
     private Integer id;
-    private Coupon coupon;
-    private Order order;
     private String code;
     private Integer idCustomer;
     private String content;
     private Date date;
     private String note;
+    private Integer idOrder;
+    private Integer idCoupon;
     private Set<Receivingbilldetail> receivingbilldetails = new HashSet<Receivingbilldetail>(0);
 
     public Receivingbill() {
@@ -48,15 +50,15 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
         this.date = date;
     }
 
-    public Receivingbill(Coupon coupon, Order order, String code, Integer idCustomer, String content, Date date, String note,
+    public Receivingbill(String code, Integer idCustomer, String content, Date date, String note, Integer idOrder, Integer idCoupon,
             Set<Receivingbilldetail> receivingbilldetails) {
-        this.coupon = coupon;
-        this.order = order;
         this.code = code;
         this.idCustomer = idCustomer;
         this.content = content;
         this.date = date;
         this.note = note;
+        this.idOrder = idOrder;
+        this.idCoupon = idCoupon;
         this.receivingbilldetails = receivingbilldetails;
     }
 
@@ -69,26 +71,6 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idCoupon")
-    public Coupon getCoupon() {
-        return this.coupon;
-    }
-
-    public void setCoupon(Coupon coupon) {
-        this.coupon = coupon;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idOrder")
-    public Order getOrder() {
-        return this.order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 
     @Column(name = "code", nullable = false, length = 45)
@@ -137,7 +119,25 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
         this.note = note;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "receivingbill")
+    @Column(name = "idOrder")
+    public Integer getIdOrder() {
+        return this.idOrder;
+    }
+
+    public void setIdOrder(Integer idOrder) {
+        this.idOrder = idOrder;
+    }
+
+    @Column(name = "idCoupon")
+    public Integer getIdCoupon() {
+        return this.idCoupon;
+    }
+
+    public void setIdCoupon(Integer idCoupon) {
+        this.idCoupon = idCoupon;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "receivingbill", cascade=CascadeType.ALL)
     public Set<Receivingbilldetail> getReceivingbilldetails() {
         return this.receivingbilldetails;
     }
@@ -148,8 +148,8 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
 
     @Override
     public String toString() {
-        return "Receivingbill [id=" + id + ", coupon=" + coupon + ", customer="
-                + idCustomer + ", order=" + order + ", code=" + code
+        return "Receivingbill [id=" + id + ", coupon=" + idCoupon + ", customer="
+                + idCustomer + ", order=" + idOrder + ", code=" + code
                 + ", content=" + content + ", date=" + date + ", note=" + note
                 + ", receivingbilldetails=" + receivingbilldetails + "]";
     }

@@ -97,7 +97,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             return;
         }
 
-        model.addNew(order);
+        model.addNewByPersist(order);
         // Update quantity in stock for material
         List<Orderdetail> orderdetails = new ArrayList<Orderdetail>(order.getOrderdetails());
         for (Orderdetail orderdetail : orderdetails) {
@@ -426,12 +426,13 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         bill.setNote("");
         bill.setIdCustomer(order.getIdCustomer());
         bill.setDate(order.getDate());
-        bill.setOrder(order);
+        bill.setIdOrder(order.getId());
 
         // Receiving bill detail
         Receivingbilldetail detail = new Receivingbilldetail();
         detail.setCategory("Thu Tiền");
         detail.setReason(order.getContent());
+        detail.setReceivingbill(bill);
 
         double totalAmount = 0.0f;
         for (Orderdetail orderdetail : order.getOrderdetails()) {
@@ -439,6 +440,9 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         }
         detail.setAmount(new BigDecimal(totalAmount));
 
+        Set<Receivingbilldetail> details = new HashSet<Receivingbilldetail>();
+        details.add(detail);
+        bill.setReceivingbilldetails(details);
         // Save receiving bill
         receivingbillModel.addNew(bill);
     }

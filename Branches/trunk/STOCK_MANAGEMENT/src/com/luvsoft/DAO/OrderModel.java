@@ -23,6 +23,12 @@ public class OrderModel extends AbstractEntityModel {
         }
     }
 
+    @Override
+    public boolean addNewByPersist(Order order) {
+        return entityManager.addNewByPersist(order);
+    }
+
+    @Override
     public boolean isOrderExisted(Order order) {
         if(entityManager.findEntityByProperty(getEntityname(), "orderCode", order.getOrderCode()).isEmpty()) {
             return false;

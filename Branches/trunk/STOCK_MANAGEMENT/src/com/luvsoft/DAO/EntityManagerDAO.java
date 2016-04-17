@@ -61,6 +61,33 @@ public class EntityManagerDAO {
     }
 
     /**
+     * Add new an entity by persist to know the id after commit
+     * @param object
+     * @return
+     */
+    public boolean addNewByPersist(Object object) {
+        try{
+            entitymanager.getTransaction( ).begin( );
+            try{
+                entitymanager.persist(object);
+            }catch(EntityExistsException eee){
+                System.out.println("Entity existed!");
+                return false;
+            }
+            catch(IllegalArgumentException eiae){
+                System.out.println("Illegal argument!");
+                return false;
+            }
+            entitymanager.flush();
+            entitymanager.getTransaction( ).commit( );
+            return true;
+        }catch(IllegalStateException e){
+            System.out.println("Illegal state!");
+            return false;
+        }
+    }
+
+    /**
      * Update entity
      *  - if entity exist, update it
      *  - if not, insert a new register

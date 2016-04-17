@@ -41,7 +41,6 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
     private Date date;
     private String note;
     private Set<Coupondetail> coupondetails = new HashSet<Coupondetail>(0);
-    private Set<Receivingbill> receivingbills = new HashSet<Receivingbill>(0);
     private Set<Spendingbill> spendingbills = new HashSet<Spendingbill>(0);
 
     public Coupon() {
@@ -55,7 +54,7 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
     }
 
     public Coupon(Coupontype coupontype, Customer customer, String code, String buyer, String content, Date date, String note,
-            Set<Coupondetail> coupondetails, Set<Receivingbill> receivingbills, Set<Spendingbill> spendingbills) {
+            Set<Coupondetail> coupondetails, Set<Spendingbill> spendingbills) {
         this.coupontype = coupontype;
         this.customer = customer;
         this.code = code;
@@ -64,7 +63,6 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
         this.date = date;
         this.note = note;
         this.coupondetails = coupondetails;
-        this.receivingbills = receivingbills;
         this.spendingbills = spendingbills;
     }
 
@@ -155,15 +153,6 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "coupon")
-    public Set<Receivingbill> getReceivingbills() {
-        return this.receivingbills;
-    }
-
-    public void setReceivingbills(Set<Receivingbill> receivingbills) {
-        this.receivingbills = receivingbills;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "coupon")
     public Set<Spendingbill> getSpendingbills() {
         return this.spendingbills;
     }
@@ -178,7 +167,7 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
                 + ", customer=" + customer + ", code=" + code + ", buyer="
                 + buyer + ", content=" + content + ", date=" + date + ", note="
                 + note + ", coupondetails=" + coupondetails
-                + ", receivingbills=" + receivingbills + ", spendingbills="
+                + ", spendingbills="
                 + spendingbills + "]";
     }
 

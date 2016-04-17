@@ -42,7 +42,6 @@ public class Order extends AbstractEntity implements java.io.Serializable {
     private String content;
     private Date date;
     private String note;
-    private Set<Receivingbill> receivingbills = new HashSet<Receivingbill>(0);
     private Set<Orderdetail> orderdetails = new HashSet<Orderdetail>(0);
 
     // Not mapped data
@@ -59,7 +58,7 @@ public class Order extends AbstractEntity implements java.io.Serializable {
     }
 
     public Order(Ordertype ordertype, String orderCode, Integer idCustomer, String buyer, String content, Date date, String note,
-            Set<Receivingbill> receivingbills, Set<Orderdetail> orderdetails) {
+             Set<Orderdetail> orderdetails) {
         this.ordertype = ordertype;
         this.orderCode = orderCode;
         this.idCustomer = idCustomer;
@@ -67,7 +66,6 @@ public class Order extends AbstractEntity implements java.io.Serializable {
         this.content = content;
         this.date = date;
         this.note = note;
-        this.receivingbills = receivingbills;
         this.orderdetails = orderdetails;
     }
 
@@ -147,15 +145,6 @@ public class Order extends AbstractEntity implements java.io.Serializable {
         this.note = note;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
-    public Set<Receivingbill> getReceivingbills() {
-        return this.receivingbills;
-    }
-
-    public void setReceivingbills(Set<Receivingbill> receivingbills) {
-        this.receivingbills = receivingbills;
-    }
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = {CascadeType.ALL})
     public Set<Orderdetail> getOrderdetails() {
         return this.orderdetails;
@@ -177,7 +166,7 @@ public class Order extends AbstractEntity implements java.io.Serializable {
     @Override
     public String toString() {
         return "Order [id=" + id + ", idCustomer=" + idCustomer + ", ordertype=" + ordertype + ", orderCode=" + orderCode + ", buyer=" + buyer
-                + ", content=" + content + ", date=" + date + ", note=" + note + ", receivingbills=" + receivingbills + ", orderdetails="
+                + ", content=" + content + ", date=" + date + ", note=" + note + ", orderdetails="
                 + orderdetails + "]";
     }
 

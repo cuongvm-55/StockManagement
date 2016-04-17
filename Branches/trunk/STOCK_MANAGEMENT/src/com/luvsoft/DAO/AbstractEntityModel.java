@@ -93,4 +93,8 @@ public abstract class AbstractEntityModel {
         // TODO Auto-generated method stub
         return false;
     }
+
+    public boolean addNewByPersist(Order order) {
+        return false;
+    }
 }
