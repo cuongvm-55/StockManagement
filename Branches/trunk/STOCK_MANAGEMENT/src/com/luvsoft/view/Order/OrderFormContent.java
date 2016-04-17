@@ -1,8 +1,10 @@
 package com.luvsoft.view.Order;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.vaadin.suggestfield.SuggestField;
 import org.vaadin.viritin.grid.MGrid;
@@ -14,6 +16,7 @@ import com.luvsoft.entities.Ordertype;
 import com.luvsoft.presenter.OrderPresenter;
 import com.luvsoft.presenter.OrderPresenter.CustomerConverter;
 import com.luvsoft.presenter.OrderPresenter.MaterialConverter;
+import com.luvsoft.utils.LuvsoftNumberFormat;
 import com.luvsoft.view.validator.LuvsoftOrderDetailValidator;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -161,8 +164,8 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         tableOrderDetails.setEditorCancelCaption("Hủy");
         tableOrderDetails.withProperties("frk_material_code", "frk_material_name", "frk_material_unit",
                                          "frk_material_stock", "quantityNeeded", "quantityDelivered",
-                                         "quantityLacked", "frk_material_quantity", "price", "saleOff",
-                                         "sellingPrice", "totalAmount", "importPrice");
+                                         "quantityLacked", "frk_material_quantity", "formattedPrice", "saleOff",
+                                         "formattedSellingPrice", "formattedTotalAmount", "formattedImportPrice");
                 
         tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_code").setHtml("<b>Mã Hàng</b>");
         tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_name").setHtml("<b>Tên Hàng</b>");
@@ -172,11 +175,11 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         tableOrderDetails.getDefaultHeaderRow().getCell("quantityDelivered").setHtml("<b>SL Xuất</b>");
         tableOrderDetails.getDefaultHeaderRow().getCell("quantityLacked").setHtml("<b>SL Thiếu</b>");
         tableOrderDetails.getDefaultHeaderRow().getCell("frk_material_quantity").setHtml("<b>Tồn Cuối</b>");
-        tableOrderDetails.getDefaultHeaderRow().getCell("price").setHtml("<b>Giá Chuẩn</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("formattedPrice").setHtml("<b>Giá Chuẩn</b>");
         tableOrderDetails.getDefaultHeaderRow().getCell("saleOff").setHtml("<b>Chiết Khấu</b>");
-        tableOrderDetails.getDefaultHeaderRow().getCell("sellingPrice").setHtml("<b>Giá Bán</b>");
-        tableOrderDetails.getDefaultHeaderRow().getCell("totalAmount").setHtml("<b>Thành Tiền</b>");
-        tableOrderDetails.getDefaultHeaderRow().getCell("importPrice").setHtml("<b>Giá Nhập</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("formattedSellingPrice").setHtml("<b>Giá Bán</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("formattedTotalAmount").setHtml("<b>Thành Tiền</b>");
+        tableOrderDetails.getDefaultHeaderRow().getCell("formattedImportPrice").setHtml("<b>Giá Nhập</b>");
         setColumnFiltering(true);
 
         orderDetails = new ArrayList<Orderdetail>();
@@ -186,13 +189,30 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         tableOrderDetails.getColumn("quantityLacked").setEditorField(new TextField());
         tableOrderDetails.getColumn("quantityDelivered").setEditorField(new TextField());
         tableOrderDetails.getColumn("quantityNeeded").setEditorField(new TextField());
-        tableOrderDetails.getColumn("price").setEditorField(new TextField());
-        tableOrderDetails.getColumn("sellingPrice").setEditorField(new TextField());
-        tableOrderDetails.getColumn("totalAmount").setEditorField(new TextField());
+        tableOrderDetails.getColumn("formattedPrice").setEditorField(new TextField());
+
+        TextField txtTableSellingPrice = new TextField();
+        tableOrderDetails.getColumn("formattedSellingPrice").setEditorField(txtTableSellingPrice);
+
+        tableOrderDetails.getColumn("formattedTotalAmount").setEditorField(new TextField());
+
         TextField txtTableSaleOff = new TextField();
-        txtTableSaleOff.setConverter(new StringToFloatConverter());
+        txtTableSaleOff.setConverter(new StringToFloatConverter(){
+            private static final long serialVersionUID = 3312602926285681764L;
+            @Override
+            protected NumberFormat getFormat(Locale locale) {
+                return LuvsoftNumberFormat.getPercentageFormat();
+            }
+        });
+
         tableOrderDetails.getColumn("saleOff").setEditorField(txtTableSaleOff);
-        tableOrderDetails.getColumn("saleOff").setConverter(new StringToFloatConverter());
+        tableOrderDetails.getColumn("saleOff").setConverter(new StringToFloatConverter(){
+            private static final long serialVersionUID = 3312602926285681764L;
+            @Override
+            protected NumberFormat getFormat(Locale locale) {
+                return LuvsoftNumberFormat.getPercentageFormat();
+            }
+        });
 
         tableOrderDetails.getColumn("quantityNeeded").getEditorField().addValueChangeListener(new ValueChangeListener() {
             private static final long serialVersionUID = 9041180115447481664L;
@@ -213,7 +233,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
             }
         });
 
-        tableOrderDetails.getColumn("price").getEditorField().addValueChangeListener(new ValueChangeListener() {
+        tableOrderDetails.getColumn("formattedPrice").getEditorField().addValueChangeListener(new ValueChangeListener() {
             private static final long serialVersionUID = 5675838268905015025L;
 
             @Override
@@ -224,6 +244,8 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         });
 
         tableOrderDetails.getColumn("saleOff").getEditorField().addValueChangeListener(new ValueChangeListener() {
+            private static final long serialVersionUID = 2922146168876632193L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
                 presenter.calculateSellingPriceWhenChangeSaleOff(event);

@@ -1,7 +1,6 @@
 package com.luvsoft.presenter;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,12 +24,9 @@ import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Orderdetail;
 import com.luvsoft.entities.Ordertype;
+import com.luvsoft.utils.LuvsoftNumberFormat;
 import com.luvsoft.view.Order.OrderFormContent;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
-import com.vaadin.shared.Position;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
 
@@ -123,6 +119,26 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
 
         if(!isExisted) {
             orderdetailList.add(orderdetail);
+            orderdetail.setQuantityDelivered(0);
+            orderdetail.setQuantityLacked(0);
+            orderdetail.setQuantityNeeded(0);
+
+//            view.getTableOrderDetails().addRow(
+//                    //orderdetail.getId(),
+//                    orderdetail.getFrk_material_code(),
+//                    orderdetail.getFrk_material_name(),
+//                    orderdetail.getFrk_material_unit(),
+//                    orderdetail.getFrk_material_stock(),
+//                    orderdetail.getQuantityNeeded(),
+//                    orderdetail.getQuantityDelivered(),
+//                    orderdetail.getQuantityLacked(),
+//                    orderdetail.getMaterial().getQuantity(),
+//                    LuvsoftNumberFormat.getNumberFormat().format(orderdetail.getPrice().doubleValue()),
+//                    LuvsoftNumberFormat.getPercentageFormat().format(orderdetail.getSaleOff()),
+//                    LuvsoftNumberFormat.getNumberFormat().format(orderdetail.getSellingPrice()),
+//                    LuvsoftNumberFormat.getNumberFormat().format(orderdetail.getTotalAmount()),
+//                    LuvsoftNumberFormat.getNumberFormat().format(orderdetail.getImportPrice())
+//                    );
             return true;
         }
         return false;
@@ -417,13 +433,14 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             orderDetail.setQuantityDelivered(0);
             orderDetail.setQuantityLacked(0);
             orderDetail.setFrk_material_quantity(material.getQuantity());
-            orderDetail.setSaleOff(0);
+            orderDetail.setSaleOff(0.0f);
             orderDetail.setPrice(material.getPrice());
+            orderDetail.setformattedPrice(orderDetail.getformattedPrice());
     
-            BigDecimal safeOffAmount = material.getPrice().multiply(new BigDecimal(orderDetail.getSaleOff()));
-            orderDetail.setSellingPrice(material.getPrice().subtract(safeOffAmount));
-            orderDetail.setTotalAmount(orderDetail.getSellingPrice().multiply(new BigDecimal(orderDetail.getQuantityDelivered())));
-            orderDetail.setImportPrice(orderDetail.getPrice());
+            double safeOffAmount = material.getPrice().doubleValue() * orderDetail.getSaleOff();
+            orderDetail.setSellingPrice(material.getPrice().doubleValue() - safeOffAmount);
+            orderDetail.setTotalAmount(orderDetail.getSellingPrice() * orderDetail.getQuantityDelivered());
+            orderDetail.setImportPrice(orderDetail.getPrice().doubleValue());
         }
         orderDetail.setOrder(view.getOrder());
     }
@@ -456,17 +473,17 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      */
     public void calculateTotalAmountWhenChangeQuantityDelivered(ValueChangeEvent event) {
         if(event.getProperty().getValue() != null) {
-            String sellingPriceStr = ((TextField) view.getTableOrderDetails().getColumn("sellingPrice").getEditorField()).getValue();
+            String sellingPriceStr = ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).getValue();
             if(sellingPriceStr == null) {
                 sellingPriceStr = "";
             }
-            BigDecimal sellingPrice = new BigDecimal(sellingPriceStr == "" ? "0" : sellingPriceStr);
+            double sellingPrice = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(sellingPriceStr);
 
             String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
             int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
 
-            BigDecimal totalAmount = sellingPrice.multiply(new BigDecimal(quantityDelivered));
-            ((TextField) view.getTableOrderDetails().getColumn("totalAmount").getEditorField()).setValue(totalAmount.toString());
+            double totalAmount = sellingPrice * quantityDelivered;
+            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(LuvsoftNumberFormat.getNumberFormat().format(totalAmount));
         }
     }
 
@@ -496,16 +513,16 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     public void calculateSellingPriceWhenChangePrice(ValueChangeEvent event) {
         if(event.getProperty().getValue() != null) {
             String priceStr = event.getProperty().getValue() + "";
-            BigDecimal price = new BigDecimal(priceStr == "" ? "0" : priceStr);
+            double price = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(priceStr);
 
             String saleOffStr = ((TextField) view.getTableOrderDetails().getColumn("saleOff").getEditorField()).getValue();
             if(saleOffStr == null) {
                 saleOffStr = "";
             }
-            float saleOff = Float.parseFloat(saleOffStr == "" ? "0" : saleOffStr);
+            float saleOff = LuvsoftNumberFormat.convertPercentageStringToFloat(saleOffStr == "" ? "0" : saleOffStr);
 
-            BigDecimal sellingPrice = price.subtract(price.multiply(new BigDecimal(saleOff))); // sellingPrice = price - price*saleOff
-            ((TextField) view.getTableOrderDetails().getColumn("sellingPrice").getEditorField()).setValue(sellingPrice.toString());
+            double sellingPrice = price - (price * saleOff) / 100.0f;
+            ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).setValue(LuvsoftNumberFormat.getNumberFormat().format(sellingPrice));
 
             // Re-caculate the total amount
             String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
@@ -514,8 +531,8 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             }
             int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
 
-            BigDecimal totalAmount = sellingPrice.multiply(new BigDecimal(quantityDelivered));
-            ((TextField) view.getTableOrderDetails().getColumn("totalAmount").getEditorField()).setValue(totalAmount.toString());
+            double totalAmount = sellingPrice * quantityDelivered;
+            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(LuvsoftNumberFormat.getNumberFormat().format(totalAmount));
         }
     }
 
@@ -526,16 +543,16 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     public void calculateSellingPriceWhenChangeSaleOff(ValueChangeEvent event) {
         if(event.getProperty().getValue() != null) {
             String saleOffStr = event.getProperty().getValue() + "";
-            float saleOff = Float.parseFloat(saleOffStr == "" ? "0" : saleOffStr);
+            float saleOff = LuvsoftNumberFormat.convertPercentageStringToFloat(saleOffStr == "" ? "0" : saleOffStr);
 
-            String priceStr = ((TextField) view.getTableOrderDetails().getColumn("price").getEditorField()).getValue();
+            String priceStr = ((TextField) view.getTableOrderDetails().getColumn("formattedPrice").getEditorField()).getValue();
             if(priceStr == null) {
                 priceStr = "";
             }
-            BigDecimal price = new BigDecimal(priceStr == "" ? "0" : priceStr);
+            double price = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(priceStr);
 
-            BigDecimal sellingPrice = price.subtract(price.multiply(new BigDecimal(saleOff))); // sellingPrice = price - price*saleOff
-            ((TextField) view.getTableOrderDetails().getColumn("sellingPrice").getEditorField()).setValue(sellingPrice.toString());
+            double sellingPrice = price - (price * saleOff) / 100.0f;
+            ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).setValue(LuvsoftNumberFormat.getNumberFormat().format(sellingPrice));
 
             // Re-caculate the total amount
             String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
@@ -544,8 +561,8 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             }
             int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
 
-            BigDecimal totalAmount = sellingPrice.multiply(new BigDecimal(quantityDelivered));
-            ((TextField) view.getTableOrderDetails().getColumn("totalAmount").getEditorField()).setValue(totalAmount.toString());
+            double totalAmount = sellingPrice * quantityDelivered;
+            ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(LuvsoftNumberFormat.getNumberFormat().format(totalAmount));
         }
     }
 

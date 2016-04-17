@@ -1,6 +1,8 @@
 package com.luvsoft.entities;
 
-// Generated Jan 26, 2016 10:06:12 PM by Hibernate Tools 4.3.1
+// Generated Apr 14, 2016 10:06:14 PM by Hibernate Tools 4.3.1
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 import java.math.BigDecimal;
 
@@ -8,15 +10,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
-
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import com.luvsoft.utils.LuvsoftNumberFormat;
 import com.luvsoft.view.component.anotations.DoNotGreaterThanQuantityInStock;
 
 /**
@@ -36,7 +36,7 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
     private int quantityNeeded;
     private int quantityDelivered;
     private BigDecimal price;
-    private Integer saleOff;
+    private Float saleOff;
 
     // Not-mapped members
     private transient String frk_material_code;
@@ -45,9 +45,14 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
     private transient String frk_material_stock;
     private transient int frk_material_quantity;
     private transient int quantityLacked;
-    private transient BigDecimal sellingPrice;
-    private transient BigDecimal totalAmount;
-    private transient BigDecimal importPrice;
+    private transient double sellingPrice;
+    private transient double totalAmount;
+    private transient double importPrice;
+
+    private transient String formattedPrice;
+    private transient String formattedSellingPrice;
+    private transient String formattedTotalAmount;
+    private transient String formattedImportPrice;
 
     public Orderdetail() {
     }
@@ -60,7 +65,7 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
         this.price = price;
     }
 
-    public Orderdetail(Material material, Order order, int quantityNeeded, int quantityDelivered, BigDecimal price, Integer saleOff) {
+    public Orderdetail(Material material, Order order, int quantityNeeded, int quantityDelivered, BigDecimal price, Float saleOff) {
         this.material = material;
         this.order = order;
         this.quantityNeeded = quantityNeeded;
@@ -126,14 +131,15 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+        this.formattedPrice = LuvsoftNumberFormat.getNumberFormat().format(price);
     }
 
-    @Column(name = "saleOff")
-    public Integer getSaleOff() {
+    @Column(name = "saleOff", precision = 12, scale = 0)
+    public Float getSaleOff() {
         return this.saleOff;
     }
 
-    public void setSaleOff(Integer saleOff) {
+    public void setSaleOff(Float saleOff) {
         this.saleOff = saleOff;
     }
 
@@ -192,30 +198,77 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
     }
 
     @Transient
-    public BigDecimal getSellingPrice() {
+    public double getSellingPrice() {
         return sellingPrice;
     }
 
-    public void setSellingPrice(BigDecimal sellingPrice) {
+    public void setSellingPrice(double sellingPrice) {
+        this.formattedSellingPrice = LuvsoftNumberFormat.getNumberFormat().format(sellingPrice);
         this.sellingPrice = sellingPrice;
     }
 
     @Transient
-    public BigDecimal getTotalAmount() {
+    public double getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(BigDecimal totalAmount) {
+    public void setTotalAmount(double totalAmount) {
+        this.formattedTotalAmount = LuvsoftNumberFormat.getNumberFormat().format(totalAmount);
         this.totalAmount = totalAmount;
     }
 
     @Transient
-    public BigDecimal getImportPrice() {
+    public double getImportPrice() {
         return importPrice;
     }
 
-    public void setImportPrice(BigDecimal importPrice) {
+    public void setImportPrice(double importPrice) {
+        this.formattedImportPrice = LuvsoftNumberFormat.getNumberFormat().format(importPrice);
         this.importPrice = importPrice;
+    }
+
+    @Transient
+    public String getformattedPrice() {
+        formattedPrice = LuvsoftNumberFormat.getNumberFormat().format(price.doubleValue());
+        return formattedPrice;
+    }
+
+    public void setformattedPrice(String formattedPrice) {
+        price = new BigDecimal(LuvsoftNumberFormat.getDoubleValueFromFormattedStr(formattedPrice));
+        this.formattedPrice = formattedPrice;
+    }
+
+    @Transient
+    public String getFormattedSellingPrice() {
+        formattedSellingPrice = LuvsoftNumberFormat.getNumberFormat().format(sellingPrice);
+        return formattedSellingPrice;
+    }
+
+    public void setFormattedSellingPrice(String formattedSellingPrice) {
+        sellingPrice = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(formattedSellingPrice);
+        this.formattedSellingPrice = formattedSellingPrice;
+    }
+
+    @Transient
+    public String getFormattedTotalAmount() {
+        formattedTotalAmount = LuvsoftNumberFormat.getNumberFormat().format(totalAmount);
+        return formattedTotalAmount;
+    }
+
+    public void setFormattedTotalAmount(String formattedTotalAmount) {
+        totalAmount = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(formattedTotalAmount);
+        this.formattedTotalAmount = formattedTotalAmount;
+    }
+
+    @Transient
+    public String getFormattedImportPrice() {
+        formattedImportPrice = LuvsoftNumberFormat.getNumberFormat().format(importPrice);
+        return formattedImportPrice;
+    }
+
+    public void setFormattedImportPrice(String formattedImportPrice) {
+        importPrice = LuvsoftNumberFormat.getDoubleValueFromFormattedStr(formattedImportPrice);
+        this.formattedImportPrice = formattedImportPrice;
     }
 
     @Override
