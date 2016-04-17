@@ -153,6 +153,8 @@ public abstract class AbstractEntityPresenter implements UpdateEntityListener{
             return "HD" + nextIdStr;
         case "Coupon":
             return "PH" + nextIdStr;
+        case "Receivingbill":
+            return "PT" + nextIdStr;
         }
         return "";
     }

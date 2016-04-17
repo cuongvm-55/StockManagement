@@ -20,7 +20,6 @@ import com.luvsoft.stockmanagement.StockManagementUI;
 import com.luvsoft.utils.Utilities;
 import com.luvsoft.view.component.LuvsoftConfirmationDialog;
 import com.luvsoft.view.validator.LuvsoftOrderDetailValidator;
-import com.vaadin.client.VLoadingIndicator;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitEvent;
@@ -487,6 +486,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                 @Override
                 public void buttonClick(ClickEvent event) {
                     presenter.saveOrder();
+                    dialog.close();
                 }
             });
             UI.getCurrent().addWindow(dialog);
@@ -499,7 +499,8 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
                 @Override
                 public void buttonClick(ClickEvent event) {
-                    presenter.saveOrder();
+                    presenter.paidOrder();
+                    dialog.close();
                 }
             });
             UI.getCurrent().addWindow(dialog);

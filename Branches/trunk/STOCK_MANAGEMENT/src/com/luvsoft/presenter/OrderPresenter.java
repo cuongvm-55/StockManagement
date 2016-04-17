@@ -19,6 +19,7 @@ import com.luvsoft.DAO.FilterObject;
 import com.luvsoft.DAO.MaterialModel;
 import com.luvsoft.DAO.OrderModel;
 import com.luvsoft.DAO.OrderTypeModel;
+import com.luvsoft.DAO.ReceivingbillModel;
 import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Customer;
 import com.luvsoft.entities.Material;
@@ -80,6 +81,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     private CustomerModel customerModel = new CustomerModel();
     private MaterialModel materialModel = new MaterialModel();
     private OrderTypeModel orderTypeModel = new OrderTypeModel();
+    private ReceivingbillModel receivingbillModel = new ReceivingbillModel();
 
     private List<Object> listCustomers = new ArrayList<Object>();
     private List<Object> listMaterials = new ArrayList<Object>();
@@ -419,14 +421,14 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
 
         // Create a receiving bill to paid money for this order
         Receivingbill bill = new Receivingbill();
-        // bill.setCode(code);
+        bill.setCode(generateEntityCode(Receivingbill.getEntityname()));
         bill.setContent(order.getContent());
         bill.setNote("");
         bill.setIdCustomer(order.getIdCustomer());
         bill.setDate(order.getDate());
         bill.setOrder(order);
 
-        // Receving bill detail
+        // Receiving bill detail
         Receivingbilldetail detail = new Receivingbilldetail();
         detail.setCategory("Thu Tiền");
         detail.setReason(order.getContent());
@@ -436,6 +438,9 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             totalAmount += orderdetail.getTotalAmount();
         }
         detail.setAmount(new BigDecimal(totalAmount));
+
+        // Save receiving bill
+        receivingbillModel.addNew(bill);
     }
 
     /**

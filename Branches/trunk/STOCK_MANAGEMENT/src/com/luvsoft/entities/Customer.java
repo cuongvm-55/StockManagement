@@ -48,7 +48,6 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
     private BigDecimal debt;
     private Set<Spendingbill> spendingbills = new HashSet<Spendingbill>(0);
     private Set<Coupon> coupons = new HashSet<Coupon>(0);
-    private Set<Receivingbill> receivingbills = new HashSet<Receivingbill>(0);
 
     // Not-mapped members
     private transient String frk_area_name;
@@ -75,7 +74,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
 
     public Customer(Area area, Customertype1 customertype1, Customertype2 customertype2, String code, String name, String address,
             String phoneNumber, String email, String bankName, String bankAccount, BigDecimal debt, Set<Spendingbill> spendingbills,
-            Set<Coupon> coupons, Set<Receivingbill> receivingbills) {
+            Set<Coupon> coupons) {
         this.area = area;
         this.customertype1 = customertype1;
         this.customertype2 = customertype2;
@@ -89,7 +88,6 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         this.debt = debt;
         this.spendingbills = spendingbills;
         this.coupons = coupons;
-        this.receivingbills = receivingbills;
     }
 
     public Customer(Integer id, Area area, Customertype1 customertype1,
@@ -97,7 +95,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
             String address, String phoneNumber, String email, String bankName,
             String bankAccount, BigDecimal debt,
             Set<Spendingbill> spendingbills, Set<Coupon> coupons,
-            Set<Receivingbill> receivingbills, String frk_area_name,
+            String frk_area_name,
             String frk_customertype1_name, String frk_customertype2_name) {
         super();
         this.id = id;
@@ -114,7 +112,6 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         this.debt = debt;
         this.spendingbills = spendingbills;
         this.coupons = coupons;
-        this.receivingbills = receivingbills;
         this.frk_area_name = frk_area_name;
         this.frk_customertype1_name = frk_customertype1_name;
         this.frk_customertype2_name = frk_customertype2_name;
@@ -266,15 +263,6 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         this.coupons = coupons;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
-    public Set<Receivingbill> getReceivingbills() {
-        return this.receivingbills;
-    }
-
-    public void setReceivingbills(Set<Receivingbill> receivingbills) {
-        this.receivingbills = receivingbills;
-    }
-
     @Transient
     public String getFrk_customertype1_name() {
         return frk_customertype1_name;
@@ -310,8 +298,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
                 + ", phoneNumber=" + phoneNumber + ", email=" + email
                 + ", bankName=" + bankName + ", bankAccount=" + bankAccount
                 + ", debt=" + debt + ", spendingbills="
-                + spendingbills + ", coupons=" + coupons + ", receivingbills="
-                + receivingbills + "]";
+                + spendingbills + ", coupons=" + coupons + "]";
     }
 
     public static String getEntityname() {
@@ -362,6 +349,6 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public Customer cloneObject() {
-        return new Customer(id, area, customertype1, customertype2, code, name, address, phoneNumber, email, bankName, bankAccount, debt, spendingbills, coupons, receivingbills, frk_area_name, frk_customertype1_name, frk_customertype2_name);
+        return new Customer(id, area, customertype1, customertype2, code, name, address, phoneNumber, email, bankName, bankAccount, debt, spendingbills, coupons, frk_area_name, frk_customertype1_name, frk_customertype2_name);
     }
 }
