@@ -1,7 +1,9 @@
 package com.luvsoft.presenter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,12 +26,18 @@ import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Orderdetail;
 import com.luvsoft.entities.Ordertype;
+import com.luvsoft.entities.Receivingbill;
+import com.luvsoft.entities.Receivingbilldetail;
 import com.luvsoft.printing.OrderPrintingView;
 import com.luvsoft.utils.Utilities;
 import com.luvsoft.view.Order.OrderFormContent;
+import com.luvsoft.view.component.LuvsoftConfirmationDialog;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 
 public class OrderPresenter extends AbstractEntityPresenter implements OrderListener, Serializable {
     private static final long serialVersionUID = -7212035637448304624L;
@@ -97,6 +105,30 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
                 materialModel.updateQuantityInStock(orderdetail.getFrk_material_quantity(), orderdetail.getMaterial());
             }
         }
+    }
+
+    public void deleteSelectedOrderdetails() {
+        Collection<Object> selectedRows = view.getTableOrderDetails().getSelectedRows();
+        LuvsoftConfirmationDialog dialog = new LuvsoftConfirmationDialog("Xác nhận xóa?");
+        dialog.addLuvsoftClickListener(new ClickListener() {
+            private static final long serialVersionUID = 351366856643651627L;
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+                for (Object object : selectedRows) {
+                    view.getOrderDetails().remove(object);
+                }
+                view.getTableOrderDetails().setRows(view.getOrderDetails());
+                dialog.close();
+            }
+        });
+
+        // We do not show confirmation dialog if there is no selected item
+        if(selectedRows.isEmpty()) {
+            return;
+        }
+
+        UI.getCurrent().addWindow(dialog);
     }
 
     /**
@@ -375,6 +407,42 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     }
 
     /**
+     * This function is used to paid an order
+     */
+    public void paidOrder() {
+        // Save order to database
+        Order order = getOrderFromComponents();
+        if(order == null) {
+            System.out.println("Exist saveOrder due to order is invalid");
+            return;
+        }
+
+        if(!orderModel.isOrderExisted(order)) {
+            saveOrderToDatabase(order);
+        }
+
+        // Create a receiving bill to paid money for this order
+        Receivingbill bill = new Receivingbill();
+        // bill.setCode(code);
+        bill.setContent(order.getContent());
+        bill.setNote("");
+        bill.setIdCustomer(order.getIdCustomer());
+        bill.setDate(order.getDate());
+        bill.setOrder(order);
+
+        // Receving bill detail
+        Receivingbilldetail detail = new Receivingbilldetail();
+        detail.setCategory("Thu Tiền");
+        detail.setReason(order.getContent());
+
+        double totalAmount = 0.0f;
+        for (Orderdetail orderdetail : order.getOrderdetails()) {
+            totalAmount += orderdetail.getTotalAmount();
+        }
+        detail.setAmount(new BigDecimal(totalAmount));
+    }
+
+    /**
      * This function is used to fill an order from components
      * @param order
      */
@@ -502,7 +570,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
 
             String quantityInStockStr = ((TextField) view.getTableOrderDetails().getColumn("frk_material_quantity").getEditorField()).getValue();
-            int quantityInStock = Integer.parseInt(quantityInStockStr == "" ? "0" : quantityInStockStr);
+            int quantityInStock = Integer.parseInt((quantityInStockStr == null || quantityInStockStr == "") ? "0" : quantityInStockStr);
             quantityInStock = quantityInStock - quantityDelivered;
             ((TextField) view.getTableOrderDetails().getColumn("frk_material_quantity").getEditorField()).setValue(quantityInStock+"");
         }
@@ -585,6 +653,19 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             double totalAmount = sellingPrice * quantityDelivered;
             ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
         }
+    }
+
+    /**
+     * This function is used to display the total amount for all order details
+     */
+    public void calculateTotalAmountByOrderdetails() {
+        double totalAmount = 0;
+        for (Orderdetail orderdetail : view.getOrderDetails()) {
+            totalAmount += orderdetail.getTotalAmount();
+        }
+
+        // Display it by a label
+        view.getTotalAmountOfOrderdetails().setValue(Utilities.getNumberFormat().format(totalAmount) + " VNĐ");
     }
 
     @Override

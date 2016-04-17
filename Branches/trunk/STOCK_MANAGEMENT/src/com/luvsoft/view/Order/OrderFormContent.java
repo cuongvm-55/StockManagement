@@ -18,7 +18,9 @@ import com.luvsoft.presenter.OrderPresenter.CustomerConverter;
 import com.luvsoft.presenter.OrderPresenter.MaterialConverter;
 import com.luvsoft.stockmanagement.StockManagementUI;
 import com.luvsoft.utils.Utilities;
+import com.luvsoft.view.component.LuvsoftConfirmationDialog;
 import com.luvsoft.view.validator.LuvsoftOrderDetailValidator;
+import com.vaadin.client.VLoadingIndicator;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitEvent;
@@ -34,11 +36,13 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid.HeaderRow;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -64,9 +68,12 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
     private HeaderRow filteringHeader;
 
     // Footer
+    private Label totalAmountOfOrderdetails;
     private Button printer;
     private Button save;
     private Button discard;
+    private Button deleteSelectedOrderdetails;
+    private Button paid;
 
     // Presenter
     private OrderPresenter presenter;
@@ -161,6 +168,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         filterFields = new ArrayList<SuggestField>();
 
         tableOrderDetails = new MGrid<Orderdetail>(Orderdetail.class);
+        tableOrderDetails.setSelectionMode(SelectionMode.MULTI);
         tableOrderDetails.setEditorEnabled(true);
         tableOrderDetails.setSizeFull();
         tableOrderDetails.setEditorSaveCaption("Lưu");
@@ -195,6 +203,16 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         tableOrderDetails.getColumn("formattedPrice").setEditorField(new TextField());
         tableOrderDetails.getColumn("formattedSellingPrice").setEditorField(new TextField());
         tableOrderDetails.getColumn("formattedTotalAmount").setEditorField(new TextField());
+
+        // Size for some columns
+        tableOrderDetails.getColumn("formattedSellingPrice").setWidth(100);
+
+        // Disable some columns
+        tableOrderDetails.getColumn("frk_material_code").setEditable(false);
+        tableOrderDetails.getColumn("frk_material_name").setEditable(false);
+        tableOrderDetails.getColumn("frk_material_unit").setEditable(false);
+        tableOrderDetails.getColumn("frk_material_stock").setEditable(false);
+        tableOrderDetails.getColumn("formattedImportPrice").setEditable(false);
 
         TextField txtTableSaleOff = new TextField();
         txtTableSaleOff.setConverter(new StringToFloatConverter() {
@@ -270,18 +288,18 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
             @Override
             public void postCommit(CommitEvent commitEvent) throws CommitException {
-                // TODO Auto-generated method stub
+                presenter.calculateTotalAmountByOrderdetails();
             }
         });
 
         // Footer
         // //////////////////////////////////////////////////////////
-        // | totalwrapper |//
+        // | totalwrapper                                         |//
         // //////////////////////////////////////////////////////////
-        // | footer |//
-        // | _______ _______ ____ |//
-        // | |printer| |discard| |save||//
-        // | ------- ------- ---- |//
+        // | footer                                               |//
+        // |  _______   _____                      ______    ____ |//
+        // | |printer| | paid |                   |discard| |save||//
+        // |  -------   ------                     -------   ---- |//
         // //////////////////////////////////////////////////////////
         HorizontalLayout footer = new HorizontalLayout();
         footer.setSpacing(true);
@@ -290,20 +308,32 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         printer = new Button("In", FontAwesome.PRINT);
         printer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 
+        paid = new Button("Thanh Toán", FontAwesome.DOLLAR);
+        paid.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+        paid.addClickListener(this);
+
         save = new Button("Lưu", FontAwesome.SAVE);
         save.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 
         discard = new Button("Hủy", FontAwesome.BAN);
-        footer.addComponents(printer, discard, save);
-        footer.setExpandRatio(printer, 1.0f);
+        footer.addComponents(printer, paid, discard, save);
+        footer.setExpandRatio(paid, 1.0f);
 
         HorizontalLayout totalwrapper = new HorizontalLayout();
         totalwrapper.setSizeFull();
         totalwrapper.setMargin(new MarginInfo(false, true, false, true));
-        Label total = new Label("15.000.000 vnd");
-        total.setCaption("Tổng tiền");
-        total.addStyleName("text-align-right");
-        totalwrapper.addComponent(total);
+
+        totalAmountOfOrderdetails = new Label("______ VNĐ");
+        totalAmountOfOrderdetails.setCaption("<b>Tổng tiền</b>");
+        totalAmountOfOrderdetails.setCaptionAsHtml(true);
+        totalAmountOfOrderdetails.addStyleName("text-align-right");
+
+        deleteSelectedOrderdetails = new Button("Xóa Vật Tư", FontAwesome.BAN);
+        deleteSelectedOrderdetails.addStyleName(ValoTheme.BUTTON_DANGER + " " + ValoTheme.BUTTON_TINY);
+        deleteSelectedOrderdetails.addClickListener(this);
+
+        totalwrapper.addComponent(deleteSelectedOrderdetails);
+        totalwrapper.addComponent(totalAmountOfOrderdetails);
 
         addComponents(centerPart, tableOrderDetails, totalwrapper, footer);
         setExpandRatio(centerPart, 0.3f);
@@ -450,7 +480,29 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
     @Override
     public void buttonClick(ClickEvent event) {
         if (event.getButton().equals(save)) {
-            presenter.saveOrder();
+            LuvsoftConfirmationDialog dialog = new LuvsoftConfirmationDialog("Xác nhận lưu hóa đơn?");
+            dialog.addLuvsoftClickListener(new ClickListener() {
+                private static final long serialVersionUID = 351366856643651627L;
+
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    presenter.saveOrder();
+                }
+            });
+            UI.getCurrent().addWindow(dialog);
+        } else if(event.getButton().equals(deleteSelectedOrderdetails)) {
+            presenter.deleteSelectedOrderdetails();
+        } else if(event.getButton().equals(paid)) {
+            LuvsoftConfirmationDialog dialog = new LuvsoftConfirmationDialog("Xác nhận thanh toán?");
+            dialog.addLuvsoftClickListener(new ClickListener() {
+                private static final long serialVersionUID = 351366856643651627L;
+
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    presenter.saveOrder();
+                }
+            });
+            UI.getCurrent().addWindow(dialog);
         }
     }
 
@@ -612,5 +664,21 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public Label getTotalAmountOfOrderdetails() {
+        return totalAmountOfOrderdetails;
+    }
+
+    public void setTotalAmountOfOrderdetails(Label totalAmountOfOrderdetails) {
+        this.totalAmountOfOrderdetails = totalAmountOfOrderdetails;
+    }
+
+    public Button getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Button paid) {
+        this.paid = paid;
     }
 }

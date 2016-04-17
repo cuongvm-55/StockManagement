@@ -1,18 +1,15 @@
 package com.luvsoft.entities;
 
-// Generated Jan 26, 2016 10:06:12 PM by Hibernate Tools 4.3.1
+// Generated Apr 17, 2016 4:51:03 PM by Hibernate Tools 4.3.1
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-
 import static javax.persistence.GenerationType.IDENTITY;
-
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -34,9 +31,9 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
     private static final long serialVersionUID = 996658298117657862L;
     private Integer id;
     private Coupon coupon;
-    private Customer customer;
     private Order order;
     private String code;
+    private Integer idCustomer;
     private String content;
     private Date date;
     private String note;
@@ -45,19 +42,18 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
     public Receivingbill() {
     }
 
-    public Receivingbill(Customer customer, String code, String content, Date date) {
-        this.customer = customer;
+    public Receivingbill(String code, String content, Date date) {
         this.code = code;
         this.content = content;
         this.date = date;
     }
 
-    public Receivingbill(Coupon coupon, Customer customer, Order order, String code, String content, Date date, String note,
+    public Receivingbill(Coupon coupon, Order order, String code, Integer idCustomer, String content, Date date, String note,
             Set<Receivingbilldetail> receivingbilldetails) {
         this.coupon = coupon;
-        this.customer = customer;
         this.order = order;
         this.code = code;
+        this.idCustomer = idCustomer;
         this.content = content;
         this.date = date;
         this.note = note;
@@ -86,16 +82,6 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idCustomer", nullable = false)
-    public Customer getCustomer() {
-        return this.customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idOrder")
     public Order getOrder() {
         return this.order;
@@ -112,6 +98,15 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    @Column(name = "idCustomer")
+    public Integer getIdCustomer() {
+        return this.idCustomer;
+    }
+
+    public void setIdCustomer(Integer idCustomer) {
+        this.idCustomer = idCustomer;
     }
 
     @Column(name = "content", nullable = false, length = 65535)
@@ -154,7 +149,7 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
     @Override
     public String toString() {
         return "Receivingbill [id=" + id + ", coupon=" + coupon + ", customer="
-                + customer + ", order=" + order + ", code=" + code
+                + idCustomer + ", order=" + order + ", code=" + code
                 + ", content=" + content + ", date=" + date + ", note=" + note
                 + ", receivingbilldetails=" + receivingbilldetails + "]";
     }
