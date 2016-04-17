@@ -95,10 +95,10 @@ public class OrderPrintingView extends VerticalLayout {
         tblOrderDetails.addContainerProperty("SL Xuất", Integer.class, null);
         //tblOrderDetails.addContainerProperty("SL Thiếu", Integer.class, null);
         //tblOrderDetails.addContainerProperty("Tồn Cuối", Integer.class, null);
-        tblOrderDetails.addContainerProperty("Giá Chuẩn", BigDecimal.class, null);
-        tblOrderDetails.addContainerProperty("Chiết Khấu", Integer.class, null);
-        tblOrderDetails.addContainerProperty("Giá Bán", BigDecimal.class, null);
-        tblOrderDetails.addContainerProperty("Thành Tiền", Double.class, null);
+        tblOrderDetails.addContainerProperty("Giá Chuẩn", String.class, null);
+        tblOrderDetails.addContainerProperty("Chiết Khấu", String.class, null);
+        tblOrderDetails.addContainerProperty("Giá Bán", String.class, null);
+        tblOrderDetails.addContainerProperty("Thành Tiền", String.class, null);
 
         //tblOrderDetails.setColumnCollapsingAllowed(true);
         tblOrderDetails.setPageLength(0);
@@ -117,7 +117,7 @@ public class OrderPrintingView extends VerticalLayout {
             Material mt = od.getMaterial();
             // sanity check
             if( mt == null ) continue;
-            amount = od.getPrice().doubleValue()*od.getQuantityDelivered();
+            amount = od.getSellingPrice()*od.getQuantityDelivered();
             totalAmount+= amount;
             tblOrderDetails.addItem(new Object[]{
                     new Integer(i),
@@ -125,10 +125,10 @@ public class OrderPrintingView extends VerticalLayout {
                     mt.getName(),
                     ( mt.getUnit() != null ) ? mt.getUnit().getName() : "",
                     od.getQuantityDelivered(),
-                    od.getMaterial().getPrice(),
-                    od.getSaleOff(),
-                    od.getPrice(),
-                    amount,
+                    Utilities.getNumberFormat().format(od.getPrice()),
+                    Utilities.getPercentageFormat().format(od.getSaleOff()),
+                    Utilities.getNumberFormat().format(od.getSellingPrice()),
+                    Utilities.getNumberFormat().format(amount),
                     }, itemId);
         }
 

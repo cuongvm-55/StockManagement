@@ -90,6 +90,13 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         }
 
         orderModel.addNew(order);
+        // Update quantity in stock for material
+        List<Orderdetail> orderdetails = new ArrayList<Orderdetail>(order.getOrderdetails());
+        for (Orderdetail orderdetail : orderdetails) {
+            if(orderdetail.getMaterial().getQuantity() != orderdetail.getFrk_material_quantity()) {
+                materialModel.updateQuantityInStock(orderdetail.getFrk_material_quantity(), orderdetail.getMaterial());
+            }
+        }
     }
 
     /**
@@ -347,8 +354,11 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      */
     public void saveOrder() {
         // Save it to database
-        Order order = null;
-        getOrderFromComponents(order);
+        Order order = getOrderFromComponents();
+        if(order == null) {
+            System.out.println("Exist saveOrder due to order is invalid");
+            return;
+        }
         saveOrderToDatabase(order);
     }
 
@@ -356,8 +366,11 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      * This function is used to print an order
      */
     public void printOrder() {
-        Order order = null;
-        getOrderFromComponents(order);
+        Order order = getOrderFromComponents();
+        if(order == null) {
+            System.out.println("Exist printOrder due to order is invalid");
+            return;
+        }
         OrderPrintingView.getInstance().setOrder(order);
     }
 
@@ -365,20 +378,20 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      * This function is used to fill an order from components
      * @param order
      */
-    public void getOrderFromComponents(Order order) {
-        order = view.getOrder();
+    public Order getOrderFromComponents() {
+        Order order = view.getOrder();
         Customer customer = view.getCustomer();
 
         if(order == null) {
             System.out.println("Has no order to save");
-            return;
+            return null;
         }
 
         // Set data for order
         order.setOrderCode(view.getOrderNumber().getValue());
         if(order.getOrderCode().trim().equals("")) {
             System.out.println("Order code is invalid");
-            return;
+            return null;
         }
 
         if(customer != null && !customer.getCode().equals("") && view.getCustomerCode().getValue() != null) {
@@ -391,17 +404,17 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         if(order.getOrdertype() == null || order.getOrdertype().getId() == -1) {
             // Ordertype cannot be null
             System.out.println("Ordertype is null");
-            return;
+            return null;
         }
 
         if(view.getOrderContent().getValue().trim().equals("")) {
             System.out.println("Content cannot be empty");
-            return;
+            return null;
         }
 
         if(view.getOrderDate().getValue() == null) {
             System.out.println("Date cannot be empty");
-            return;
+            return null;
         }
 
         order.setBuyer(view.getBuyer().getValue());
@@ -414,6 +427,8 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             Set<Orderdetail> setOrderdetails = new HashSet<Orderdetail>(view.getOrderDetails());
             order.setOrderdetails(setOrderdetails);
         }
+
+        return order;
     }
 
     /**
@@ -485,6 +500,11 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
 
             double totalAmount = sellingPrice * quantityDelivered;
             ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
+
+            String quantityInStockStr = ((TextField) view.getTableOrderDetails().getColumn("frk_material_quantity").getEditorField()).getValue();
+            int quantityInStock = Integer.parseInt(quantityInStockStr == "" ? "0" : quantityInStockStr);
+            quantityInStock = quantityInStock - quantityDelivered;
+            ((TextField) view.getTableOrderDetails().getColumn("frk_material_quantity").getEditorField()).setValue(quantityInStock+"");
         }
     }
 

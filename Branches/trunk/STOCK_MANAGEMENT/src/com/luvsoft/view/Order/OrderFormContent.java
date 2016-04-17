@@ -191,11 +191,9 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         tableOrderDetails.getColumn("quantityLacked").setEditorField(new TextField());
         tableOrderDetails.getColumn("quantityDelivered").setEditorField(new TextField());
         tableOrderDetails.getColumn("quantityNeeded").setEditorField(new TextField());
+        tableOrderDetails.getColumn("frk_material_quantity").setEditorField(new TextField());
         tableOrderDetails.getColumn("formattedPrice").setEditorField(new TextField());
-
-        TextField txtTableSellingPrice = new TextField();
-        tableOrderDetails.getColumn("formattedSellingPrice").setEditorField(txtTableSellingPrice);
-
+        tableOrderDetails.getColumn("formattedSellingPrice").setEditorField(new TextField());
         tableOrderDetails.getColumn("formattedTotalAmount").setEditorField(new TextField());
 
         TextField txtTableSaleOff = new TextField();
