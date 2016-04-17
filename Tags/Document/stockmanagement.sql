@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 06, 2016 at 05:47 PM
+-- Generation Time: Apr 14, 2016 at 06:55 PM
 -- Server version: 5.6.26-log
 -- PHP Version: 5.6.8
 
@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS `customer` (
   `debt` decimal(19,4) NOT NULL DEFAULT '0.0000' COMMENT 'Công nợ. Nếu công nợ là số dương thì khách hàng đang nợ mình, ngược lại mình nợ khách hàng',
   `idCustomerType1` int(11) DEFAULT NULL COMMENT 'FK: id nhóm khách hàng 1',
   `idCustomerType2` int(11) DEFAULT NULL COMMENT 'FK: id nhóm khách hàng 2'
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `customer`
@@ -234,20 +234,7 @@ INSERT INTO `customer` (`id`, `code`, `name`, `address`, `phoneNumber`, `idArea`
 (37, 'KH2', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329831', 1, 'datnq.55@gmail.com', 'TP Bank', '21232', '5000001.0000', 3, 2),
 (38, 'KH3', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329832', 1, 'datnq.55@gmail.com', 'TP Bank', '21233', '5000002.0000', 3, 1),
 (39, 'KH4', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329833', 1, 'datnq.55@gmail.com', 'TP Bank', '21234', '5000003.0000', NULL, NULL),
-(40, 'KH5', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329834', 1, 'datnq.55@gmail.com', 'TP Bank', '21235', '5000004.0000', NULL, NULL),
-(41, 'KH6', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329835', 1, 'datnq.55@gmail.com', 'TP Bank', '21236', '5000005.0000', NULL, NULL),
-(42, 'KH7', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329836', 1, 'datnq.55@gmail.com', 'TP Bank', '21237', '5000006.0000', NULL, NULL),
-(43, 'KH8', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329837', 1, 'datnq.55@gmail.com', 'TP Bank', '21238', '5000007.0000', NULL, NULL),
-(44, 'KH9', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329838', 1, 'datnq.55@gmail.com', 'TP Bank', '21239', '5000008.0000', NULL, NULL),
-(45, 'KH10', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329839', 1, 'datnq.55@gmail.com', 'TP Bank', '21240', '5000009.0000', NULL, NULL),
-(46, 'KH11', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329840', 1, 'datnq.55@gmail.com', 'TP Bank', '21241', '5000010.0000', NULL, NULL),
-(47, 'KH12', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329841', 1, 'datnq.55@gmail.com', 'TP Bank', '21242', '5000011.0000', NULL, NULL),
-(48, 'KH13', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329842', 1, 'datnq.55@gmail.com', 'TP Bank', '21243', '5000012.0000', NULL, NULL),
-(49, 'KH14', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329843', 1, 'datnq.55@gmail.com', 'TP Bank', '21244', '5000013.0000', NULL, NULL),
-(50, 'KH15', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329844', 1, 'datnq.55@gmail.com', 'TP Bank', '21245', '5000014.0000', NULL, NULL),
-(51, 'KH16', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329845', 1, 'datnq.55@gmail.com', 'TP Bank', '21246', '5000015.0000', NULL, NULL),
-(52, 'KH17', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329846', 1, 'datnq.55@gmail.com', 'TP Bank', '21247', '5000016.0000', NULL, NULL),
-(53, 'KH18', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329847', 1, 'datnq.55@gmail.com', 'TP Bank', '21248', '5000017.0000', 1, 2);
+(40, 'KH5', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329834', 1, 'datnq.55@gmail.com', 'TP Bank', '21235', '5000004.0000', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -306,15 +293,15 @@ CREATE TABLE IF NOT EXISTS `material` (
   `idUnit` int(11) DEFAULT NULL COMMENT 'Đơn vị tính',
   `quantity` int(11) NOT NULL DEFAULT '0' COMMENT 'Số lượng',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=202 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `material`
 --
 
 INSERT INTO `material` (`id`, `code`, `name`, `idMaterialType1`, `idMaterialType2`, `price`, `idStock`, `idUnit`, `quantity`, `description`) VALUES
-(50, 'VT1', 'Xích1', 1, 2, '100000.0000', 16, 1, 10, 'adasdasdas'),
-(51, 'VT2', 'Xích2', 1, 2, '100001.0000', 16, 1, 11, 'adasdasdas'),
+(50, 'VT1', 'Xích1', 1, 2, '100000.0000', 2, 1, 10, 'adasdasdas'),
+(51, 'VT2', 'Xích2', 1, 2, '100001.0000', 2, 1, 11, 'adasdasdas'),
 (52, 'VT3', 'Xích3', 1, 2, '100002.0000', 16, 1, 12, 'adasdasdas'),
 (53, 'VT4', 'Xích4', 1, 2, '100003.0000', 16, 1, 13, 'adasdasdas'),
 (54, 'VT5', 'Xích5', 1, 2, '100004.0000', 16, 1, 14, 'adasdasdas'),
@@ -332,6 +319,50 @@ INSERT INTO `material` (`id`, `code`, `name`, `idMaterialType1`, `idMaterialType
 (66, 'VT17', 'Xích17', 1, 2, '100016.0000', 16, 1, 26, 'adasdasdas'),
 (67, 'VT18', 'Xích18', 1, 2, '100017.0000', 16, 1, 27, 'adasdasdas'),
 (68, 'VT19', 'Xích19', 1, 2, '100018.0000', 16, 1, 28, 'adasdasdas');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `materialinputhistory`
+--
+
+CREATE TABLE IF NOT EXISTS `materialinputhistory` (
+  `id` int(11) NOT NULL,
+  `idMaterial` int(11) NOT NULL COMMENT 'Id vật tư',
+  `quantity` int(11) NOT NULL COMMENT 'Số lượng vt nhập',
+  `inputPrice` decimal(19,0) NOT NULL COMMENT 'Giá nhập gần nhất',
+  `date` date NOT NULL COMMENT 'Ngày history được ghi'
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `materialinputhistory`
+--
+
+INSERT INTO `materialinputhistory` (`id`, `idMaterial`, `quantity`, `inputPrice`, `date`) VALUES
+(1, 50, 10, '50000', '2016-04-14'),
+(2, 51, 12, '40000', '2016-04-15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `materialoutputhistory`
+--
+
+CREATE TABLE IF NOT EXISTS `materialoutputhistory` (
+  `id` int(11) NOT NULL,
+  `idMaterial` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `outputPrice` decimal(19,0) NOT NULL,
+  `date` date NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `materialoutputhistory`
+--
+
+INSERT INTO `materialoutputhistory` (`id`, `idMaterial`, `quantity`, `outputPrice`, `date`) VALUES
+(1, 50, 5, '60000', '2016-04-14'),
+(2, 51, 3, '55000', '2016-04-15');
 
 -- --------------------------------------------------------
 
@@ -437,7 +468,7 @@ CREATE TABLE IF NOT EXISTS `ordertype` (
 
 INSERT INTO `ordertype` (`id`, `name`, `description`) VALUES
 (1, 'Xuất bán', 'adadad fgfg'),
-(2, 'Xuất bán nội bộ', '');
+(2, 'Xuất bán nội bộ', 'sadsa');
 
 -- --------------------------------------------------------
 
@@ -519,8 +550,8 @@ CREATE TABLE IF NOT EXISTS `stock` (
 --
 
 INSERT INTO `stock` (`id`, `code`, `name`, `idStockType`, `description`) VALUES
-(2, 'Kho 1', 'Kho Cầu Giấy dsad', 109, 'sdfsfskdjfksd'),
-(16, 'KHO1', 'Kho Mĩ Đình', 109, 'ádadasd');
+(2, 'Kho 1', 'Kho Cầu Giấy', 109, 'sdfsfskdjfksd'),
+(16, 'KHO1', 'Kho Mĩ Đình', 108, 'ádadasd');
 
 -- --------------------------------------------------------
 
@@ -532,16 +563,15 @@ CREATE TABLE IF NOT EXISTS `stocktype` (
   `id` int(11) NOT NULL COMMENT 'id của kho',
   `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL COMMENT 'tên loại kho',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `stocktype`
 --
 
 INSERT INTO `stocktype` (`id`, `name`, `description`) VALUES
-(108, 'kkjkj', 'Kho chứa hàng tồn'),
-(109, 'Kho hàng bán', 'Chứa hàng hóa bán'),
-(110, 'fgdfg', 'dfgdfgd');
+(108, 'Kho hàng tồn', 'Kho chứa hàng tồn'),
+(109, 'Kho hàng bán', 'Chứa hàng hóa bán');
 
 -- --------------------------------------------------------
 
@@ -614,6 +644,18 @@ ALTER TABLE `customertype2`
 --
 ALTER TABLE `material`
   ADD PRIMARY KEY (`id`), ADD KEY `fk_Material_MaterialType1_idx` (`idMaterialType1`), ADD KEY `fk_Material_MaterialType21_idx` (`idMaterialType2`), ADD KEY `fk_Material_Stock1_idx` (`idStock`), ADD KEY `fk_unit_id` (`idUnit`);
+
+--
+-- Indexes for table `materialinputhistory`
+--
+ALTER TABLE `materialinputhistory`
+  ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`), ADD KEY `id_2` (`id`), ADD KEY `fk_material_id` (`idMaterial`);
+
+--
+-- Indexes for table `materialoutputhistory`
+--
+ALTER TABLE `materialoutputhistory`
+  ADD PRIMARY KEY (`id`), ADD KEY `fk_material_id2` (`idMaterial`);
 
 --
 -- Indexes for table `materialtype1`
@@ -721,7 +763,7 @@ ALTER TABLE `coupontype`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của khách hàng',AUTO_INCREMENT=54;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của khách hàng',AUTO_INCREMENT=41;
 --
 -- AUTO_INCREMENT for table `customertype1`
 --
@@ -736,7 +778,17 @@ ALTER TABLE `customertype2`
 -- AUTO_INCREMENT for table `material`
 --
 ALTER TABLE `material`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id của vật tư',AUTO_INCREMENT=69;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id của vật tư',AUTO_INCREMENT=202;
+--
+-- AUTO_INCREMENT for table `materialinputhistory`
+--
+ALTER TABLE `materialinputhistory`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT for table `materialoutputhistory`
+--
+ALTER TABLE `materialoutputhistory`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `materialtype1`
 --
@@ -796,7 +848,7 @@ ALTER TABLE `stock`
 -- AUTO_INCREMENT for table `stocktype`
 --
 ALTER TABLE `stocktype`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của kho',AUTO_INCREMENT=111;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id của kho',AUTO_INCREMENT=110;
 --
 -- AUTO_INCREMENT for table `unit`
 --
@@ -836,6 +888,18 @@ ADD CONSTRAINT `fk_Material_MaterialType1` FOREIGN KEY (`idMaterialType1`) REFER
 ADD CONSTRAINT `fk_Material_MaterialType21` FOREIGN KEY (`idMaterialType2`) REFERENCES `materialtype2` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
 ADD CONSTRAINT `fk_Material_Stock1` FOREIGN KEY (`idStock`) REFERENCES `stock` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
 ADD CONSTRAINT `fk_unit_id` FOREIGN KEY (`idUnit`) REFERENCES `unit` (`id`);
+
+--
+-- Constraints for table `materialinputhistory`
+--
+ALTER TABLE `materialinputhistory`
+ADD CONSTRAINT `fk_material_id` FOREIGN KEY (`idMaterial`) REFERENCES `material` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `materialoutputhistory`
+--
+ALTER TABLE `materialoutputhistory`
+ADD CONSTRAINT `fk_material_id2` FOREIGN KEY (`idMaterial`) REFERENCES `material` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `order`
