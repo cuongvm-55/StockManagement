@@ -33,7 +33,12 @@ public class LuvsoftTableBeanValidator<T extends AbstractEntity> extends BeanVal
 
     @Override
     public void validate(Object value) throws InvalidValueException {
-        super.validate(value);
+        try{
+            super.validate(value);
+        }catch(InvalidValueException e){
+            isCalledByPreCommit = false;
+            throw e;
+        }
 
         Method[] methods = beanClass.getMethods();
         for(Method m : methods) {

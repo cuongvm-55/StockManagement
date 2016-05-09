@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -40,22 +40,14 @@ public class EntityManagerDAO {
      */
     //public <T extends AbstractEntity> void addNew(T object){
     public boolean addNew(Object object){
+        EntityTransaction et = entitymanager.getTransaction( );
         try{
-            entitymanager.getTransaction( ).begin( );
-            try{
-                entitymanager.merge( object );
-            }catch(EntityExistsException eee){
-                System.out.println("Entity existed!");
-                return false;
-            }
-            catch(IllegalArgumentException eiae){
-                System.out.println("Illegal argument!");
-                return false;
-            }
-            entitymanager.getTransaction( ).commit( );
+            et.begin( );
+            entitymanager.merge( object );
+            et.commit( );
             return true;
-        }catch(IllegalStateException e){
-            System.out.println("Illegal state!");
+        }catch(Exception e){
+            et.rollback();
             return false;
         }
     }
@@ -95,9 +87,14 @@ public class EntityManagerDAO {
      * @param object: object contains information
      */
     public <T extends AbstractEntity> void update(T entity){
-        entitymanager.getTransaction( ).begin( );
-        entitymanager.merge(entity);
-        entitymanager.getTransaction( ).commit( );
+        EntityTransaction et = entitymanager.getTransaction( );
+        try{
+            et.begin( );
+            entitymanager.merge(entity);
+            et.commit( );
+        }catch(Exception e){
+            et.rollback();
+        }
     }
 
     /**
@@ -106,10 +103,15 @@ public class EntityManagerDAO {
      * @param object
      */
     public <T extends AbstractEntity> void remove(String entityName, int id){
-        entitymanager.getTransaction( ).begin( );
-        T entity = findById(entityName, id);
-        entitymanager.remove(entity);
-        entitymanager.getTransaction( ).commit( );
+        EntityTransaction et = entitymanager.getTransaction( );
+        try{
+            et.begin( );
+            T entity = findById(entityName, id);
+            entitymanager.remove(entity);
+            et.commit( );
+        }catch(Exception e){
+            et.rollback();
+        }
     }
 
     /**
@@ -143,17 +145,24 @@ public class EntityManagerDAO {
     @SuppressWarnings("unchecked")
     public <T extends AbstractEntity> T findById(String entityName, int id){
         Query query = entitymanager.createQuery("SELECT e FROM " + entityName + " e WHERE id="+id);
-        return (T)query.getResultList().get(0);
+        System.out.println("find by Id: " + id);
+        return ( query.getResultList()!= null
+                 && !query.getResultList().isEmpty()) ? (T)query.getResultList().get(0) : null;
     }
 
     /**
      * Remove all entities
      */
     public void removeAll(String entityName){
-        entitymanager.getTransaction( ).begin( );
-        Query query = entitymanager.createQuery("DELETE FROM "+ entityName);
-        query.executeUpdate();
-        entitymanager.getTransaction( ).commit( );
+        EntityTransaction et = entitymanager.getTransaction( );
+        try{
+            et.begin( );
+            Query query = entitymanager.createQuery("DELETE FROM "+ entityName);
+            query.executeUpdate();
+            et.commit( );
+        }catch(Exception e){
+            et.rollback();
+        }
     }
 
     /**
@@ -269,14 +278,14 @@ public class EntityManagerDAO {
     }
 
     public void refreshEntity(Object entity, Class<?> classtype, int id) {
-        try {
-            entitymanager.getTransaction( ).begin( );
+        EntityTransaction et = entitymanager.getTransaction( );
+        try{
+            et.begin( );
             entity = entitymanager.find(classtype, id);
             entitymanager.refresh(entity);
-            entitymanager.getTransaction( ).commit();
-        }
-        catch (EntityNotFoundException e) {
-            e.printStackTrace();
+            et.commit( );
+        }catch(Exception e){
+            et.rollback();
         }
     }
 }

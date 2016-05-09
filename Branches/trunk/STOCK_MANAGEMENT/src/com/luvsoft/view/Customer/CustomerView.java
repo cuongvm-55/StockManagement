@@ -194,6 +194,7 @@ public class CustomerView extends GenericTabCategory<Customer> {
                     Customer cs = (Customer)object;
                     presenter.deleteEntity(cs);
                 }
+                content.deselectAll();
                 dialog.close();
             }
         });

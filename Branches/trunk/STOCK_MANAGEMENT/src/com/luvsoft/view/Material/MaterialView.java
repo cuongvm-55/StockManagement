@@ -204,6 +204,7 @@ public class MaterialView extends GenericTabCategory<Material> {
                     Material cs = (Material)object;
                     presenter.deleteEntity(cs);
                 }
+                content.deselectAll();
                 dialog.close();
             }
         });

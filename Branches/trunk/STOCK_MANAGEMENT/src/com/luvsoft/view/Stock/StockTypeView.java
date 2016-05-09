@@ -124,6 +124,7 @@ public class StockTypeView extends GenericTabCategory<Stocktype> {
                 for (Object object : selectedRows) {
                     presenter.deleteEntity((Stocktype) object);
                 }
+                content.deselectAll();
                 dialog.close();
             }
         });

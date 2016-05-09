@@ -124,6 +124,7 @@ public class CustomerType2View extends GenericTabCategory<Customertype2> {
                 for (Object object : selectedRows) {
                     presenter.deleteEntity((Customertype2) object);
                 }
+                content.deselectAll();
                 dialog.close();
             }
         });
