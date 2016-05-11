@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 17, 2016 at 07:37 PM
+-- Generation Time: May 11, 2016 at 05:26 PM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -164,7 +164,18 @@ CREATE TABLE IF NOT EXISTS `coupon` (
   `content` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Diễn giải: Mặc định là lấy tên của loại phiếu',
   `date` datetime NOT NULL COMMENT 'Ngày giờ tạo',
   `note` text COLLATE utf8_unicode_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `coupon`
+--
+
+INSERT INTO `coupon` (`id`, `code`, `idCouponType`, `idCustomer`, `buyer`, `content`, `date`, `note`) VALUES
+(1, 'PH127451', 1, 33, '', 'Nh?p Mua Hàng', '2016-04-18 14:00:00', ''),
+(2, 'PH236997', 1, 33, '', 'Nh?p Mua Hàng', '2016-04-18 14:07:13', ''),
+(3, 'PH324945', 1, 33, '', 'Nh?p Mua Hàng', '2016-04-18 14:15:52', ''),
+(4, 'PH435358', 1, 33, '', 'Nh?p Mua Hàng', '2016-04-18 15:54:33', ''),
+(5, 'PH526493', 1, 33, '', 'Nh?p Mua Hàng', '2016-04-18 17:18:21', '');
 
 -- --------------------------------------------------------
 
@@ -178,8 +189,17 @@ CREATE TABLE IF NOT EXISTS `coupondetail` (
   `idCoupon` int(11) NOT NULL COMMENT 'FK: id của phiếu',
   `quantity` int(11) NOT NULL,
   `price` decimal(19,4) NOT NULL COMMENT 'Giá chuẩn: mặc định lấy từ vật tư, có thể sửa được',
-  `saleOff` int(11) DEFAULT '0' COMMENT 'Chiết khấu, đơn vị phần trăm'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `saleOff` float DEFAULT '0' COMMENT 'Chiết khấu, đơn vị phần trăm'
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `coupondetail`
+--
+
+INSERT INTO `coupondetail` (`id`, `idMaterial`, `idCoupon`, `quantity`, `price`, `saleOff`) VALUES
+(1, 50, 3, 2, '100000.0000', 0),
+(2, 50, 4, 3, '100000.0000', 0),
+(3, 50, 5, 2, '100000.0000', 0.02);
 
 -- --------------------------------------------------------
 
@@ -191,15 +211,16 @@ CREATE TABLE IF NOT EXISTS `coupontype` (
   `id` int(11) NOT NULL,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL COMMENT 'tên loại phiếu: Nhập mua, nhập hàng trả lại, xuất trả nhà cung cấp',
   `description` text COLLATE utf8_unicode_ci
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `coupontype`
 --
 
 INSERT INTO `coupontype` (`id`, `name`, `description`) VALUES
-(1, 'Loại phiếu 1', 'sadadasd'),
-(2, 'Loại phiếu 2', 'ádadadadasd');
+(1, 'PH_NHAPMUA', 'Phiếu Mua'),
+(2, 'PH_NHAPHANGTRALAI', 'Phiếu Nhập Hàng Trả Lại'),
+(3, 'PH_XUATTRANHACUNGCAP', 'Phiếu Xuất Trả Nhà Cung Cấp');
 
 -- --------------------------------------------------------
 
@@ -294,7 +315,7 @@ CREATE TABLE IF NOT EXISTS `material` (
 --
 
 INSERT INTO `material` (`id`, `code`, `name`, `idMaterialType1`, `idMaterialType2`, `price`, `idStock`, `idUnit`, `quantity`, `description`) VALUES
-(50, 'VT1', 'Xích1', 1, 2, '100000.0000', 2, 1, 0, 'adasdasdas'),
+(50, 'VT1', 'Xích1', 1, 2, '100000.0000', 2, 1, 6, 'adasdasdas'),
 (51, 'VT2', 'Xích2', 1, 2, '100001.0000', 2, 1, 11, 'adasdasdas'),
 (52, 'VT3', 'Xích3', 1, 2, '100002.0000', 16, 1, 12, 'adasdasdas'),
 (53, 'VT4', 'Xích4', 1, 2, '100003.0000', 16, 1, 13, 'adasdasdas'),
@@ -304,7 +325,7 @@ INSERT INTO `material` (`id`, `code`, `name`, `idMaterialType1`, `idMaterialType
 (57, 'VT8', 'Xích8', 1, 2, '100007.0000', 16, 1, 17, 'adasdasdas'),
 (58, 'VT9', 'Xích9', 1, 2, '100008.0000', 16, 1, 18, 'adasdasdas'),
 (59, 'VT10', 'Xích10', 1, 2, '100009.0000', 16, 1, 8, 'adasdasdas'),
-(60, 'VT11', 'Xích11', 1, 2, '100010.0000', 16, 1, 12, 'adasdasdas'),
+(60, 'VT11', 'Xích11', 1, 2, '100010.0000', 16, 1, 14, 'adasdasdas'),
 (61, 'VT12', 'Xích12', 1, 2, '100011.0000', 16, 1, 15, 'adasdasdas'),
 (62, 'VT13', 'Xích13', 1, 2, '100012.0000', 16, 1, 22, 'adasdasdas'),
 (63, 'VT14', 'Xích14', 1, 2, '100013.0000', 16, 1, 18, 'adasdasdas'),
@@ -326,7 +347,15 @@ CREATE TABLE IF NOT EXISTS `materialinputhistory` (
   `quantity` int(11) NOT NULL COMMENT 'Số lượng vt nhập',
   `inputPrice` decimal(19,0) NOT NULL COMMENT 'Giá nhập gần nhất',
   `date` date NOT NULL COMMENT 'Ngày history được ghi'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `materialinputhistory`
+--
+
+INSERT INTO `materialinputhistory` (`id`, `idMaterial`, `quantity`, `inputPrice`, `date`) VALUES
+(1, 60, 2, '100010', '2016-04-18'),
+(2, 50, 17, '98000', '2016-04-18');
 
 -- --------------------------------------------------------
 
@@ -340,7 +369,7 @@ CREATE TABLE IF NOT EXISTS `materialoutputhistory` (
   `quantity` int(11) NOT NULL,
   `outputPrice` decimal(19,0) NOT NULL,
   `date` date NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `materialoutputhistory`
@@ -351,7 +380,8 @@ INSERT INTO `materialoutputhistory` (`id`, `idMaterial`, `quantity`, `outputPric
 (6, 59, 2, '98009', '2016-04-17'),
 (7, 65, 2, '100015', '2016-04-17'),
 (8, 63, 5, '100013', '2016-04-17'),
-(9, 60, 3, '95010', '2016-04-17');
+(9, 60, 3, '95010', '2016-04-17'),
+(10, 50, 11, '100000', '2016-04-18');
 
 -- --------------------------------------------------------
 
@@ -404,7 +434,7 @@ CREATE TABLE IF NOT EXISTS `money` (
   `amount` decimal(19,4) NOT NULL COMMENT 'Tổng tiền thực hiện giao dịch',
   `date` datetime NOT NULL COMMENT 'Ngày giờ thực hiện giao dịch',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả giao dịch, lấy từ content (diễn giải) của Order và các loại phiếu'
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `money`
@@ -413,7 +443,16 @@ CREATE TABLE IF NOT EXISTS `money` (
 INSERT INTO `money` (`id`, `amount`, `date`, `description`) VALUES
 (1, '493065.1600', '2016-04-17 23:06:34', 'Mã phi?u thu PT116706 lý do Xu?t Bán Hàng Cho Khách'),
 (2, '1193160.1600', '2016-04-17 23:09:32', 'Mã phi?u thu PT938713 lý do Xu?t Bán Hàng Cho Khách'),
-(3, '1478188.6600', '2016-04-17 23:26:47', 'Mã phi?u thu PT1036311 lý do Xu?t Bán Hàng Cho Khách');
+(3, '1478188.6600', '2016-04-17 23:26:47', 'Mã phi?u thu PT1036311 lý do Xu?t Bán Hàng Cho Khách'),
+(4, '1278168.6600', '2016-04-18 14:00:31', 'Mã phi?u mua hàng  lý do Nh?p Mua Hàng'),
+(5, '308168.6600', '2016-04-18 14:08:37', 'Mã phi?u mua hàng PC232960 lý do Nh?p Mua Hàng'),
+(6, '5308168.6600', '2016-04-18 14:15:36', 'Mã phi?u thu PT1141997 lý do Xu?t Bán Hàng Cho Khách'),
+(7, '5108168.6600', '2016-04-18 14:16:29', 'Mã phi?u mua hàng PC341488 lý do Nh?p Mua Hàng'),
+(8, '5298168.6600', '2016-04-18 15:47:40', 'Mã phi?u thu PT1239305 lý do Xu?t Bán Hàng Cho Khách'),
+(9, '5498168.6600', '2016-04-18 15:54:58', 'Mã phi?u thu PT1338294 lý do Xu?t Bán Hàng Cho Khách'),
+(10, '5198168.6600', '2016-04-18 15:55:26', 'Mã phi?u mua hàng PC41781 lý do Nh?p Mua Hàng'),
+(11, '5398168.6600', '2016-04-18 17:16:28', 'Mã phi?u thu PT146295 lý do Xu?t Bán Hàng Cho Khách'),
+(12, '5202168.6600', '2016-04-18 17:18:39', 'Mã phi?u mua hàng PC548741 lý do Nh?p Mua Hàng');
 
 -- --------------------------------------------------------
 
@@ -430,7 +469,7 @@ CREATE TABLE IF NOT EXISTS `order` (
   `content` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Diễn giải: Mặc định là: Xuất bán hàng cho khách nhưng có thể sửa được',
   `date` datetime NOT NULL COMMENT 'Ngày - giờ tạo hóa đơn',
   `note` text COLLATE utf8_unicode_ci COMMENT 'Ghi chú trên hóa đơn, nếu thay đổi địa chỉ nhận hàng thì ghi vào ghi chú'
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `order`
@@ -439,7 +478,11 @@ CREATE TABLE IF NOT EXISTS `order` (
 INSERT INTO `order` (`id`, `orderCode`, `idOrderType`, `idCustomer`, `buyer`, `content`, `date`, `note`) VALUES
 (15, 'HD137790', 1, 33, '', 'Xu?t Bán Hàng Cho Khách', '2016-04-17 23:05:42', ''),
 (16, 'HD1636559', 1, 34, '', 'Xu?t Bán Hàng Cho Khách', '2016-04-17 23:08:57', ''),
-(17, 'HD1711775', 1, 33, '', 'Xu?t Bán Hàng Cho Khách', '2016-04-17 23:26:13', '');
+(17, 'HD1711775', 1, 33, '', 'Xu?t Bán Hàng Cho Khách', '2016-04-17 23:26:13', ''),
+(18, 'HD184722', 1, 34, '', 'Xu?t Bán Hàng Cho Khách', '2016-04-18 14:13:45', ''),
+(19, 'HD1938016', 1, 33, '', 'Xu?t Bán Hàng Cho Khách', '2016-04-18 15:46:51', ''),
+(20, 'HD2030872', 1, 33, '', 'Xu?t Bán Hàng Cho Khách', '2016-04-18 15:54:33', ''),
+(21, 'HD2144413', 1, 33, '', 'Xu?t Bán Hàng Cho Khách', '2016-04-18 17:15:52', '');
 
 -- --------------------------------------------------------
 
@@ -455,7 +498,7 @@ CREATE TABLE IF NOT EXISTS `orderdetail` (
   `quantityDelivered` int(11) NOT NULL COMMENT 'Số lượng hàng đã xuất',
   `price` decimal(19,4) NOT NULL COMMENT 'Giá chuẩn, mặc định là lấy giá vật tư nhưng có thể sửa được',
   `saleOff` float DEFAULT '0' COMMENT 'Chiết khấu, tính theo phần trăm. Là phần trăm giảm giá trên giá gốc'
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `orderdetail`
@@ -466,7 +509,11 @@ INSERT INTO `orderdetail` (`id`, `idMaterial`, `idOrder`, `quantityNeeded`, `qua
 (26, 59, 15, 2, 2, '100009.0000', 0.02),
 (27, 65, 16, 2, 2, '100015.0000', 0),
 (28, 63, 16, 5, 5, '100013.0000', 0),
-(29, 60, 17, 3, 3, '100010.0000', 0.05);
+(29, 60, 17, 3, 3, '100010.0000', 0.05),
+(30, 50, 18, 5, 5, '1000000.0000', 0),
+(31, 50, 19, 2, 2, '100000.0000', 0.05),
+(32, 50, 20, 2, 2, '100000.0000', 0),
+(33, 50, 21, 2, 2, '100000.0000', 0);
 
 -- --------------------------------------------------------
 
@@ -503,7 +550,7 @@ CREATE TABLE IF NOT EXISTS `receivingbill` (
   `note` text COLLATE utf8_unicode_ci,
   `idOrder` int(11) DEFAULT '0' COMMENT 'FK: id của hóa đơn\\n- Phiếu chi có thể thuộc một hóa đơn',
   `idCoupon` int(11) DEFAULT '0' COMMENT 'FK: id của phiếu (phiếu xuất trả nhà cung cấp)\\n- Phiếu chi có thể thuộc một phiếu trong các loại phiếu trên'
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `receivingbill`
@@ -512,7 +559,11 @@ CREATE TABLE IF NOT EXISTS `receivingbill` (
 INSERT INTO `receivingbill` (`id`, `code`, `idCustomer`, `content`, `date`, `note`, `idOrder`, `idCoupon`) VALUES
 (8, 'PT116706', 33, 'Xu?t Bán Hàng Cho Khách', '2016-04-17 23:05:42', '', 15, NULL),
 (9, 'PT938713', 34, 'Xu?t Bán Hàng Cho Khách', '2016-04-17 23:08:57', '', 16, NULL),
-(10, 'PT1036311', 33, 'Xu?t Bán Hàng Cho Khách', '2016-04-17 23:26:13', '', 17, NULL);
+(10, 'PT1036311', 33, 'Xu?t Bán Hàng Cho Khách', '2016-04-17 23:26:13', '', 17, NULL),
+(11, 'PT1141997', 34, 'Xu?t Bán Hàng Cho Khách', '2016-04-18 14:13:45', '', 18, NULL),
+(12, 'PT1239305', 33, 'Xu?t Bán Hàng Cho Khách', '2016-04-18 15:46:51', '', 19, NULL),
+(13, 'PT1338294', 33, 'Xu?t Bán Hàng Cho Khách', '2016-04-18 15:54:33', '', 20, NULL),
+(14, 'PT146295', 33, 'Xu?t Bán Hàng Cho Khách', '2016-04-18 17:15:52', '', 21, NULL);
 
 -- --------------------------------------------------------
 
@@ -526,7 +577,7 @@ CREATE TABLE IF NOT EXISTS `receivingbilldetail` (
   `category` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Mặc định là \\"Thu tiền\\", có thể sửa được',
   `reason` text COLLATE utf8_unicode_ci COMMENT 'lý do thu tiền',
   `amount` decimal(19,4) NOT NULL COMMENT 'số thu vào'
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `receivingbilldetail`
@@ -535,7 +586,11 @@ CREATE TABLE IF NOT EXISTS `receivingbilldetail` (
 INSERT INTO `receivingbilldetail` (`id`, `idReceivingBill`, `category`, `reason`, `amount`) VALUES
 (5, 8, 'Thu Ti?n', 'Xu?t Bán Hàng Cho Khách', '493065.1600'),
 (6, 9, 'Thu Ti?n', 'Xu?t Bán Hàng Cho Khách', '700095.0000'),
-(7, 10, 'Thu Ti?n', 'Xu?t Bán Hàng Cho Khách', '285028.5000');
+(7, 10, 'Thu Ti?n', 'Xu?t Bán Hàng Cho Khách', '285028.5000'),
+(8, 11, 'Thu Ti?n', 'Xu?t Bán Hàng Cho Khách', '5000000.0000'),
+(9, 12, 'Thu Ti?n', 'Xu?t Bán Hàng Cho Khách', '190000.0000'),
+(10, 13, 'Thu Ti?n', 'Xu?t Bán Hàng Cho Khách', '200000.0000'),
+(11, 14, 'Thu Ti?n', 'Xu?t Bán Hàng Cho Khách', '200000.0000');
 
 -- --------------------------------------------------------
 
@@ -546,12 +601,23 @@ INSERT INTO `receivingbilldetail` (`id`, `idReceivingBill`, `category`, `reason`
 CREATE TABLE IF NOT EXISTS `spendingbill` (
   `id` int(11) NOT NULL,
   `code` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  `idCustomer` int(11) DEFAULT NULL COMMENT 'FK: id của khách hàng',
+  `idCustomer` int(11) DEFAULT '0' COMMENT 'FK: id của khách hàng',
   `content` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Diễn giải của phiếu chi',
   `date` datetime NOT NULL COMMENT 'ngày giờ tạo',
   `note` text COLLATE utf8_unicode_ci,
-  `idCoupon` int(11) DEFAULT NULL COMMENT 'FK: id của phiếu (phiếu mua, phiếu nhập hàng trả lại)\\n- Phiếu chi có thể thuộc một phiếu trong các loại phiếu trên'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `idCoupon` int(11) DEFAULT '0' COMMENT 'FK: id của phiếu (phiếu mua, phiếu nhập hàng trả lại)\\n- Phiếu chi có thể thuộc một phiếu trong các loại phiếu trên'
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `spendingbill`
+--
+
+INSERT INTO `spendingbill` (`id`, `code`, `idCustomer`, `content`, `date`, `note`, `idCoupon`) VALUES
+(1, '', 33, 'Nh?p Mua Hàng', '2016-04-18 14:00:00', '', 1),
+(2, 'PC232960', 33, 'Nh?p Mua Hàng', '2016-04-18 14:07:13', '', 2),
+(3, 'PC341488', 33, 'Nh?p Mua Hàng', '2016-04-18 14:15:52', '', 3),
+(4, 'PC41781', 33, 'Nh?p Mua Hàng', '2016-04-18 15:54:33', '', 4),
+(5, 'PC548741', 33, 'Nh?p Mua Hàng', '2016-04-18 17:18:21', '', 5);
 
 -- --------------------------------------------------------
 
@@ -565,7 +631,18 @@ CREATE TABLE IF NOT EXISTS `spendingbilldetail` (
   `category` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Mặc định là \\"Chi tiền\\", có thể sửa được',
   `reason` text COLLATE utf8_unicode_ci COMMENT 'lý do chi tiền',
   `amount` decimal(19,4) NOT NULL COMMENT 'số tiền chi ra'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `spendingbilldetail`
+--
+
+INSERT INTO `spendingbilldetail` (`id`, `idSpendingBill`, `category`, `reason`, `amount`) VALUES
+(1, 1, 'Thu Ti?n', 'Nh?p Mua Hàng', '200020.0000'),
+(2, 2, 'Thu Ti?n', 'Nh?p Mua Hàng', '970000.0000'),
+(3, 3, 'Thu Ti?n', 'Nh?p Mua Hàng', '200000.0000'),
+(4, 4, 'Thu Ti?n', 'Nh?p Mua Hàng', '300000.0000'),
+(5, 5, 'Thu Ti?n', 'Nh?p Mua Hàng', '196000.0000');
 
 -- --------------------------------------------------------
 
@@ -586,8 +663,8 @@ CREATE TABLE IF NOT EXISTS `stock` (
 --
 
 INSERT INTO `stock` (`id`, `code`, `name`, `idStockType`, `description`) VALUES
-(2, 'Kho 1', 'Kho Cầu Giấy', 109, 'sdfsfskdjfksd'),
-(16, 'KHO1', 'Kho Mĩ Đình', 108, 'ádadasd');
+(2, 'KHO_QN_BAN', 'Kho hàng bán Quan Nhân', 108, 'Kho hàng bán Quan Nhân'),
+(16, 'KHO_QN_LOI', 'Kho hàng lỗi Quan Nhân', 109, 'Kho hàng lỗi Quan Nhân');
 
 -- --------------------------------------------------------
 
@@ -606,8 +683,8 @@ CREATE TABLE IF NOT EXISTS `stocktype` (
 --
 
 INSERT INTO `stocktype` (`id`, `name`, `description`) VALUES
-(108, 'Kho hàng tồn', 'Kho chứa hàng tồn'),
-(109, 'Kho hàng bán', 'Chứa hàng hóa bán');
+(108, 'KH_HANGBAN', 'Kho chứa hàng bán'),
+(109, 'KH_HANGLOI', 'Kho chứa hàng lỗi');
 
 -- --------------------------------------------------------
 
@@ -784,17 +861,17 @@ ALTER TABLE `area`
 -- AUTO_INCREMENT for table `coupon`
 --
 ALTER TABLE `coupon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `coupondetail`
 --
 ALTER TABLE `coupondetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `coupontype`
 --
 ALTER TABLE `coupontype`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `customer`
 --
@@ -819,12 +896,12 @@ ALTER TABLE `material`
 -- AUTO_INCREMENT for table `materialinputhistory`
 --
 ALTER TABLE `materialinputhistory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `materialoutputhistory`
 --
 ALTER TABLE `materialoutputhistory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `materialtype1`
 --
@@ -839,17 +916,17 @@ ALTER TABLE `materialtype2`
 -- AUTO_INCREMENT for table `money`
 --
 ALTER TABLE `money`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT for table `order`
 --
 ALTER TABLE `order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;
 --
 -- AUTO_INCREMENT for table `orderdetail`
 --
 ALTER TABLE `orderdetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=34;
 --
 -- AUTO_INCREMENT for table `ordertype`
 --
@@ -859,22 +936,22 @@ ALTER TABLE `ordertype`
 -- AUTO_INCREMENT for table `receivingbill`
 --
 ALTER TABLE `receivingbill`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT for table `receivingbilldetail`
 --
 ALTER TABLE `receivingbilldetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `spendingbill`
 --
 ALTER TABLE `spendingbill`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `spendingbilldetail`
 --
 ALTER TABLE `spendingbilldetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `stock`
 --
@@ -941,6 +1018,7 @@ ADD CONSTRAINT `fk_material_id2` FOREIGN KEY (`idMaterial`) REFERENCES `material
 -- Constraints for table `order`
 --
 ALTER TABLE `order`
+ADD CONSTRAINT `fk_Order_Customer1` FOREIGN KEY (`idCustomer`) REFERENCES `customer` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
 ADD CONSTRAINT `fk_Order_OrderType1` FOREIGN KEY (`idOrderType`) REFERENCES `ordertype` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
@@ -949,6 +1027,12 @@ ADD CONSTRAINT `fk_Order_OrderType1` FOREIGN KEY (`idOrderType`) REFERENCES `ord
 ALTER TABLE `orderdetail`
 ADD CONSTRAINT `fk_OrderDetail_Material1` FOREIGN KEY (`idMaterial`) REFERENCES `material` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
 ADD CONSTRAINT `fk_OrderDetail_Order1` FOREIGN KEY (`idOrder`) REFERENCES `order` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `receivingbill`
+--
+ALTER TABLE `receivingbill`
+ADD CONSTRAINT `fk_Receivingbill_Customer1` FOREIGN KEY (`idCustomer`) REFERENCES `customer` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `receivingbilldetail`
@@ -960,8 +1044,7 @@ ADD CONSTRAINT `fk_ReceivingBillDetail_ReceivingBill1` FOREIGN KEY (`idReceiving
 -- Constraints for table `spendingbill`
 --
 ALTER TABLE `spendingbill`
-ADD CONSTRAINT `fk_SpendingBill_Coupon1` FOREIGN KEY (`idCoupon`) REFERENCES `coupon` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `fk_SpendingBill_Customer1` FOREIGN KEY (`idCustomer`) REFERENCES `customer` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_Spendingbill_Customer1` FOREIGN KEY (`idCustomer`) REFERENCES `customer` (`id`);
 
 --
 -- Constraints for table `spendingbilldetail`
