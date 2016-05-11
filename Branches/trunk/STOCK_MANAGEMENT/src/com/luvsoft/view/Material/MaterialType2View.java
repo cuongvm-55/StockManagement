@@ -124,6 +124,7 @@ public class MaterialType2View extends GenericTabCategory<Materialtype2> {
                 for (Object object : selectedRows) {
                     presenter.deleteEntity((Materialtype2) object);
                 }
+                content.deselectAll();
                 dialog.close();
             }
         });

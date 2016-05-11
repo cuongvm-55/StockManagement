@@ -119,6 +119,7 @@ public class UnitView extends GenericTabCategory<Unit> {
                 for (Object object : selectedRows) {
                     presenter.deleteEntity((Unit) object);
                 }
+                content.deselectAll();
                 dialog.close();
             }
         });

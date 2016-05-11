@@ -123,6 +123,7 @@ public class CouponTypeView extends GenericTabCategory<Coupontype> {
                 for (Object object : selectedRows) {
                     presenter.deleteEntity((Coupontype) object);
                 }
+                content.deselectAll();
                 dialog.close();
             }
         });

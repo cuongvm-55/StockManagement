@@ -124,6 +124,7 @@ public class OrderTypeView extends GenericTabCategory<Ordertype> {
                 for (Object object : selectedRows) {
                     presenter.deleteEntity((Ordertype) object);
                 }
+                content.deselectAll();
                 dialog.close();
             }
         });

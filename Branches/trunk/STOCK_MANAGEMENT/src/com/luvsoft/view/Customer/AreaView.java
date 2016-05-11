@@ -125,6 +125,7 @@ public class AreaView extends GenericTabCategory<Area> {
                 for (Object object : selectedRows) {
                     presenter.deleteEntity((Area) object);
                 }
+                content.deselectAll();
                 dialog.close();
             }
         });
