@@ -91,6 +91,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         addStyleName("formlayout-spacing max-textfield-width background-blue");
         setSizeFull();
         removeAllComponents();
+        filteringHeader = null;
 
         Label centertitle = new Label("Hóa đơn");
         centertitle.addStyleName("center font16 " + ValoTheme.LABEL_BOLD);
@@ -504,6 +505,8 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                 }
             });
             UI.getCurrent().addWindow(dialog);
+        } else if(event.getButton().equals(discard)) {
+            create();
         }
     }
 

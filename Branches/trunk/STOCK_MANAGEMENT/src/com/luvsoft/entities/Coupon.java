@@ -2,17 +2,17 @@ package com.luvsoft.entities;
 
 // Generated Jan 26, 2016 10:06:12 PM by Hibernate Tools 4.3.1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-
-import static javax.persistence.GenerationType.IDENTITY;
-
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -41,9 +41,16 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
     private Date date;
     private String note;
     private Set<Coupondetail> coupondetails = new HashSet<Coupondetail>(0);
-    private Set<Spendingbill> spendingbills = new HashSet<Spendingbill>(0);
 
     public Coupon() {
+        id = -1;
+        coupontype = new Coupontype();
+        customer = new Customer();
+        code = "";
+        buyer = "";
+        content = "";
+        date = new Date();
+        note = "";
     }
 
     public Coupon(Coupontype coupontype, String code, String content, Date date) {
@@ -54,7 +61,7 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
     }
 
     public Coupon(Coupontype coupontype, Customer customer, String code, String buyer, String content, Date date, String note,
-            Set<Coupondetail> coupondetails, Set<Spendingbill> spendingbills) {
+            Set<Coupondetail> coupondetails) {
         this.coupontype = coupontype;
         this.customer = customer;
         this.code = code;
@@ -63,7 +70,6 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
         this.date = date;
         this.note = note;
         this.coupondetails = coupondetails;
-        this.spendingbills = spendingbills;
     }
 
     @Id
@@ -143,7 +149,7 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
         this.note = note;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "coupon")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "coupon", cascade=CascadeType.ALL)
     public Set<Coupondetail> getCoupondetails() {
         return this.coupondetails;
     }
@@ -152,23 +158,12 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
         this.coupondetails = coupondetails;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "coupon")
-    public Set<Spendingbill> getSpendingbills() {
-        return this.spendingbills;
-    }
-
-    public void setSpendingbills(Set<Spendingbill> spendingbills) {
-        this.spendingbills = spendingbills;
-    }
-
     @Override
     public String toString() {
         return "Coupon [id=" + id + ", coupontype=" + coupontype
                 + ", customer=" + customer + ", code=" + code + ", buyer="
                 + buyer + ", content=" + content + ", date=" + date + ", note="
-                + note + ", coupondetails=" + coupondetails
-                + ", spendingbills="
-                + spendingbills + "]";
+                + note + ", coupondetails=" + coupondetails + "]";
     }
 
     public static String getEntityname() {
@@ -183,8 +178,14 @@ public class Coupon extends AbstractEntity implements java.io.Serializable {
 
     @Override
     public void verifyObject() {
-        // TODO Auto-generated method stub
-        
+        id = -1;
+        coupontype = new Coupontype();
+        customer = new Customer();
+        code = "";
+        buyer = "";
+        content = "";
+        date = new Date();
+        note = "";
     }
 
     @Override

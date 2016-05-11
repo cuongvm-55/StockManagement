@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Transient;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -141,6 +142,27 @@ public class Coupontype extends AbstractEntity implements java.io.Serializable {
         }
         if(description == null) {
             description = "";
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    public enum COUPON_TYPES {
+        PH_NHAPMUA,
+        PH_NHAPHANGTRALAI,
+        PH_XUATTRANHACUNGCAP
+    }
+
+    @Transient
+    public static String GetStringFromTypes(COUPON_TYPES types) {
+        switch (types) {
+            case PH_NHAPMUA:
+                return "PH_NHAPMUA";
+            case PH_NHAPHANGTRALAI:
+                return "PH_NHAPHANGTRALAI";
+            case PH_XUATTRANHACUNGCAP:
+                return "PH_XUATTRANHACUNGCAP";
+            default:
+                return "UNKNOWN";
         }
     }
 }

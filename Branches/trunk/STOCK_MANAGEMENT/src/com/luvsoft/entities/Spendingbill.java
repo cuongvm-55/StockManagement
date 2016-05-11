@@ -2,17 +2,17 @@ package com.luvsoft.entities;
 
 // Generated Jan 26, 2016 10:06:12 PM by Hibernate Tools 4.3.1
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-
-import static javax.persistence.GenerationType.IDENTITY;
-
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,7 +33,7 @@ public class Spendingbill extends AbstractEntity implements java.io.Serializable
      */
     private static final long serialVersionUID = -4565970400181930647L;
     private Integer id;
-    private Coupon coupon;
+    private Integer idCoupon;
     private Customer customer;
     private String code;
     private String content;
@@ -50,9 +50,9 @@ public class Spendingbill extends AbstractEntity implements java.io.Serializable
         this.date = date;
     }
 
-    public Spendingbill(Coupon coupon, Customer customer, String code, String content, Date date, String note,
+    public Spendingbill(Integer idCoupon, Customer customer, String code, String content, Date date, String note,
             Set<Spendingbilldetail> spendingbilldetails) {
-        this.coupon = coupon;
+        this.idCoupon = idCoupon;
         this.customer = customer;
         this.code = code;
         this.content = content;
@@ -72,14 +72,13 @@ public class Spendingbill extends AbstractEntity implements java.io.Serializable
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idCoupon")
-    public Coupon getCoupon() {
-        return this.coupon;
+    @Column(name = "idCoupon")
+    public Integer getIdCoupon() {
+        return this.idCoupon;
     }
 
-    public void setCoupon(Coupon coupon) {
-        this.coupon = coupon;
+    public void setIdCoupon(Integer idCoupon) {
+        this.idCoupon = idCoupon;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -129,7 +128,7 @@ public class Spendingbill extends AbstractEntity implements java.io.Serializable
         this.note = note;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "spendingbill")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "spendingbill", cascade = CascadeType.ALL)
     public Set<Spendingbilldetail> getSpendingbilldetails() {
         return this.spendingbilldetails;
     }
@@ -140,7 +139,7 @@ public class Spendingbill extends AbstractEntity implements java.io.Serializable
 
     @Override
     public String toString() {
-        return "Spendingbill [id=" + id + ", coupon=" + coupon + ", customer="
+        return "Spendingbill [id=" + id + ", coupon=" + idCoupon + ", customer="
                 + customer + ", code=" + code + ", content=" + content
                 + ", date=" + date + ", note=" + note
                 + ", spendingbilldetails=" + spendingbilldetails + "]";

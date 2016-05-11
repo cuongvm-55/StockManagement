@@ -33,6 +33,10 @@ import com.luvsoft.utils.Utilities;
 import com.luvsoft.view.Order.OrderFormContent;
 import com.luvsoft.view.component.LuvsoftConfirmationDialog;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.server.Page;
+import com.vaadin.shared.Position;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -395,6 +399,8 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             return;
         }
         saveOrderToDatabase(order);
+
+        showNotification("Lưu Hóa Đơn Thành Công");
     }
 
     /**
@@ -429,7 +435,7 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         bill.setCode(generateEntityCode(Receivingbill.getEntityname()));
         bill.setContent(order.getContent());
         bill.setNote("");
-        bill.setIdCustomer(order.getIdCustomer());
+        bill.setCustomer(order.getCustomer());
         bill.setDate(order.getDate());
         bill.setIdOrder(order.getId());
 
@@ -450,6 +456,9 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         bill.setReceivingbilldetails(details);
         // Save receiving bill
         receivingbillModel.addNew(bill);
+
+        // Notification
+        showNotification("Thanh Toán Hóa Đơn Thành Công - Phiếu Thu Đã Được Tạo");
     }
 
     /**
@@ -473,9 +482,9 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         }
 
         if(customer != null && !customer.getCode().equals("") && view.getCustomerCode().getValue() != null) {
-            order.setIdCustomer(customer.getId());
+            order.setCustomer(customer);
         } else {
-            order.setIdCustomer(0);
+            order.setCustomer(new Customer());
         }
 
         order.setOrdertype((Ordertype) view.getOptionsOrderType().getValue());
@@ -676,6 +685,13 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
 
         // Display it by a label
         view.getTotalAmountOfOrderdetails().setValue(Utilities.getNumberFormat().format(totalAmount) + " VNĐ");
+    }
+
+    public void showNotification(String message) {
+        Notification notification = new Notification("<b>Thông Báo<b>", "<b>" + message + "</b>", Type.TRAY_NOTIFICATION);
+        notification.setHtmlContentAllowed(true);
+        notification.setPosition(Position.BOTTOM_RIGHT);
+        notification.show(Page.getCurrent());
     }
 
     @Override

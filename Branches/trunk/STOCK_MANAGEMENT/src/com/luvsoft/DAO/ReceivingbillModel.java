@@ -1,5 +1,6 @@
 package com.luvsoft.DAO;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,8 @@ import com.luvsoft.entities.Money;
 import com.luvsoft.entities.Receivingbill;
 import com.luvsoft.entities.Receivingbilldetail;
 
-public class ReceivingbillModel extends AbstractEntityModel {
+public class ReceivingbillModel extends AbstractEntityModel implements Serializable {
+    private static final long serialVersionUID = 3700106855651539733L;
 
     @Override
     public String getEntityname() {

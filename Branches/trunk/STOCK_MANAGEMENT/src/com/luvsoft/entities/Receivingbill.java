@@ -15,6 +15,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -33,7 +35,7 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
     private static final long serialVersionUID = 996658298117657862L;
     private Integer id;
     private String code;
-    private Integer idCustomer;
+    private Customer customer;
     private String content;
     private Date date;
     private String note;
@@ -44,16 +46,17 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
     public Receivingbill() {
     }
 
-    public Receivingbill(String code, String content, Date date) {
+    public Receivingbill(Customer customer, String code, String content, Date date) {
+        this.customer = customer;
         this.code = code;
         this.content = content;
         this.date = date;
     }
 
-    public Receivingbill(String code, Integer idCustomer, String content, Date date, String note, Integer idOrder, Integer idCoupon,
+    public Receivingbill(String code, Customer customer, String content, Date date, String note, Integer idOrder, Integer idCoupon,
             Set<Receivingbilldetail> receivingbilldetails) {
         this.code = code;
-        this.idCustomer = idCustomer;
+        this.customer = customer;
         this.content = content;
         this.date = date;
         this.note = note;
@@ -82,13 +85,14 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
         this.code = code;
     }
 
-    @Column(name = "idCustomer")
-    public Integer getIdCustomer() {
-        return this.idCustomer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idCustomer", nullable = false)
+    public Customer getCustomer() {
+        return this.customer;
     }
 
-    public void setIdCustomer(Integer idCustomer) {
-        this.idCustomer = idCustomer;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     @Column(name = "content", nullable = false, length = 65535)
@@ -149,7 +153,7 @@ public class Receivingbill extends AbstractEntity implements java.io.Serializabl
     @Override
     public String toString() {
         return "Receivingbill [id=" + id + ", coupon=" + idCoupon + ", customer="
-                + idCustomer + ", order=" + idOrder + ", code=" + code
+                + customer + ", order=" + idOrder + ", code=" + code
                 + ", content=" + content + ", date=" + date + ", note=" + note
                 + ", receivingbilldetails=" + receivingbilldetails + "]";
     }

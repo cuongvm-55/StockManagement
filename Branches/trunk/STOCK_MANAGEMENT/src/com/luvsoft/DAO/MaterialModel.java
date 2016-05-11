@@ -1,5 +1,6 @@
 package com.luvsoft.DAO;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,13 +8,15 @@ import java.util.List;
 
 import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Material;
+import com.luvsoft.entities.Materialinputhistory;
 import com.luvsoft.entities.Materialoutputhistory;
 import com.luvsoft.entities.Materialtype1;
 import com.luvsoft.entities.Materialtype2;
 import com.luvsoft.entities.Stock;
 import com.luvsoft.entities.Unit;
 
-public class MaterialModel extends AbstractEntityModel {
+public class MaterialModel extends AbstractEntityModel implements Serializable{
+    private static final long serialVersionUID = -5055983447976696596L;
 
     @Override
     public String getEntityname() {
@@ -127,6 +130,39 @@ public class MaterialModel extends AbstractEntityModel {
             outputHistory.setQuantity(outputHistory.getQuantity() + outputQuantity);
             outputHistory.setOutputPrice(outputPrice);
             entityManager.update(outputHistory);
+        }
+    }
+
+    /**
+     * This function is used to update input history table for material when update quantity of any material
+     * @param inputQuantity   ->   quantity needed to increase
+     * @param inputPrice      ->   new price of material
+     * @param material
+     */
+    public void updateMaterialInputHistory(int inputQuantity, BigDecimal inputPrice, Material material) {
+        // Check this material is existed in history table today or not?
+        Date today = new Date();
+        String query = "SELECT e FROM " + Materialinputhistory.getEntityname() + " e WHERE e.date =:var0 AND material.id =:var1";
+        List<Object> listParameters = new ArrayList<Object>();
+        listParameters.add(today);
+        listParameters.add(material.getId());
+        List<Object> listResult = entityManager.findByQuery(query, listParameters);
+
+        if(listResult.isEmpty()) {
+            // There is no material existed in history table today
+            // Create new field in history table
+            Materialinputhistory inputHistory = new Materialinputhistory();
+            inputHistory.setDate(today);
+            inputHistory.setMaterial(material);
+            inputHistory.setInputPrice(inputPrice);
+            inputHistory.setQuantity(inputQuantity);
+            entityManager.addNew(inputHistory);
+        } else {
+            // There is at least one material existed in history table today
+            Materialinputhistory inputHistory = (Materialinputhistory) listResult.get(0);
+            inputHistory.setQuantity(inputHistory.getQuantity() + inputQuantity);
+            inputHistory.setInputPrice(inputPrice);
+            entityManager.update(inputHistory);
         }
     }
 }

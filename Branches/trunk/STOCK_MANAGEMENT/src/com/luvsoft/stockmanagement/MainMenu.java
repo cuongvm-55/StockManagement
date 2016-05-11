@@ -13,7 +13,8 @@ import com.luvsoft.view.Material.UnitView;
 import com.luvsoft.view.Order.OrderTypeView;
 import com.luvsoft.view.Stock.StockTypeView;
 import com.luvsoft.view.Stock.StockView;
-import com.luvsoft.view.component.GenericTabFunction;
+import com.luvsoft.view.component.GenericTabFunction_Buy;
+import com.luvsoft.view.component.GenericTabFunction_Shell;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
@@ -94,15 +95,25 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
         VerticalLayout subTabSystem = new VerticalLayout();
         addTab(subTabSystem, "Hệ Thống", FontAwesome.COGS);
 
-        GenericTabFunction tab = new GenericTabFunction();
-        tab.init();
+        //////////////////////////////////////////////////////////////////////////////////
+        // Functions: Shell, Buy
+        //////////////////////////////////////////////////////////////////////////////////
+        GenericTabFunction_Shell subTabFunction_Shell = new GenericTabFunction_Shell();
+        subTabFunction_Shell.init();
         TabSheet subTabFunction = new TabSheet();
         subTabFunction.addStyleName(ValoTheme.TABSHEET_FRAMED);
         subTabFunction.addStyleName(ValoTheme.TABSHEET_ICONS_ON_TOP);
         subTabFunction.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
         subTabFunction.setSizeFull();
-        subTabFunction.addTab(tab.getWapper(), "Bán Hàng", FontAwesome.DOLLAR);
+        subTabFunction.addTab(subTabFunction_Shell.getWapper(), "Bán Hàng", FontAwesome.DOLLAR);
+
+        GenericTabFunction_Buy subTabFunction_Buy = new GenericTabFunction_Buy();
+        subTabFunction_Buy.init();
+
+        subTabFunction.addTab(subTabFunction_Buy.getWapper(), "Mua Hàng", FontAwesome.CART_PLUS);
+
         addTab(subTabFunction, "Chức Năng", FontAwesome.FOLDER_OPEN);
+        //////////////////////////////////////////////////////////////////////////////////
 
         TabSheet subTabReport = new TabSheet();
         subTabReport.addStyleName(ValoTheme.TABSHEET_FRAMED);

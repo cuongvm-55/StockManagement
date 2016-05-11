@@ -24,7 +24,7 @@ public class OrderModel extends AbstractEntityModel {
     }
 
     @Override
-    public boolean addNewByPersist(Order order) {
+    public boolean addNewByPersist(AbstractEntity order) {
         return entityManager.addNewByPersist(order);
     }
 

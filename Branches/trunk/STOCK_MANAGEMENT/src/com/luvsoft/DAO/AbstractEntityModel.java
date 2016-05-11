@@ -85,16 +85,11 @@ public abstract class AbstractEntityModel {
     public List<Materialtype1> getMaterialType1List(){return null;}
     public List<Materialtype2> getMaterialType2List(){return null;}
 
+    public boolean isOrderExisted(Order order) {return false;}
+    public boolean isCouponExisted(Coupon coupon) {return false;}
+    public boolean addNewByPersist(AbstractEntity entity) {return false;}
+
     // abstract functions
     public abstract String getEntityname();
     public abstract List<AbstractEntity> getFilterData(FilterObject filterObject);
-
-    public boolean isOrderExisted(Order order) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    public boolean addNewByPersist(Order order) {
-        return false;
-    }
 }
