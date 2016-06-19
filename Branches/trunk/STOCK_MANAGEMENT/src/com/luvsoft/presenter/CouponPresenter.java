@@ -114,7 +114,7 @@ public class CouponPresenter extends AbstractEntityPresenter implements CouponLi
                 materialModel.updateQuantityInStock(newQuantity + oldQuantity, coupondetail.getMaterial());
 
                 // Backup history of material to the Materialinputhistory
-                materialModel.updateMaterialInputHistory(newQuantity, new BigDecimal(coupondetail.getBuyingPrice()), coupondetail.getMaterial());
+                //materialModel.updateMaterialInputHistory(newQuantity, new BigDecimal(coupondetail.getBuyingPrice()), coupondetail.getMaterial());
             }
         }
     }

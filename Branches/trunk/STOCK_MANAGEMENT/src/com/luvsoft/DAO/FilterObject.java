@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FilterObject {
-    private Map<String, String> criteria; //<! <FieldName, FieldValue>
-    private int pageIndex;
-    private int numberOfRecordsPerPage;
+    public Map<String, String> criteria; //<! <FieldName, FieldValue>
+    public int pageIndex;
+    public int numberOfRecordsPerPage;
 
     public FilterObject(){
         criteria = new HashMap<String, String>();
         pageIndex = 0;
-        numberOfRecordsPerPage = 0;
+        numberOfRecordsPerPage = Integer.MAX_VALUE;
     }
 
     public FilterObject(Map<String, String> criteria, int pageIndex,

@@ -3,13 +3,10 @@ package com.luvsoft.DAO;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.luvsoft.entities.AbstractEntity;
 import com.luvsoft.entities.Material;
-import com.luvsoft.entities.Materialinputhistory;
-import com.luvsoft.entities.Materialoutputhistory;
 import com.luvsoft.entities.Materialtype1;
 import com.luvsoft.entities.Materialtype2;
 import com.luvsoft.entities.Stock;
@@ -107,7 +104,7 @@ public class MaterialModel extends AbstractEntityModel implements Serializable{
      * @param material
      */
     public void updateMaterialOutputHistory(int outputQuantity, BigDecimal outputPrice, Material material) {
-        // Check this material is existed in history table today or not?
+        /* // Check this material is existed in history table today or not?
         Date today = new Date();
         String query = "SELECT e FROM " + Materialoutputhistory.getEntityname() + " e WHERE e.date =:var0 AND material.id =:var1";
         List<Object> listParameters = new ArrayList<Object>();
@@ -131,6 +128,7 @@ public class MaterialModel extends AbstractEntityModel implements Serializable{
             outputHistory.setOutputPrice(outputPrice);
             entityManager.update(outputHistory);
         }
+        */
     }
 
     /**
@@ -141,7 +139,7 @@ public class MaterialModel extends AbstractEntityModel implements Serializable{
      */
     public void updateMaterialInputHistory(int inputQuantity, BigDecimal inputPrice, Material material) {
         // Check this material is existed in history table today or not?
-        Date today = new Date();
+        /*Date today = new Date();
         String query = "SELECT e FROM " + Materialinputhistory.getEntityname() + " e WHERE e.date =:var0 AND material.id =:var1";
         List<Object> listParameters = new ArrayList<Object>();
         listParameters.add(today);
@@ -164,5 +162,6 @@ public class MaterialModel extends AbstractEntityModel implements Serializable{
             inputHistory.setInputPrice(inputPrice);
             entityManager.update(inputHistory);
         }
+        */
     }
 }

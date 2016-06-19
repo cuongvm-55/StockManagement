@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 
 import com.luvsoft.printing.OrderPrintingView;
+import com.luvsoft.statistic.StatisticManagerThread;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.JavaScript;
@@ -40,7 +41,7 @@ public class StockManagementUI extends UI {
             layout.buildContent();
             setContent(layout);
             setHeight(null);
-            JavaScript.getCurrent().execute("setTimeout(function() {" + " print(); self.close();}, 100);");
+            JavaScript.getCurrent().execute("setTimeout(function() {" + " print(); self.close();}, 20);");
         }
         else{
             layout = new VerticalLayout();
@@ -53,6 +54,11 @@ public class StockManagementUI extends UI {
             layout.setExpandRatio(menu, 2.0f);
 
             buildFooter();
+
+            // Start statistic manager thread
+            //if( !StatisticManagerThread.getInstance().isAlive() ){
+            //    StatisticManagerThread.getInstance().start();
+            //}
         }
     }
 

@@ -1,17 +1,16 @@
-package com.luvsoft.report;
+package com.luvsoft.report.producer;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.luvsoft.DAO.EntityManagerDAO;
 import com.luvsoft.DAO.StockModel;
 import com.luvsoft.entities.Material;
-import com.luvsoft.entities.Materialinputhistory;
-import com.luvsoft.entities.Materialoutputhistory;
+import com.luvsoft.entities.Materialhistory;
 import com.luvsoft.entities.Stock;
 import com.luvsoft.entities.Stocktype;
+import com.luvsoft.statistic.MaterialStatisticManager;
+import com.luvsoft.statistic.Types.StatRecord;
 import com.luvsoft.utils.Utilities;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -40,7 +39,7 @@ public class InputOutputInventoryReport extends VerticalLayout{
     private DateField dfTo;
     private Button btnOk;
     private Grid gridContent;
-    
+
     public InputOutputInventoryReport(){
         lblTitle = new Label(TITLE);
         lblTitle.addStyleName("text-center margin-left-20px margin-top-10px");
@@ -151,45 +150,54 @@ public class InputOutputInventoryReport extends VerticalLayout{
                 Object[] materials = materialList.toArray();
                 for( int i=0;i<materials.length;i++ ){
                     Material material = (Material)materials[i];
-    
-                    // Note: The static before "from" is considered as origin
-                    Materialinputhistory inputBegRecord = getNearestInputHistory(Utilities.addDate(from,-1), material.getId());
-                    Materialoutputhistory outputBegRecord = getNearestOutputHistory(Utilities.addDate(from,-1), material.getId());
-                    Materialinputhistory inputEndRecord = getNearestInputHistory(to, material.getId());
-                    Materialoutputhistory outputEndRecord = getNearestOutputHistory(to, material.getId());
-    
-                    double price = inputBegRecord.getInputPrice().doubleValue();
+
+                    // Inventory
+                    Materialhistory inventoryMH = MaterialStatisticManager.getInstance().getInventoryMaterialAtDatePoint(from, material);
+                    // Note: The static on "fromDate" is considered belong to interval
+                    // Input stats in [from, to]
+                    StatRecord inputRecord = new StatRecord();
+                    MaterialStatisticManager.getInstance().extractInputStatisticInDateRange(
+                            from,
+                            to,
+                            material.getId(),
+                            inputRecord);
+
+                    // Ouput stats in [from, to]
+                    StatRecord outputRecord = new StatRecord();
+                    MaterialStatisticManager.getInstance().extractOutputStatisticInDateRange(
+                            from,
+                            to,
+                            material.getId(),
+                            outputRecord);
+                    double price = inventoryMH.getAverageInputPrice().doubleValue(); // average price
                     price = (price == 0f) ? material.getPrice().doubleValue() : price;
-                    int originQuantity = inputBegRecord.getQuantity() - outputBegRecord.getQuantity();
-                    int inputQuantity = inputEndRecord.getQuantity() - inputBegRecord.getQuantity();
-                    int outputQuantity = outputEndRecord.getQuantity() - outputBegRecord.getQuantity();
-                    int inventoryQuantity = (originQuantity + inputQuantity) - outputQuantity;
                     gridContent.addRow(
                             index,                            // STT
                             material.getCode(),               // Ma VT
                             material.getName(),               // Ten VT
                             material.getUnit() != null ? material.getUnit().getName() : "",// ĐVT
-                            originQuantity,                   // SL ton  < dau ki >
+                            inventoryMH.getQuantity(),                   // SL ton  < dau ki >
                             Utilities.getNumberFormat().format(price), // Gia
-                            Utilities.getNumberFormat().format(originQuantity*price), // TT ton
-                            inputQuantity,                                                    // SL nhap < trong ki >
-                            Utilities.getNumberFormat().format(inputQuantity*price),       // TT nhap
-                            outputQuantity,                                                   // SL xuat
-                            Utilities.getNumberFormat().format(outputQuantity*price),      // TT xuat
-                            inventoryQuantity,                                                // SL ton  < cuoi ki >
-                            Utilities.getNumberFormat().format(inventoryQuantity*price) ); // TT ton
+                            Utilities.getNumberFormat().format(inventoryMH.getQuantity()*price), // TT ton
+                            inputRecord.quantity,                                                    // SL nhap < trong ki >
+                            Utilities.getNumberFormat().format(inputRecord.amount),       // TT nhap
+                            outputRecord.quantity,                                                // SL xuat
+                            Utilities.getNumberFormat().format(outputRecord.amount),      // TT xuat
+                            inventoryMH.getQuantity() + inputRecord.quantity - outputRecord.quantity, // SL ton  < cuoi ki >
+                            Utilities.getNumberFormat().format(
+                                    (inventoryMH.getQuantity() + inputRecord.quantity - outputRecord.quantity)*price)); // TT ton
                      // update sums
-                    originQuanitySum += originQuantity;
-                    originAmountSum += originQuantity*price;
+                    originQuanitySum += inventoryMH.getQuantity();
+                    originAmountSum  += inventoryMH.getQuantity()*price;
     
-                    inputQuanitySum += inputQuantity;
-                    inputAmountSum += inputQuantity*price;
+                    inputQuanitySum  += inputRecord.quantity;
+                    inputAmountSum   += inputRecord.amount;
     
-                    outputQuanitySum += outputQuantity;
-                    outputAmountSum += outputQuantity*price;
+                    outputQuanitySum += outputRecord.quantity;
+                    outputAmountSum  += outputRecord.amount;
     
-                    inventoryQuanitySum += inventoryQuantity;
-                    inventoryAmountSum += inventoryQuantity*price;
+                    inventoryQuanitySum += (inventoryMH.getQuantity() + inputRecord.quantity - outputRecord.quantity);
+                    inventoryAmountSum  += (inventoryMH.getQuantity()*price + inputRecord.amount - outputRecord.amount);
 
                     index++;
                 }
@@ -206,115 +214,4 @@ public class InputOutputInventoryReport extends VerticalLayout{
         groupingFooter.getCell("TT Tồn").setText(Utilities.getNumberFormat().format(inventoryAmountSum));
     }
 
-    /**
-     * get all input of this material  in [from, to] period
-     * @param from
-     * @param to
-     * @return
-     */
-    public List<Materialinputhistory> extractInputHistoryInDateRange(Date from, Date to, Integer materialId){
-        List<Materialinputhistory> ret = new ArrayList<Materialinputhistory>();
-        String QUERY = ""
-                + "SELECT e "
-                + "FROM "+Materialinputhistory.getEntityname()+" e "
-                + "WHERE e.date >= :var0 AND e.date <= :var1 "
-                + "AND material.id = :var2";
-        List<Object> params = new ArrayList<Object>();
-        params.add(from);
-        params.add(to);
-        params.add(materialId);
-
-        List<Object> retsults = EntityManagerDAO.getInstance().findByQuery(QUERY, params);
-        for( int i=0;i<retsults.size();i++ ){
-            Materialinputhistory mt = (Materialinputhistory)retsults.get(i);
-            mt.verifyObject();
-            ret.add(mt);
-        }
-
-        return ret;
-    }
-
-    /**
-     * get all output of this material in [from, to] period
-     * @param from
-     * @param to
-     * @return
-     */
-    public List<Materialoutputhistory> extractOutputHistoryInDateRange(Date from, Date to, Integer materialId){
-        List<Materialoutputhistory> ret = new ArrayList<Materialoutputhistory>();
-        String QUERY = ""
-                + "SELECT e "
-                + "FROM "+Materialoutputhistory.getEntityname()+" e "
-                + "WHERE e.date >= :var0 AND e.date <= :var1 "
-                + "AND material.id = :var2";
-        List<Object> params = new ArrayList<Object>();
-        params.add(from);
-        params.add(to);
-        params.add(materialId);
-
-        List<Object> retsults = EntityManagerDAO.getInstance().findByQuery(QUERY, params);
-        for( int i=0;i<retsults.size();i++ ){
-            Materialoutputhistory mt = (Materialoutputhistory)retsults.get(i);
-            mt.verifyObject();
-            ret.add(mt);
-        }
-
-        return ret;
-    }
-    
-    /**
-     * get nearest input history report before the datePoint [..., datePoint]
-     * @param datePoint
-     * @return
-     */
-    private Materialinputhistory getNearestInputHistory(Date datePoint, Integer materialId){
-        Materialinputhistory h = new Materialinputhistory();
-        h.verifyObject();
-        String QUERY = ""
-                + "SELECT e "
-                + "FROM "+Materialinputhistory.getEntityname()+" e "
-                + "WHERE e.date <= :var0 "
-                + "AND material.id = :var1 "
-                + "ORDER BY date DESC";
-        List<Object> params = new ArrayList<Object>();
-        params.add(datePoint);
-        params.add(materialId);
-
-        List<Object> retsults = EntityManagerDAO.getInstance().findByQuery(QUERY, params);
-        if( !retsults.isEmpty() ){
-            // get the first history record
-            h = (Materialinputhistory)retsults.get(0);
-            h.verifyObject();
-        }
-
-        return h;
-    }
-    
-    /**
-     * get nearest output history report before the datePoint [..., datePoint]
-     * @param datePoint
-     * @return
-     */
-    private Materialoutputhistory getNearestOutputHistory(Date datePoint, Integer materialId){
-        Materialoutputhistory h = new Materialoutputhistory();
-        h.verifyObject();
-        String QUERY = ""
-                + "SELECT e "
-                + "FROM "+Materialoutputhistory.getEntityname()+" e "
-                + "WHERE e.date <= :var0 "
-                + "AND material.id = :var1 "
-                + "ORDER BY date DESC";
-        List<Object> params = new ArrayList<Object>();
-        params.add(datePoint);
-        params.add(materialId);
-
-        List<Object> retsults = EntityManagerDAO.getInstance().findByQuery(QUERY, params);
-        if( !retsults.isEmpty() ){
-            // get the first history record
-            h = (Materialoutputhistory)retsults.get(0);
-            h.verifyObject();
-        }
-
-        return h;
-    }
 }

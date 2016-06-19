@@ -7,12 +7,15 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/x
 	    <class>com.luvsoft.entities.Coupondetail</class>
 	    <class>com.luvsoft.entities.Coupontype</class>
 	    <class>com.luvsoft.entities.Customer</class>
+	    <class>com.luvsoft.entities.Customerhistory</class>
 	    <class>com.luvsoft.entities.Customertype1</class>
 	    <class>com.luvsoft.entities.Customertype2</class>
 	    <class>com.luvsoft.entities.Material</class>
+	    <class>com.luvsoft.entities.Materialhistory</class>
 	    <class>com.luvsoft.entities.Materialtype1</class>
 	    <class>com.luvsoft.entities.Materialtype2</class>
 	    <class>com.luvsoft.entities.Money</class>
+	    <class>com.luvsoft.entities.Moneyhistory</class>
 	    <class>com.luvsoft.entities.Order</class>
 	    <class>com.luvsoft.entities.Orderdetail</class>
 	    <class>com.luvsoft.entities.Ordertype</class>
@@ -23,8 +26,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/x
 	    <class>com.luvsoft.entities.Stock</class>
 	    <class>com.luvsoft.entities.Stocktype</class>
 	    <class>com.luvsoft.entities.Unit</class>
-	    <class>com.luvsoft.entities.Materialinputhistory</class>
-	    <class>com.luvsoft.entities.Materialoutputhistory</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
