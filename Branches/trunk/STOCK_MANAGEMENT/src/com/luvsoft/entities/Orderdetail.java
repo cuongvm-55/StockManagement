@@ -229,7 +229,7 @@ public class Orderdetail extends AbstractEntity implements java.io.Serializable 
 
     @Transient
     public String getformattedPrice() {
-        formattedPrice = Utilities.getNumberFormat().format(price.doubleValue());
+        formattedPrice = Utilities.getNumberFormat().format(price);
         return formattedPrice;
     }
 

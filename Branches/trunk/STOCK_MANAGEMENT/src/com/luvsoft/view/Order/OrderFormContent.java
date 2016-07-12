@@ -10,6 +10,7 @@ import org.vaadin.suggestfield.SuggestField;
 import org.vaadin.viritin.grid.MGrid;
 
 import com.luvsoft.entities.Customer;
+import com.luvsoft.entities.Material;
 import com.luvsoft.entities.Order;
 import com.luvsoft.entities.Orderdetail;
 import com.luvsoft.entities.Ordertype;
@@ -17,17 +18,22 @@ import com.luvsoft.presenter.OrderPresenter;
 import com.luvsoft.presenter.OrderPresenter.CustomerConverter;
 import com.luvsoft.presenter.OrderPresenter.MaterialConverter;
 import com.luvsoft.stockmanagement.StockManagementUI;
+import com.luvsoft.utils.NemErrorList;
 import com.luvsoft.utils.Utilities;
 import com.luvsoft.view.component.LuvsoftConfirmationDialog;
 import com.luvsoft.view.validator.LuvsoftOrderDetailValidator;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitEvent;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitHandler;
 import com.vaadin.data.util.converter.StringToFloatConverter;
+import com.vaadin.data.validator.NullValidator;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -38,6 +44,8 @@ import com.vaadin.ui.Grid.HeaderRow;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
@@ -79,6 +87,12 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
     private Order order;
     private Customer customer;
 
+    // Validators
+    private NullValidator customerCodeValidator;
+    private StringLengthValidator orderNumberValidator;
+    private StringLengthValidator orderContentValidator;
+    private NullValidator orderDateValidator;
+
     public OrderFormContent(OrderPresenter presenter, Order order) {
         super();
         this.presenter = presenter;
@@ -104,8 +118,14 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
         orderNumber = new TextField(); // auto generate
         orderNumber.setCaption("Số Hóa Đơn");
+        orderNumberValidator = new StringLengthValidator(NemErrorList.Error_CodeOrderNumberNotEmpty);
+        orderNumberValidator.setMinLength(1);
+        orderNumber.addValidator(orderNumberValidator);
 
         customerCode = createSuggestFieldForCustomer(CustomerConverter.BY_CODE, "Mã Khách Hàng", "Tìm theo mã khách");
+        customerCodeValidator = new NullValidator(NemErrorList.Error_CodeCustomerNotEmpty, false);
+        customerCode.addValidator(customerCodeValidator);
+
         customerName = createSuggestFieldForCustomer(CustomerConverter.BY_NAME, "Tên Khách Hàng", "Tìm theo tên");
         customerPhoneNumber = createSuggestFieldForCustomer(CustomerConverter.BY_PHONE_NUMBER, "Số Điện Thoại", "Tìm theo số điện thoại");
 
@@ -114,11 +134,17 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
         buyer = new TextField();
         buyer.setCaption("Người Mua");
+
         orderContent = new TextField();
         orderContent.setCaption("Diễn Giải");
         orderContent.setValue("Xuất Bán Hàng Cho Khách");
+        orderContentValidator = new StringLengthValidator(NemErrorList.Error_OrderContentNotEmpty);
+        orderContentValidator.setMinLength(1);
+        orderContent.addValidator(orderContentValidator);
+
         orderDate = new DateField();
         orderDate.setCaption("Ngày");
+        orderDateValidator = new NullValidator(NemErrorList.Error_OrderDateNotEmpty, false);
 
         orderNote = new TextArea();
         orderNote.setCaption("Ghi Chú");
@@ -196,13 +222,13 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         tableOrderDetails.setRows(orderDetails);
 
         // Handle value change for some text fields
-        tableOrderDetails.getColumn("quantityLacked").setEditorField(new TextField());
-        tableOrderDetails.getColumn("quantityDelivered").setEditorField(new TextField());
-        tableOrderDetails.getColumn("quantityNeeded").setEditorField(new TextField());
-        tableOrderDetails.getColumn("frk_material_quantity").setEditorField(new TextField());
-        tableOrderDetails.getColumn("formattedPrice").setEditorField(new TextField());
-        tableOrderDetails.getColumn("formattedSellingPrice").setEditorField(new TextField());
-        tableOrderDetails.getColumn("formattedTotalAmount").setEditorField(new TextField());
+        tableOrderDetails.getColumn("quantityLacked").setEditorField(createTextField(false));
+        tableOrderDetails.getColumn("quantityDelivered").setEditorField(createTextField(true));
+        tableOrderDetails.getColumn("quantityNeeded").setEditorField(createTextField(true));
+        tableOrderDetails.getColumn("frk_material_quantity").setEditorField(createTextField(false));
+        tableOrderDetails.getColumn("formattedPrice").setEditorField(createTextField(true));
+        tableOrderDetails.getColumn("formattedSellingPrice").setEditorField(createTextField(false));
+        tableOrderDetails.getColumn("formattedTotalAmount").setEditorField(createTextField(false));
 
         // Size for some columns
         tableOrderDetails.getColumn("formattedSellingPrice").setWidth(100);
@@ -239,7 +265,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-                presenter.calculateQuantityLackedWhenChangeQuantityNeeded(event);
+                presenter.updateColumnsWhenChangeQuantityNeeded(event);
             }
         });
 
@@ -248,8 +274,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-                presenter.calculateQuantityLackedWhenChangeQuantityDelivered(event);
-                presenter.calculateTotalAmountWhenChangeQuantityDelivered(event);
+                presenter.updateColumnsWhenChangeQuantityDelivered(event);
             }
         });
 
@@ -258,7 +283,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-                presenter.calculateSellingPriceWhenChangePrice(event);
+                presenter.updateColumnsWhenChangePrice(event);
             }
 
         });
@@ -268,7 +293,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
             @Override
             public void valueChange(ValueChangeEvent event) {
-                presenter.calculateSellingPriceWhenChangeSaleOff(event);
+                presenter.updateColumnsWhenChangeSaleOff(event);
             }
 
         });
@@ -281,9 +306,9 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
             @Override
             public void preCommit(CommitEvent commitEvent) throws CommitException {
-                orderdetailValidator.setEntity((Orderdetail) tableOrderDetails.getEditedItemId());
-                orderdetailValidator.setCalledByPreCommit(true);
-                tableOrderDetails.getEditorFieldGroup().isValid();
+//                orderdetailValidator.setEntity((Orderdetail) tableOrderDetails.getEditedItemId());
+//                orderdetailValidator.setCalledByPreCommit(true);
+//                tableOrderDetails.getEditorFieldGroup().isValid();
             }
 
             @Override
@@ -400,6 +425,7 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
                 filter.setInputPrompt("Tìm Kiếm");
                 filter.setImmediate(true);
                 filter.setMinimumQueryCharacters(2);
+                filter.setBuffered(true);
 
                 if (property.equals("frk_material_code")) {
                     presenter.setUpSuggestFieldForMaterial(filter, MaterialConverter.BY_CODE);
@@ -412,12 +438,22 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
 
                     @Override
                     public void valueChange(ValueChangeEvent event) {
+                        if(((Material) filter.getValue()).getId() == -1) {
+                            return;
+                        }
+
                         Orderdetail orderDetail = new Orderdetail();
                         presenter.fillDefaultDataForOrderDetail(orderDetail, filter);
                         // Add orderdetail to table
                         if (presenter.addToOrderDetailList(orderDetail, orderDetails)) {
                             tableOrderDetails.setRows(orderDetails);
                         }
+
+                        // In fact, valueChange event is only fired when change value of suggestionField
+                        // it will not be fired if we select the old one
+                        // therefore, we will change value of filter to a default one (empty material)
+                        // in order to select this value again
+                        filter.setValue(new Material());
                     }
                 });
 
@@ -469,17 +505,38 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         return search;
     }
 
-    public Order getOrder() {
-        return order;
+    private boolean validateAllFields() {
+        try {
+            customerCodeValidator.validate(customerCode.getValue());
+            orderNumberValidator.validate(orderNumber.getValue().trim());
+            orderContentValidator.validate(orderContent.getValue().trim());
+            orderDateValidator.validate(orderDate.getValue());
+        } catch (InvalidValueException e) {
+            Notification notify = new Notification("<b>Thông Báo</b>", e.getHtmlMessage(), Type.TRAY_NOTIFICATION, true);
+            notify.show(Page.getCurrent());
+            return false;
+        }
+        return true;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public TextField createTextField(boolean isEnable) {
+        return new TextField() {
+            private static final long serialVersionUID = 436326517648379862L;
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                super.setEnabled(isEnable);
+            }
+        };
     }
 
     @Override
     public void buttonClick(ClickEvent event) {
         if (event.getButton().equals(save)) {
+            if(!validateAllFields()) {
+                return;
+            }
+
             LuvsoftConfirmationDialog dialog = new LuvsoftConfirmationDialog("Xác nhận lưu hóa đơn?");
             dialog.addLuvsoftClickListener(new ClickListener() {
                 private static final long serialVersionUID = 351366856643651627L;
@@ -508,6 +565,14 @@ public class OrderFormContent extends VerticalLayout implements ClickListener {
         } else if(event.getButton().equals(discard)) {
             create();
         }
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public OptionGroup getOptionsOrderType() {

@@ -4,6 +4,10 @@ package com.luvsoft.utils;
 public class NemErrorList {
     public static final String Error_CodeTooLong = "Mã không được vượt quá 45 ký tự";
     public static final String Error_CodeNotEmpty = "Mã không được để trống";
+    public static final String Error_CodeCustomerNotEmpty = "Mã khách hàng không được để trống";
+    public static final String Error_CodeOrderNumberNotEmpty = "Mã hóa đơn không được để trống";
+    public static final String Error_OrderDateNotEmpty = "Ngày trên hóa đơn không được để trống";
+    public static final String Error_OrderContentNotEmpty = "Diễn giải không được để trống";
     public static final String Error_CodeIsDuplicated = "Mã đã tồn tại";
     public static final String Error_NameTooLong = "Tên không được vượt quá 45 ký tự";
     public static final String Error_NameNotEmpty = "Tên không được để trống";

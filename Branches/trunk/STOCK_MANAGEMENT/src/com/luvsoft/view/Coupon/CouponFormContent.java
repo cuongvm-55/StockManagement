@@ -98,6 +98,8 @@ public class CouponFormContent extends VerticalLayout implements ClickListener {
             centertitle.setValue("Phiếu Nhập Mua");
         } else if(couponType.equals(COUPON_TYPES.PH_NHAPHANGTRALAI)) {
             centertitle.setValue("Phiếu Nhập Hàng Trả Lại");
+        } else if(couponType.equals(COUPON_TYPES.PH_XUATTRANHACUNGCAP)) {
+            centertitle.setValue("Phiếu Xuất Trả Nhà Cung Cấp");
         }
 
         centertitle.addStyleName("center font16 " + ValoTheme.LABEL_BOLD);
@@ -121,6 +123,8 @@ public class CouponFormContent extends VerticalLayout implements ClickListener {
             couponContent.setValue("Nhập Mua Hàng");
         } else if(couponType.equals(COUPON_TYPES.PH_NHAPHANGTRALAI)) {
             couponContent.setValue("Nhập Hàng Trả Lại");
+        } else if(couponType.equals(COUPON_TYPES.PH_XUATTRANHACUNGCAP)) {
+            couponContent.setValue("Xuất Trả Nhà Cung Cấp");
         }
 
         couponDate = new DateField();

@@ -77,14 +77,13 @@ public class Utilities {
         return nf;
     }
     
-    public static double getDoubleValueFromFormattedStr(String str){
+    public static Double getDoubleValueFromFormattedStr(String str){
         try{
             return getNumberFormat().parse(str).doubleValue();
         }
         catch(Exception e){
-            System.out.println("Fail to parse string: " + str + " to double.");
+            throw new NumberFormatException();
         }
-        return 0.00d;
     }
 
     public static NumberFormat getPercentageFormat() {
@@ -96,17 +95,11 @@ public class Utilities {
     }
 
     public static Float convertPercentageStringToFloat(String percentage) {
-        try{
-            System.out.println("Percentage " + percentage);
-            if(percentage.endsWith("%")) {
-                percentage = percentage.replace("%", "");
-            }
-            System.out.println("Percentage " + percentage);
-            return Float.parseFloat(percentage);
+        System.out.println("Percentage " + percentage);
+        if(percentage.endsWith("%")) {
+            percentage = percentage.replace("%", "");
         }
-        catch(Exception exception) {
-            System.out.println("Fail to parse from String to Float ...");
-        }
-        return 0.0f;
+        System.out.println("Percentage " + percentage);
+        return Float.parseFloat(percentage);
     }
 }

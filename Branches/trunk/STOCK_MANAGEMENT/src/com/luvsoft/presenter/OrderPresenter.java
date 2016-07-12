@@ -35,13 +35,13 @@ import com.luvsoft.view.component.LuvsoftConfirmationDialog;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 
 public class OrderPresenter extends AbstractEntityPresenter implements OrderListener, Serializable {
     private static final long serialVersionUID = -7212035637448304624L;
@@ -530,8 +530,17 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
             orderDetail.setMaterial(material);
             orderDetail.setFrk_material_code(material.getCode());
             orderDetail.setFrk_material_name(material.getName());
-            orderDetail.setFrk_material_unit(material.getUnit().getName());
-            orderDetail.setFrk_material_stock(material.getStock().getCode());
+            if(material.getUnit()!= null) {
+                orderDetail.setFrk_material_unit(material.getUnit().getName());
+            } else {
+                orderDetail.setFrk_material_unit("");
+            }
+            if(material.getStock() != null) {
+                orderDetail.setFrk_material_stock(material.getStock().getCode());
+            }
+            if(material.getStock() != null) {
+                orderDetail.setFrk_material_stock("");
+            }
             orderDetail.setQuantityNeeded(0);
             orderDetail.setQuantityDelivered(0);
             orderDetail.setQuantityLacked(0);
@@ -549,49 +558,40 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
     }
 
     /**
-     * This function is used to change and calculate quantity lacked when change quantity delivered
+     * This function is used to change and calculate some values when change quantity delivered
      * @param event  ->  value change event of text field
      */
-    public void calculateQuantityLackedWhenChangeQuantityDelivered(ValueChangeEvent event) {
+    public void updateColumnsWhenChangeQuantityDelivered(ValueChangeEvent event) {
         if(event.getProperty().getValue() != null) {
-            int quantityDelivered = Integer.parseInt(event.getProperty().getValue()+"");
+            int quantityDelivered = getIntegerFromValueChangeEvent(event, "quantityDelivered", "Số lượng xuất");
 
             String quantityNeededStr = ((TextField) view.getTableOrderDetails().getColumn("quantityNeeded").getEditorField()).getValue();
             if(quantityNeededStr == null) {
                 quantityNeededStr = "";
             }
-            int quantityNeeded = Integer.parseInt(quantityNeededStr == "" ? "0" : quantityNeededStr);
+            int quantityNeeded = Integer.parseInt(quantityNeededStr.equals("") ? "0" : quantityNeededStr);
 
             int quantityLacked = quantityNeeded - quantityDelivered;
             if(quantityLacked < 0) {
                 quantityLacked = 0;
             }
             ((TextField) view.getTableOrderDetails().getColumn("quantityLacked").getEditorField()).setValue(quantityLacked+"");
-        }
-    }
 
-    /**
-     * This function is used to change and calculate total amount when change quantity delivered
-     * @param event  ->  value change event of text field
-     */
-    public void calculateTotalAmountWhenChangeQuantityDelivered(ValueChangeEvent event) {
-        if(event.getProperty().getValue() != null) {
             String sellingPriceStr = ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).getValue();
-            if(sellingPriceStr == null) {
-                sellingPriceStr = "";
+            sellingPriceStr = sellingPriceStr.trim();
+            if(sellingPriceStr == null || sellingPriceStr.equals("")) {
+                sellingPriceStr = "0";
             }
             double sellingPrice = Utilities.getDoubleValueFromFormattedStr(sellingPriceStr);
-
-            String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
-            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
-
             double totalAmount = sellingPrice * quantityDelivered;
             ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
 
             String quantityInStockStr = ((TextField) view.getTableOrderDetails().getColumn("frk_material_quantity").getEditorField()).getValue();
-            int quantityInStock = Integer.parseInt((quantityInStockStr == null || quantityInStockStr == "") ? "0" : quantityInStockStr);
+            int quantityInStock = Integer.parseInt((quantityInStockStr == null || quantityInStockStr.equals("")) ? "0" : quantityInStockStr);
             quantityInStock = quantityInStock - quantityDelivered;
             ((TextField) view.getTableOrderDetails().getColumn("frk_material_quantity").getEditorField()).setValue(quantityInStock+"");
+        } else {
+            ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).setValue("0");
         }
     }
 
@@ -599,18 +599,20 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      * This function is used to change and calculate quantity lacked when change quantity needed
      * @param event  ->  value change event of text field
      */
-    public void calculateQuantityLackedWhenChangeQuantityNeeded(ValueChangeEvent event) {
+    public void updateColumnsWhenChangeQuantityNeeded(ValueChangeEvent event) {
         if(event.getProperty().getValue() != null) {
-            int quantityNeeded = Integer.parseInt(event.getProperty().getValue()+"");
+            int quantityNeeded = getIntegerFromValueChangeEvent(event, "quantityNeeded", "Số lượng đặt hàng");
 
             String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
-            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr.equals("") ? "0" : quantityDeliveredStr);
 
             int quantityLacked = quantityNeeded - quantityDelivered;
             if(quantityLacked < 0) {
                 quantityLacked = 0;
             }
             ((TextField) view.getTableOrderDetails().getColumn("quantityLacked").getEditorField()).setValue(quantityLacked+"");
+        } else {
+            ((TextField) view.getTableOrderDetails().getColumn("quantityNeeded").getEditorField()).setValue("0");
         }
     }
 
@@ -618,29 +620,30 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      * This function is used to change and calculate selling price when change price
      * @param event  ->  value change event of text field
      */
-    public void calculateSellingPriceWhenChangePrice(ValueChangeEvent event) {
+    public void updateColumnsWhenChangePrice(ValueChangeEvent event) {
         if(event.getProperty().getValue() != null) {
-            String priceStr = event.getProperty().getValue() + "";
-            double price = Utilities.getDoubleValueFromFormattedStr(priceStr);
+            double price = getDoubleFromValueChangeEvent(event, "formattedPrice", "Giá chuẩn");
 
             String saleOffStr = ((TextField) view.getTableOrderDetails().getColumn("saleOff").getEditorField()).getValue();
             if(saleOffStr == null) {
                 saleOffStr = "";
             }
-            float saleOff = Utilities.convertPercentageStringToFloat(saleOffStr == "" ? "0" : saleOffStr);
+            float saleOff = Utilities.convertPercentageStringToFloat(saleOffStr.equals("") ? "0" : saleOffStr);
 
             double sellingPrice = price - (price * saleOff) / 100.0f;
             ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).setValue(Utilities.getNumberFormat().format(sellingPrice));
 
-            // Re-caculate the total amount
+            // Re-calculate the total amount
             String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
             if(quantityDeliveredStr == null) {
-                quantityDeliveredStr = "";
+                quantityDeliveredStr = "0";
             }
-            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr.equals("") ? "0" : quantityDeliveredStr);
 
             double totalAmount = sellingPrice * quantityDelivered;
             ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
+        } else {
+            ((TextField) view.getTableOrderDetails().getColumn("formattedPrice").getEditorField()).setValue("0");
         }
     }
 
@@ -648,29 +651,38 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
      * This function is used to calulate selling price and total amount when change sale off value
      * @param event  -> value change event of text field
      */
-    public void calculateSellingPriceWhenChangeSaleOff(ValueChangeEvent event) {
+    public void updateColumnsWhenChangeSaleOff(ValueChangeEvent event) {
         if(event.getProperty().getValue() != null) {
-            String saleOffStr = event.getProperty().getValue() + "";
-            float saleOff = Utilities.convertPercentageStringToFloat(saleOffStr == "" ? "0" : saleOffStr);
+            float saleOff = getPercentageFromValueChangeEvent(event, "saleOff", "Chiết khấu");
 
             String priceStr = ((TextField) view.getTableOrderDetails().getColumn("formattedPrice").getEditorField()).getValue();
             if(priceStr == null) {
                 priceStr = "";
             }
-            double price = Utilities.getDoubleValueFromFormattedStr(priceStr);
+
+            double price = 0.0;
+            try {
+                 price = Utilities.getDoubleValueFromFormattedStr(priceStr);
+            }
+            catch(NumberFormatException e)
+            {
+                price = 0.0;
+            }
 
             double sellingPrice = price - (price * saleOff) / 100.0f;
             ((TextField) view.getTableOrderDetails().getColumn("formattedSellingPrice").getEditorField()).setValue(Utilities.getNumberFormat().format(sellingPrice));
 
-            // Re-caculate the total amount
+            // Re-calculate the total amount
             String quantityDeliveredStr = ((TextField) view.getTableOrderDetails().getColumn("quantityDelivered").getEditorField()).getValue();
             if(quantityDeliveredStr == null) {
                 quantityDeliveredStr = "";
             }
-            int quantityDelivered = Integer.parseInt(quantityDeliveredStr == "" ? "0" : quantityDeliveredStr);
+            int quantityDelivered = Integer.parseInt(quantityDeliveredStr.equals("") ? "0" : quantityDeliveredStr);
 
             double totalAmount = sellingPrice * quantityDelivered;
             ((TextField) view.getTableOrderDetails().getColumn("formattedTotalAmount").getEditorField()).setValue(Utilities.getNumberFormat().format(totalAmount));
+        } else {
+            ((TextField) view.getTableOrderDetails().getColumn("saleOff").getEditorField()).setValue(Utilities.getPercentageFormat().format(0.0));
         }
     }
 
@@ -692,6 +704,64 @@ public class OrderPresenter extends AbstractEntityPresenter implements OrderList
         notification.setHtmlContentAllowed(true);
         notification.setPosition(Position.BOTTOM_RIGHT);
         notification.show(Page.getCurrent());
+    }
+
+    private int getIntegerFromValueChangeEvent(ValueChangeEvent event, String columnProperty, String columnName) {
+        int number = 0;
+
+        if(event.getProperty().getValue() != null) {
+            String numberStr = event.getProperty().getValue()+"";
+            numberStr = numberStr.trim();
+            try {
+                number = Integer.parseInt(numberStr);
+                if(number < 0) throw new NumberFormatException();
+            } catch (NumberFormatException e) {
+                number = 0;
+                ((TextField) view.getTableOrderDetails().getColumn(columnProperty).getEditorField()).setValue("0");
+                showNotification(columnName + " không chính xác");
+            }
+        }
+        return number;
+    }
+
+    private double getDoubleFromValueChangeEvent(ValueChangeEvent event, String columnProperty, String columnName) {
+        double number = 0.0d;
+
+        if(event.getProperty().getValue() != null) {
+            String numberStr = event.getProperty().getValue()+"";
+            numberStr = numberStr.trim();
+            try {
+                number = Utilities.getDoubleValueFromFormattedStr(numberStr);
+                if(number < 0) throw new NumberFormatException();
+            } catch (NumberFormatException e) {
+                number = 0.0d;
+                ((TextField) view.getTableOrderDetails().getColumn(columnProperty).getEditorField()).setValue("0");
+
+                if(!numberStr.equals("")) {
+                    showNotification(columnName + " không chính xác");
+                }
+            }
+        }
+        return number;
+    }
+
+    private float getPercentageFromValueChangeEvent(ValueChangeEvent event, String columnProperty, String columnName) {
+        float number = 0.0f;
+
+        if(event.getProperty().getValue() != null) {
+            String numberStr = event.getProperty().getValue()+"";
+            numberStr = numberStr.trim();
+            try {
+                number = Utilities.convertPercentageStringToFloat(numberStr);
+                if(number < 0) throw new NumberFormatException();
+            } catch (NumberFormatException e) {
+                number = 0.0f;
+                ((TextField) view.getTableOrderDetails().getColumn(columnProperty).getEditorField()).setValue("0.0%");
+                showNotification(columnName + " không chính xác");
+            }
+        }
+        ((TextField) view.getTableOrderDetails().getColumn(columnProperty).getEditorField()).setValue(number + "%");
+        return number;
     }
 
     @Override

@@ -32,8 +32,6 @@ public class LuvsoftOrderDetailValidator extends BeanValidator {
         Method[] methods = Orderdetail.class.getMethods();
         for(Method m : methods) {
 
-            // In fact, we just want to valid AvoidDuplication when the user press on save button
-            // so we just do it when isValid function is called by preCommit function
             if(m.isAnnotationPresent(DoNotGreaterThanQuantityInStock.class) && isCalledByPreCommit) {
                 if(m.isAnnotationPresent(Column.class)) {
                     Column cl = m.getAnnotation(Column.class);
