@@ -44,7 +44,10 @@ public abstract class AbstractReportProducer {
         }
 
         // Generate report
-        view.setTable(getFilterStatistic(fromDate, toDate, filterObject));
+        if( fromDate != null && toDate!= null && !toDate.before(fromDate) ){
+            view.getSumDataList().clear();
+            view.setTable(getFilterStatistic(fromDate, toDate, filterObject));
+        }
     }
 
     private void clearFilterCriteria(){
@@ -68,6 +71,7 @@ public abstract class AbstractReportProducer {
         toDate   = to;
 
         clearFilterCriteria();
+        view.getSumDataList().clear();
 
         // Update view
         view.setTable(getFilterStatistic(fromDate, toDate, filterObject));

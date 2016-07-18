@@ -56,9 +56,9 @@ public class StockManagementUI extends UI {
             buildFooter();
 
             // Start statistic manager thread
-            //if( !StatisticManagerThread.getInstance().isAlive() ){
-            //    StatisticManagerThread.getInstance().start();
-            //}
+            if( !StatisticManagerThread.getInstance().isAlive() ){
+                StatisticManagerThread.getInstance().start();
+            }
         }
     }
 

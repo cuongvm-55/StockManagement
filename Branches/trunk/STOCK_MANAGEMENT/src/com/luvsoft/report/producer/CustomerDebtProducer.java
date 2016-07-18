@@ -18,6 +18,7 @@ public class CustomerDebtProducer extends AbstractReportProducer{
         view = v;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Object> getFilterStatistic(Date from, Date to, FilterObject fo) {
         List<Object> retDatas = new ArrayList<Object>();
@@ -31,6 +32,11 @@ public class CustomerDebtProducer extends AbstractReportProducer{
         }
 
         CustomerStatisticManager csStatMgr = CustomerStatisticManager.getInstance();
+        double sumOrgAmount = 0.0;
+        double sumOutAmount = 0.0;
+        double sumInAmount = 0.0;
+        double sumInvAmount = 0.0;
+
         for(int i = 0; i < csList.size(); i++){
             Customer customer = (Customer)csList.get(i);
             Customerhistory csHistory = csStatMgr.getTotalDebtAmountAtDatePoint(from, customer);
@@ -51,7 +57,18 @@ public class CustomerDebtProducer extends AbstractReportProducer{
                     Utilities.getNumberFormat().format(spentAmount),
                     Utilities.getNumberFormat().format(receivedAmount),
                     Utilities.getNumberFormat().format(ivtAmount)));
+
+            sumOrgAmount+= csHistory.getDebt().doubleValue();
+            sumOutAmount+= spentAmount;
+            sumInAmount += receivedAmount;
+            sumInvAmount+= ivtAmount;
         }
+
+        // set sum data
+        view.getSumDataList().put("orgAmount", Utilities.getNumberFormat().format(sumOrgAmount));
+        view.getSumDataList().put("outAmount", Utilities.getNumberFormat().format(sumOutAmount));
+        view.getSumDataList().put("inAmount", Utilities.getNumberFormat().format(sumInAmount));
+        view.getSumDataList().put("ivtAmount", Utilities.getNumberFormat().format(sumInvAmount));
 
         return retDatas;
     }
@@ -64,7 +81,7 @@ public class CustomerDebtProducer extends AbstractReportProducer{
         private String outAmount; // it's the amount that we spend on this customer
         private String inAmount;  // it's the amount that we receive from this customer
         private String ivtAmount; // inventory
-        
+
         public DebtRecord(){
             sequence = 0;
             customerCode = "";
@@ -142,6 +159,15 @@ public class CustomerDebtProducer extends AbstractReportProducer{
 
         public void setIvtAmount(String ivtAmount) {
             this.ivtAmount = ivtAmount;
+        }
+
+        @Override
+        public String toString() {
+            return "DebtRecord [sequence=" + sequence + ", customerCode="
+                    + customerCode + ", customerName=" + customerName
+                    + ", orgAmount=" + orgAmount + ", outAmount=" + outAmount
+                    + ", inAmount=" + inAmount + ", ivtAmount=" + ivtAmount
+                    + "]";
         }
     }
 

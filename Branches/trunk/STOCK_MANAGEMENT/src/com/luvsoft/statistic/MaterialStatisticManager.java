@@ -163,7 +163,7 @@ public class MaterialStatisticManager {
         params.add(datePoint);
         params.add(materialId);
 
-        List<Object> retsults = EntityManagerDAO.getInstance().findByQuery(QUERY, params);
+        List<Object> retsults = EntityManagerDAO.getInstance().findByQueryWithLimit(QUERY, params, 1); // only 1 record
         if( !retsults.isEmpty() ){
             // get the first history record
             h = (Materialhistory)retsults.get(0);

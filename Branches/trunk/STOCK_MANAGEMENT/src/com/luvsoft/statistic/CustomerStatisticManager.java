@@ -102,7 +102,7 @@ public class CustomerStatisticManager {
         params.add(datePoint);
         params.add(customerId);
 
-        List<Object> retsults = EntityManagerDAO.getInstance().findByQuery(QUERY, params);
+        List<Object> retsults = EntityManagerDAO.getInstance().findByQueryWithLimit(QUERY, params, 1);// only 1 record
         if( !retsults.isEmpty() ){
             // get the first history record
             h = (Customerhistory)retsults.get(0);
@@ -265,25 +265,38 @@ public class CustomerStatisticManager {
     }
 
     /**
-     * Gets all Coupon of CouponType type of customerId in interval [from, to]
+     * Gets all Coupon of List<CouponType> type of customerId in interval [from, to]
      * @param from
      * @param to
      * @param customerId
      * @param type
      * @return
      */
-    public List<Object> retrieveCoupons(Date from, Date to, Integer customerId, CouponType type){
-        String QUERY = ""
-                + "SELECT e "
-                + "FROM "+Coupon.getEntityname()+" e "
-                + "WHERE date >= :var0 AND date <= :var1 "
-                + "AND customer.id = :var2 "
-                + "AND coupontype.id = :var3";
+    public List<Object> retrieveCoupons(Date from, Date to, Integer customerId, List<CouponType> types){
         List<Object> params = new ArrayList<Object>();
         params.add(from);
         params.add(to);
         params.add(customerId);
-        params.add(type.getValue());
+
+        String QUERY = ""
+                + "SELECT e "
+                + "FROM "+Coupon.getEntityname()+" e "
+                + "WHERE date >= :var0 AND date <= :var1 "
+                + "AND customer.id = :var2 ";
+        if( !types.isEmpty() ){
+            QUERY += "AND ";
+            int i = 0;
+            while(i < types.size()){
+                QUERY += "coupontype.id = :var"+(i+3);
+                params.add(types.get(i).getValue());
+    
+                if( i < types.size()-1 ){
+                    QUERY += " OR ";
+                }
+                i++;
+            }
+        }
+
         return EntityManagerDAO.getInstance().findByQuery(QUERY, params);
     }
 
@@ -316,12 +329,10 @@ public class CustomerStatisticManager {
      * @return
      */
     public double getExpectedTotalSpendingAmount(Date from, Date to, Integer customerId){
-        List<Object> buyCouponList = retrieveCoupons(from, to, customerId, CouponType.Coupon_Buy);
-        List<Object> customerReturnCouponList = retrieveCoupons(from, to, customerId, CouponType.Coupon_Customer_Return);
-        List<Object> couponList = new ArrayList<Object>();
-        couponList.addAll(buyCouponList);
-        couponList.addAll(customerReturnCouponList);
-
+        List<CouponType> couponTypes = new ArrayList<CouponType>();
+        couponTypes.add(CouponType.Coupon_Buy);
+        couponTypes.add(CouponType.Coupon_Customer_Return);
+        List<Object> couponList = retrieveCoupons(from, to, customerId, couponTypes);
         if( couponList.isEmpty() ){
             return 0.00d;
         }
@@ -355,7 +366,9 @@ public class CustomerStatisticManager {
      */
     public double getExpectedTotalReceivingAmount(Date from, Date to, Integer customerId){
         // Return provider coupon
-        List<Object> retProviderCouponList = retrieveCoupons(from, to, customerId, CouponType.Coupon_Return_Provider);
+        List<CouponType> couponTypes = new ArrayList<CouponType>();
+        couponTypes.add(CouponType.Coupon_Return_Provider);
+        List<Object> retProviderCouponList = retrieveCoupons(from, to, customerId, couponTypes);
         double totalAmount = 0.00d;
         if( retProviderCouponList != null){
             for( int i = 0; i < retProviderCouponList.size(); i++ ){

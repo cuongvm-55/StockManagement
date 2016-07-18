@@ -109,4 +109,11 @@ public class Customerhistory extends AbstractEntity implements java.io.Serializa
     public static String getEntityname() {
         return "Customerhistory";
     }
+
+    @Override
+    public String toString() {
+        return "Customerhistory [id=" + id + ", customer=" + customer
+                + ", debt=" + debt + ", date=" + date + "]";
+    }
+    
 }

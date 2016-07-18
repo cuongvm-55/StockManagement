@@ -269,6 +269,24 @@ public class EntityManagerDAO {
         return query.getResultList();
     }
 
+    /**
+     * Find list of object by inputed query string with limit number of return records
+     * @param queryStr
+     * @param params
+     * @param nbrRecords
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<Object> findByQueryWithLimit(String queryStr, List<Object> params, int nbrRecords){
+        Query query = entitymanager.createQuery(queryStr);
+        System.out.println(queryStr);
+        for(int i=0;i<params.size();i++){
+            query.setParameter("var"+i, params.get(i));
+        }
+        query.setMaxResults(nbrRecords);
+        return query.getResultList();
+    }
+
     @SuppressWarnings("unchecked")
     public Object findLastItem(String entityName) {
         Query query = entitymanager.createQuery("FROM " + entityName + " ORDER BY id DESC");

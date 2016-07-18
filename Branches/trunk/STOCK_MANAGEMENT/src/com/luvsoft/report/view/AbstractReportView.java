@@ -4,24 +4,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.vaadin.resetbuttonfortextfield.ResetButtonForTextField;
 import org.vaadin.viritin.grid.MGrid;
+import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
 import com.luvsoft.report.producer.AbstractReportProducer;
 import com.luvsoft.utils.Utilities;
-import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
+import com.vaadin.ui.Grid.FooterRow;
 import com.vaadin.ui.Grid.HeaderRow;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
@@ -40,6 +43,7 @@ public abstract class AbstractReportView<T> implements ClickListener {
     private Label lblTitle;
     private DateField dfFromDate;
     private DateField dfToDate;
+    private MHorizontalLayout hzFilter;
 
     private Button btnOk;
 
@@ -52,6 +56,10 @@ public abstract class AbstractReportView<T> implements ClickListener {
     // Backing Beans: Any changes (update, delete, create)
     // should re-charge this list instead of setRows() again
     private List<T> listOfData;
+
+    // sum data list (for footer)
+    private Map<String, String> sumDataList; // hold summary of some properties
+    private FooterRow groupingFooter;
 
     protected AbstractReportProducer producer;
 
@@ -98,6 +106,10 @@ public abstract class AbstractReportView<T> implements ClickListener {
         hzLayoutDate.setSpacing(true);
         hzLayoutDate.addStyleName("margin-left-right-20px");
 
+        // Filter
+        hzFilter = new MHorizontalLayout();
+
+        // Grid
         gridContent = new MGrid<>(typeOfRows);
         gridContent.setSizeFull();
         gridContent.setEditorEnabled(false);
@@ -112,11 +124,14 @@ public abstract class AbstractReportView<T> implements ClickListener {
             }
         });
 
-        tableProperties = new ArrayList<String>();
+        groupingFooter = gridContent.prependFooterRow();
 
+        tableProperties = new ArrayList<String>();
+        //footerProperties = new ArrayList<String>();
+        sumDataList = new LinkedHashMap<String, String>();
         filterFields = new ArrayList<TextField>();
  
-        wrapper.addComponents(lblTitle, hzLayoutDate, gridContent);
+        wrapper.addComponents(lblTitle, hzLayoutDate, hzFilter, gridContent);
 
         // Handle events
         this.btnOk.addClickListener(this);
@@ -153,29 +168,27 @@ public abstract class AbstractReportView<T> implements ClickListener {
         if( properties == null || properties.isEmpty() ){
             return this;
         }
+        hzFilter.setSizeUndefined();
+        Label lblFilter = new Label("Bộ lọc");
+        lblFilter.addStyleName("margin-left-20px");
+        hzFilter.addComponent(lblFilter);
 
+        MHorizontalLayout hz1 = new MHorizontalLayout();
+        hz1.setSizeFull();
         Object[] fields = properties.keySet().toArray();
-        filteringHeader = gridContent.appendHeaderRow();
+        //filteringHeader = gridContent.appendHeaderRow();
         for( int i = 0; i < fields.length; i++){
             String property = (String) fields[i];
-            // Add new TextFields to column which filters the data from that column
-            // In fact, for the report the filter text field can unnecessary in the
-            // same column with corresponding header.
-            // i.e: filter for "name" can be placed in column "code"
-            // We will inform user by the input prompt text
-            String columnId = tableProperties.get(i); //properties[i];
-
             // Create the filter TextField
             TextField filter = new TextField();
             filter.setWidth("100%");
             filter.addStyleName(ValoTheme.TEXTFIELD_TINY);
             filter.setData(property);
-            filter.setInputPrompt(properties.get(property)); // each property has specific input prompt text
-            
+            filter.setCaption(properties.get(property));
             ResetButtonForTextField.extend(filter);
             filter.setImmediate(true);
-            filteringHeader.getCell(columnId).setComponent(filter);
-            filteringHeader.getCell(columnId).setStyleName("filter-header");
+            filter.addStyleName("filter-header");
+            filter.addStyleName("caption-left");
 
             // save to handle filter box
             filterFields.add(filter);
@@ -187,8 +200,13 @@ public abstract class AbstractReportView<T> implements ClickListener {
                     producer.doFilter(filter.getData().toString(), event.getText());
                 }
             });
+
+            hz1.addComponent(filter);
         }
 
+        hzFilter.addComponent(hz1);
+        hzFilter.setExpandRatio(lblFilter, 1);
+        hzFilter.setExpandRatio(hz1, 9);
         return this;
     }
 
@@ -233,6 +251,21 @@ public abstract class AbstractReportView<T> implements ClickListener {
         try{
             this.listOfData = listOfData;
             gridContent.setRows(this.listOfData);
+
+            if( !sumDataList.isEmpty() ){
+                //groupingFooter = gridContent.getFooterRow(0).;
+                for( int i=0; i < tableProperties.size(); i++ ){
+                    if( sumDataList.get(tableProperties.get(i)) != null ){
+                        groupingFooter.getCell(tableProperties.get(i)).setText(sumDataList.get(tableProperties.get(i)));
+                    }
+                }
+            }
+            else
+            {
+                gridContent.removeFooterRow(groupingFooter);
+                groupingFooter = gridContent.prependFooterRow();
+            }
+
         }catch(Exception e)
         {
             System.out.println("No record found.");
@@ -330,6 +363,14 @@ public abstract class AbstractReportView<T> implements ClickListener {
 
     public void setProducer(AbstractReportProducer producer) {
         this.producer = producer;
+    }
+
+    public Map<String, String> getSumDataList() {
+        return sumDataList;
+    }
+
+    public void setSumDataList(Map<String, String> sumDataList) {
+        this.sumDataList = sumDataList;
     }
 
     // Abstract functions

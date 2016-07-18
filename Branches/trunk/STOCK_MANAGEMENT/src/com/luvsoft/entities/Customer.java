@@ -48,6 +48,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
     private BigDecimal debt;
     private Set<Spendingbill> spendingbills = new HashSet<Spendingbill>(0);
     private Set<Coupon> coupons = new HashSet<Coupon>(0);
+    private Set<Customerhistory> customerhistorys = new HashSet<Customerhistory>(0);
 
     // Not-mapped members
     private transient String frk_area_name;
@@ -74,7 +75,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
 
     public Customer(Area area, Customertype1 customertype1, Customertype2 customertype2, String code, String name, String address,
             String phoneNumber, String email, String bankName, String bankAccount, BigDecimal debt, Set<Spendingbill> spendingbills,
-            Set<Coupon> coupons) {
+            Set<Coupon> coupons, Set<Customerhistory> customerhistorys) {
         this.area = area;
         this.customertype1 = customertype1;
         this.customertype2 = customertype2;
@@ -88,6 +89,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         this.debt = debt;
         this.spendingbills = spendingbills;
         this.coupons = coupons;
+        this.customerhistorys = customerhistorys;
     }
 
     public Customer(Integer id, Area area, Customertype1 customertype1,
@@ -95,6 +97,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
             String address, String phoneNumber, String email, String bankName,
             String bankAccount, BigDecimal debt,
             Set<Spendingbill> spendingbills, Set<Coupon> coupons,
+            Set<Customerhistory> customerhistories,
             String frk_area_name,
             String frk_customertype1_name, String frk_customertype2_name) {
         super();
@@ -112,6 +115,7 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         this.debt = debt;
         this.spendingbills = spendingbills;
         this.coupons = coupons;
+        this.customerhistorys = customerhistories;
         this.frk_area_name = frk_area_name;
         this.frk_customertype1_name = frk_customertype1_name;
         this.frk_customertype2_name = frk_customertype2_name;
@@ -347,8 +351,18 @@ public class Customer extends AbstractEntity implements java.io.Serializable {
         debt = debt == null ? new BigDecimal(0.0d) : debt;
     }
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
+    public Set<Customerhistory> getCustomerhistorys() {
+        return customerhistorys;
+    }
+
+    //@OneToMany(mappedBy = "war",fetch = FetchType.EAGER)
+    public void setCustomerhistorys(Set<Customerhistory> customerhistorys) {
+        this.customerhistorys = customerhistorys;
+    }
+
     @Override
     public Customer cloneObject() {
-        return new Customer(id, area, customertype1, customertype2, code, name, address, phoneNumber, email, bankName, bankAccount, debt, spendingbills, coupons, frk_area_name, frk_customertype1_name, frk_customertype2_name);
+        return new Customer(id, area, customertype1, customertype2, code, name, address, phoneNumber, email, bankName, bankAccount, debt, spendingbills, coupons, customerhistorys, frk_area_name, frk_customertype1_name, frk_customertype2_name);
     }
 }

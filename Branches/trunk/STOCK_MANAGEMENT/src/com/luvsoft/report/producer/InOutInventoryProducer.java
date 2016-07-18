@@ -20,6 +20,7 @@ public class InOutInventoryProducer extends AbstractReportProducer{
         view = v;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Object> getFilterStatistic(Date from, Date to,
             FilterObject fo) {
@@ -33,6 +34,16 @@ public class InOutInventoryProducer extends AbstractReportProducer{
         }
 
         MaterialStatisticManager mtStatMgr = MaterialStatisticManager.getInstance();
+        // sum
+        long sumOrgQuantity = 0;
+        double sumOrgAmount = 0.0;
+        long sumInQuantity = 0;
+        double sumInAmount = 0.0;
+        long sumOutQuantity = 0;
+        double sumOutAmount = 0.0;
+        long sumIvtQuantity = 0;
+        double sumIvtAmount = 0.0;
+
         for( int index = 0; index < materialList.size(); index++ ){
             Material material = (Material)materialList.get(index);
 
@@ -56,9 +67,9 @@ public class InOutInventoryProducer extends AbstractReportProducer{
                     outputRecord);
             double price = inventoryMH.getAverageInputPrice().doubleValue(); // average price
             price = (price == 0f) ? material.getPrice().doubleValue() : price;
-            
+            int STT = index + 1;
             dataList.add(new InOutInventoryRecord(
-                    (index + 1),                      // STT
+                    STT,                               // STT
                     material.getCode(),               // Ma VT
                     material.getName(),               // Ten VT
                     material.getUnit() != null ? material.getUnit().getName() : "",// ĐVT
@@ -73,9 +84,32 @@ public class InOutInventoryProducer extends AbstractReportProducer{
                     Utilities.getNumberFormat().format(
                             (inventoryMH.getQuantity() + inputRecord.quantity - outputRecord.quantity)*price) // TT ton
                     ));
-            index++;
+
+            sumOrgQuantity+= inventoryMH.getQuantity();
+            sumOrgAmount += inventoryMH.getQuantity()*price;
+
+            sumInQuantity += inputRecord.quantity;
+            sumInAmount += inputRecord.amount;
+
+            sumOutQuantity += outputRecord.quantity;
+            sumOutAmount += outputRecord.amount;
+
+            sumIvtQuantity += inventoryMH.getQuantity() + inputRecord.quantity - outputRecord.quantity;
+            sumIvtAmount += (inventoryMH.getQuantity() + inputRecord.quantity - outputRecord.quantity)*price;
         }
-        System.out.println(dataList);
+        // set sum data
+        view.getSumDataList().put("orgQuantity", ""+sumOrgQuantity);
+        view.getSumDataList().put("orgAmount", Utilities.getNumberFormat().format(sumOrgAmount));
+
+        view.getSumDataList().put("inputQuantity", ""+sumInQuantity);
+        view.getSumDataList().put("inputAmount", Utilities.getNumberFormat().format(sumInAmount));
+
+        view.getSumDataList().put("outputQuantity", ""+sumOutQuantity);
+        view.getSumDataList().put("outputAmount", Utilities.getNumberFormat().format(sumOutAmount));
+
+        view.getSumDataList().put("invtQuantity", ""+sumIvtQuantity);
+        view.getSumDataList().put("invtAmount", Utilities.getNumberFormat().format(sumIvtAmount));
+
         return dataList;
     }
 

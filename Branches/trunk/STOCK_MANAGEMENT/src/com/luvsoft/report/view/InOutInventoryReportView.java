@@ -49,9 +49,10 @@ public class InOutInventoryReportView extends AbstractReportView<InOutInventoryR
     @Override
     public Map<String, String> getFilterColumns() {
         return new LinkedHashMap<String, String>(){{
-            put("frk_materialtype1_name", "Loại VT 1...");
-            put("frk_materialtype2_name", "Loại VT 2...");
-            put("name", "Tên VT...");
+            put("frk_materialtype1_name", "Loại VT 1");
+            put("frk_materialtype2_name", "Loại VT 2");
+            put("name", "Tên VT");
         }};
     }
+
 }

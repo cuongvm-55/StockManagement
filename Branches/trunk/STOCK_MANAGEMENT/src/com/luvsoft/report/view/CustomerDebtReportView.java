@@ -47,9 +47,9 @@ public class CustomerDebtReportView extends AbstractReportView<DebtRecord>{
     @Override
     public Map<String, String> getFilterColumns() {
         return new LinkedHashMap<String, String>(){{
-            put("frk_customertype1_name", "Loại KH 1...");
-            put("frk_customertype2_name", "Loại KH 2...");
-            put("name", "Tên KH...");
+            put("frk_customertype1_name", "Loại KH 1");
+            put("frk_customertype2_name", "Loại KH 2");
+            put("name", "Tên KH");
         }};
     }
 
