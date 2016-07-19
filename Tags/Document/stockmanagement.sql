@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 18, 2016 at 05:24 PM
+-- Generation Time: Jul 19, 2016 at 06:54 PM
 -- Server version: 5.6.26-log
 -- PHP Version: 5.6.8
 
@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS `customer` (
 
 INSERT INTO `customer` (`id`, `code`, `name`, `address`, `phoneNumber`, `idArea`, `email`, `bankName`, `bankAccount`, `debt`, `idCustomerType1`, `idCustomerType2`) VALUES
 (34, 'KH1', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329830', 1, 'datnq.55@gmail.com', 'TP Bank', '21231', '5000000.0000', 1, 2),
-(42, 'KH35', 'Vy Mạnh Cường', '63/30/84 Lê Đức Thọ', '01663724852', 3, 'cuongvm.55@gmail.com', 'Tien Phong', '00352078001', '0.0000', 1, 1);
+(42, 'KH35', 'Vy Mạnh Cường', '63/30/84 Lê Đức Thọ', '01663724852', 3, 'cuongvm.55@gmail.com', 'Tien Phong', '00352078001', '0.0000', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -270,8 +270,8 @@ CREATE TABLE IF NOT EXISTS `customertype1` (
 --
 
 INSERT INTO `customertype1` (`id`, `name`, `description`) VALUES
-(1, 'Loại KH 1 1', 'adadad fgfg'),
-(3, 'Loại KH 1 2', 'ádadadadasd');
+(1, 'Khách hàng', 'adadad fgfg'),
+(3, 'Nhà cung cấp', 'ádadadadasd');
 
 -- --------------------------------------------------------
 
