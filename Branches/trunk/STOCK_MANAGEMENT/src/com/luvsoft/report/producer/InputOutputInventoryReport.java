@@ -68,7 +68,7 @@ public class InputOutputInventoryReport extends VerticalLayout{
         HorizontalLayout hzLayoutDate = new HorizontalLayout();
         hzLayoutDate.addComponents(dfFrom, dfTo, btnOk);
         hzLayoutDate.setSpacing(true);
-        hzLayoutDate.addStyleName("margin-left-right-20px");
+        hzLayoutDate.addStyleName("df-report-style margin-left-right-20px");
         gridContent = new Grid();
         gridContent.setSizeFull();
         //tblOrderDetails.setResponsive(true);

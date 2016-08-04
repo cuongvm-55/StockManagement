@@ -5,6 +5,9 @@ import java.util.Map;
 
 import com.luvsoft.report.producer.InOutInventoryProducer;
 import com.luvsoft.report.producer.InOutInventoryProducer.InOutInventoryRecord;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.ui.UI;
 
 @SuppressWarnings("serial")
 public class InOutInventoryReportView extends AbstractReportView<InOutInventoryRecord>{
@@ -12,6 +15,20 @@ public class InOutInventoryReportView extends AbstractReportView<InOutInventoryR
         System.out.println("InOutInventoryReportView::InOutInventoryReportView()");
         producer = new InOutInventoryProducer(this);
         super.init("Xuất Nhập Tồn Hàng Hóa", InOutInventoryRecord.class);
+
+        gridContent.addItemClickListener(new ItemClickListener() {
+            @Override
+            public void itemClick(ItemClickEvent event) {
+                String materialCode = (String) event.getItem().getItemProperty("code").getValue();
+
+                InOutInventoryReportDetailsView reportDetailView = new InOutInventoryReportDetailsView(materialCode);
+                reportDetailView.setDateValue(dfFromDate.getValue(), dfToDate.getValue());
+                reportDetailView.generateReportDetails(dfFromDate.getValue(), dfToDate.getValue());
+                reportDetailView.generateSummaryReportDetails(dfFromDate.getValue(), dfToDate.getValue());
+
+                UI.getCurrent().addWindow(reportDetailView);
+            }
+        });
     }
 
     @Override

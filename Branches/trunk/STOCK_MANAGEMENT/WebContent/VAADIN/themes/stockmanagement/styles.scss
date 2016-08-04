@@ -83,7 +83,7 @@
     }
 
     .resetbuttonfortextfield-resetbutton {
-    top: 0pt;
+        top: 0pt;
     }
     
     .text-align-center {
@@ -97,7 +97,11 @@
     .v-caption-caption-left {
        display: inline !important;
     }
-    
+
+    .margin-top-2px {
+        margin-top: 2px;
+    }
+
     .margin-left-right-20px .v-captiontext{
         margin-right: 20px;
         margin-left: 20px;
@@ -136,5 +140,57 @@
         display: inline-block !important;
         top: 5px;
         position: relative;
+    }
+
+    .v-grid-body .v-grid-row:hover td {
+        color: #ffffff;
+        background-color: #197de1;
+    }
+
+    .v-grid-footer {
+        font-weight: bold;
+        color: #197de1;
+    }
+
+    .df-report-style {
+        text-align: center;
+        border: 1px solid #d4d4d4;
+        border-radius: 3px;
+        background-color: #fafafa;
+        background-image: -webkit-linear-gradient(top, #fafafa 2%, #efefef 98%);
+        height: 40px;
+        padding-top: 4px;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .df-report-detail-style {
+        text-align: center;
+        border: 1px solid #d4d4d4;
+        border-radius: 3px;
+        background-color: #fafafa;
+        background-image: -webkit-linear-gradient(top, #fafafa 2%, #efefef 98%);
+        height: 46px;
+        padding-top: 4px;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .filter-report-style {
+        text-align: center;
+        height: 40px !important;
+        border: 1px solid #d4d4d4;
+        border-radius: 3px;
+        background-color: #fafafa;
+        background-image: -webkit-linear-gradient(top, #fafafa 2%, #efefef 98%);
+        padding-top: 6px !important;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+        font-weight: bold;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .filter-report-style .resetbuttonfortextfield-resetbutton {
+        margin-top: 3px;
     }
 }

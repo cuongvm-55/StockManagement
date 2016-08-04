@@ -57,6 +57,13 @@ public class MaterialStatisticManager {
         }
     }
 
+    public void extractInputStatisticInDateRange(Date from, Date to, String materialCode, StatRecord record){
+        // Fetch material by code
+        List<Object> lsObjects = EntityManagerDAO.getInstance().findEntityByProperty(Material.getEntityname(), "code", materialCode);
+        Material material = (Material) lsObjects.get(0);
+        extractInputStatisticInDateRange(from, to, material.getId(), record);
+    }
+
     /**
      * Get output stats (Coupon_Return_Provider, Order) in date range [fromDate, toDate]
      * @param from
@@ -95,7 +102,14 @@ public class MaterialStatisticManager {
         }
 
     }
-    
+
+    public void extractOutputStatisticInDateRange(Date from, Date to, String materialCode, StatRecord record){
+        // Fetch material by code
+        List<Object> lsObjects = EntityManagerDAO.getInstance().findEntityByProperty(Material.getEntityname(), "code", materialCode);
+        Material material = (Material) lsObjects.get(0);
+        extractOutputStatisticInDateRange(from, to, material.getId(), record);
+    }
+
     /**
      * get inventory material consumed till the datePoint [..., datePoint)
      * The statistic at datePoint will not be calculated
@@ -143,6 +157,13 @@ public class MaterialStatisticManager {
 
         return mh;
     }
+
+    public Materialhistory getInventoryMaterialAtDatePoint(Date datePoint, String materialCode){
+        // Fetch material by code
+        List<Object> lsObjects = EntityManagerDAO.getInstance().findEntityByProperty(Material.getEntityname(), "code", materialCode);
+        Material material = (Material) lsObjects.get(0);
+        return getInventoryMaterialAtDatePoint(datePoint, material);
+    }
     
     /**
      * Gets nearest Materialhistory in (..., datePoint]
@@ -181,7 +202,7 @@ public class MaterialStatisticManager {
      * @param to
      * @return
      */
-    private List<Object> retrieveCouponDetailsInDateRange(Date from, Date to, Integer materialId){
+    public List<Object> retrieveCouponDetailsInDateRange(Date from, Date to, Integer materialId){
         String QUERY = ""
                 + "SELECT e "
                 + "FROM "+Coupondetail.getEntityname()+" e "
@@ -195,12 +216,31 @@ public class MaterialStatisticManager {
     }
 
     /**
+     * get all Coupondetail in [from, to] period of material code
+     * @param from
+     * @param to
+     * @return
+     */
+    public List<Object> retrieveCouponDetailsInDateRange(Date from, Date to, String materialCode){
+        String QUERY = ""
+                + "SELECT e "
+                + "FROM "+Coupondetail.getEntityname()+" e "
+                + "WHERE coupon.date >= :var0 AND coupon.date <= :var1 "
+                + "AND material.code = :var2";
+        List<Object> params = new ArrayList<Object>();
+        params.add(from);
+        params.add(to);
+        params.add(materialCode);
+        return EntityManagerDAO.getInstance().findByQuery(QUERY, params);
+    }
+
+    /**
      * get all Orderdetail in [from, to] period of material id
      * @param from
      * @param to
      * @return
      */
-    private List<Object> retrieveOrderDetailsInDateRange(Date from, Date to, Integer materialId){
+    public List<Object> retrieveOrderDetailsInDateRange(Date from, Date to, Integer materialId){
         String QUERY = ""
                 + "SELECT e "
                 + "FROM "+Orderdetail.getEntityname()+" e "
@@ -210,6 +250,25 @@ public class MaterialStatisticManager {
         params.add(from);
         params.add(to);
         params.add(materialId);
+        return EntityManagerDAO.getInstance().findByQuery(QUERY, params);
+    }
+
+    /**
+     * get all Orderdetail in [from, to] period of material code
+     * @param from
+     * @param to
+     * @return
+     */
+    public List<Object> retrieveOrderDetailsInDateRange(Date from, Date to, String materialCode){
+        String QUERY = ""
+                + "SELECT e "
+                + "FROM "+Orderdetail.getEntityname()+" e "
+                + "WHERE order.date >= :var0 AND order.date <= :var1 "
+                + "AND material.code = :var2";
+        List<Object> params = new ArrayList<Object>();
+        params.add(from);
+        params.add(to);
+        params.add(materialCode);
         return EntityManagerDAO.getInstance().findByQuery(QUERY, params);
     }
 
