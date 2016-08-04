@@ -34,7 +34,18 @@ public class Utilities {
     public static Date TimeStampStringToDate(String timestamp){
         return new Date(Long.parseLong(timestamp) );
     }
-    
+
+    public static Date reachMonthBegin(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+
+        return cal.getTime();
+    }
+
     public static Date reachDayBegin(Date date){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);

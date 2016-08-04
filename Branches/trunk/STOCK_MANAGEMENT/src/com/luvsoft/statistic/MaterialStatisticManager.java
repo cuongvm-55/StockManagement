@@ -122,6 +122,8 @@ public class MaterialStatisticManager {
         extractOutputStatisticInDateRange(
                 nearestMH.getDate(),
                 Utilities.addDate(datePoint, -1),
+                
+                
                 material.getId(),
                 outputRecord);
         

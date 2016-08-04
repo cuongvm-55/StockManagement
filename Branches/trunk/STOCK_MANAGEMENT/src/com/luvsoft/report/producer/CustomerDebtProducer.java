@@ -32,6 +32,8 @@ public class CustomerDebtProducer extends AbstractReportProducer{
         }
 
         CustomerStatisticManager csStatMgr = CustomerStatisticManager.getInstance();
+        double sumExpectedOutAmount = 0.00;
+        double sumExpectedInAmount = 0.00;
         double sumOrgAmount = 0.0;
         double sumOutAmount = 0.0;
         double sumInAmount = 0.0;
@@ -43,30 +45,37 @@ public class CustomerDebtProducer extends AbstractReportProducer{
             // Get total spend amount in interval [from, to]
             double spentAmount = csStatMgr.getTotalSpendingAmount(from, to, customer.getId());
             // Get expected spending amount for this customer in [from, to]
-            // double expectedSpendingAmount = csStatMgr.getExpectedTotalSpendingAmount(from, to, customer.getId());
+            double expectedSpendingAmount = csStatMgr.getExpectedTotalSpendingAmount(from, to, customer.getId());
             // Get total received amount in interval [from, to]
             double receivedAmount = csStatMgr.getTotalReceivingAmount(from, to, customer.getId());
             // Get expected receiving amount for this customer in [from, to]
-            // double expectedReceivingAmount = csStatMgr.getExpectedTotalReceivingAmount(from, to, customer.getId());
+            double expectedReceivingAmount = csStatMgr.getExpectedTotalReceivingAmount(from, to, customer.getId());
 
-            double ivtAmount = csHistory.getDebt().doubleValue() + spentAmount - receivedAmount;
+            // no_cuoi = no_dau + no_trong_ki - tien_minh_no_KH_trong_ki 
+            double ivtAmount = csHistory.getDebt().doubleValue() + (expectedReceivingAmount - receivedAmount) - (expectedSpendingAmount - spentAmount)/*spentAmount - receivedAmount*/;
             retDatas.add(new DebtRecord(i+1,
                     customer.getCode(),
                     customer.getName(),
                     Utilities.getNumberFormat().format(csHistory.getDebt()),
+                    Utilities.getNumberFormat().format(expectedSpendingAmount),
                     Utilities.getNumberFormat().format(spentAmount),
+                    Utilities.getNumberFormat().format(expectedReceivingAmount),
                     Utilities.getNumberFormat().format(receivedAmount),
                     Utilities.getNumberFormat().format(ivtAmount)));
 
-            sumOrgAmount+= csHistory.getDebt().doubleValue();
-            sumOutAmount+= spentAmount;
-            sumInAmount += receivedAmount;
-            sumInvAmount+= ivtAmount;
+            sumExpectedOutAmount += expectedSpendingAmount;
+            sumOrgAmount         += csHistory.getDebt().doubleValue();
+            sumOutAmount         += spentAmount;
+            sumExpectedInAmount += expectedReceivingAmount;
+            sumInAmount          += receivedAmount;
+            sumInvAmount         += ivtAmount;
         }
 
         // set sum data
         view.getSumDataList().put("orgAmount", Utilities.getNumberFormat().format(sumOrgAmount));
+        view.getSumDataList().put("expectedOutAmount", Utilities.getNumberFormat().format(sumExpectedOutAmount));
         view.getSumDataList().put("outAmount", Utilities.getNumberFormat().format(sumOutAmount));
+        view.getSumDataList().put("expectedInAmount", Utilities.getNumberFormat().format(sumExpectedInAmount));
         view.getSumDataList().put("inAmount", Utilities.getNumberFormat().format(sumInAmount));
         view.getSumDataList().put("ivtAmount", Utilities.getNumberFormat().format(sumInvAmount));
 
@@ -77,30 +86,37 @@ public class CustomerDebtProducer extends AbstractReportProducer{
         private int sequence;
         private String customerCode;
         private String customerName;
-        private String orgAmount; // origin
-        private String outAmount; // it's the amount that we spend on this customer
-        private String inAmount;  // it's the amount that we receive from this customer
-        private String ivtAmount; // inventory
+        private String orgAmount;         // origin debt
+        private String expectedOutAmount; // total expected amount that we should spend on this customer
+        private String outAmount;         // it's the amount that we spend on this customer
+        private String expectedInAmount;  // total expected amount that we should receive from this customer
+        private String inAmount;          // it's the amount that we receive from this customer
+        private String ivtAmount;         // inventory debt
 
         public DebtRecord(){
             sequence = 0;
             customerCode = "";
             customerName = "";
+            expectedOutAmount = "";
             orgAmount = "";
             outAmount = "";
+            expectedInAmount = "";
             inAmount = "";
             ivtAmount = "";
         }
 
         public DebtRecord(int sequence, String customerCode,
-                String customerName, String orgAmount, String outAmount,
-                String inAmount, String ivtAmount) {
+                String customerName, String orgAmount,
+                String expectedOutAmount, String outAmount,
+                String expectedInAmount, String inAmount, String ivtAmount) {
             super();
             this.sequence = sequence;
             this.customerCode = customerCode;
             this.customerName = customerName;
             this.orgAmount = orgAmount;
+            this.expectedOutAmount = expectedOutAmount;
             this.outAmount = outAmount;
+            this.expectedInAmount = expectedInAmount;
             this.inAmount = inAmount;
             this.ivtAmount = ivtAmount;
         }
@@ -137,12 +153,28 @@ public class CustomerDebtProducer extends AbstractReportProducer{
             this.orgAmount = orgAmount;
         }
 
+        public String getExpectedOutAmount() {
+            return expectedOutAmount;
+        }
+
+        public void setExpectedOutAmount(String expectedOutAmount) {
+            this.expectedOutAmount = expectedOutAmount;
+        }
+
         public String getOutAmount() {
             return outAmount;
         }
 
         public void setOutAmount(String outAmount) {
             this.outAmount = outAmount;
+        }
+
+        public String getExpectedInAmount() {
+            return expectedInAmount;
+        }
+
+        public void setExpectedInAmount(String expectedInAmount) {
+            this.expectedInAmount = expectedInAmount;
         }
 
         public String getInAmount() {
@@ -165,9 +197,10 @@ public class CustomerDebtProducer extends AbstractReportProducer{
         public String toString() {
             return "DebtRecord [sequence=" + sequence + ", customerCode="
                     + customerCode + ", customerName=" + customerName
-                    + ", orgAmount=" + orgAmount + ", outAmount=" + outAmount
-                    + ", inAmount=" + inAmount + ", ivtAmount=" + ivtAmount
-                    + "]";
+                    + ", orgAmount=" + orgAmount + ", expectedOutAmount="
+                    + expectedOutAmount + ", outAmount=" + outAmount
+                    + ", expectedInAmount=" + expectedInAmount + ", inAmount="
+                    + inAmount + ", ivtAmount=" + ivtAmount + "]";
         }
     }
 

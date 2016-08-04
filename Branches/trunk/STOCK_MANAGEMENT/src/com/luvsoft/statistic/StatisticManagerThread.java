@@ -6,6 +6,7 @@ import java.util.List;
 import com.luvsoft.DAO.EntityManagerDAO;
 import com.luvsoft.entities.Customer;
 import com.luvsoft.entities.Material;
+import com.luvsoft.utils.Utilities;
 
 public class StatisticManagerThread extends Thread{
     private static StatisticManagerThread instance = null;
@@ -39,7 +40,7 @@ public class StatisticManagerThread extends Thread{
                 }
                 mt.verifyObject();
                 if( MaterialStatisticManager.getInstance().isConsumMaterialHistoryNeeded(datePoint, mt.getId()) ){
-                    MaterialStatisticManager.getInstance().consumeMaterialHistory(datePoint, mt);
+                    MaterialStatisticManager.getInstance().consumeMaterialHistory(Utilities.reachMonthBegin(datePoint), mt);
                 }
                 else{
                     // Already consumed
@@ -58,7 +59,7 @@ public class StatisticManagerThread extends Thread{
                 }
                 c.verifyObject();
                 if( CustomerStatisticManager.getInstance().isConsumeCustomerHistoryNeeded(datePoint, c.getId()) ){
-                    CustomerStatisticManager.getInstance().consumeCustomerHistory(datePoint, c);
+                    CustomerStatisticManager.getInstance().consumeCustomerHistory(Utilities.reachMonthBegin(datePoint), c);
                 }
                 else{
                     // Already consumed

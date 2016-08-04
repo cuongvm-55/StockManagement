@@ -1,6 +1,8 @@
 package com.luvsoft.stockmanagement;
 
+import com.luvsoft.report.producer.GrossRevenueProducer.GrossMode;
 import com.luvsoft.report.view.CustomerDebtReportView;
+import com.luvsoft.report.view.GrossRevenueView;
 import com.luvsoft.report.view.InOutInventoryReportView;
 import com.luvsoft.view.Coupon.CouponTypeView;
 import com.luvsoft.view.Customer.AreaView;
@@ -28,7 +30,9 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
     // Reports
     private static final String SUB_TAB_REPORT_IN_OUT_INVENTORY = "Xuất-Nhập-Tồn";
     private static final String SUB_TAB_REPORT_CUSTOMER_DEBT    = "Công Nợ Khách Hàng";
-    
+    private static final String SUB_TAB_REPORT_GROSS_REVENEU    = "Doanh Thu";
+    private static final String SUB_TAB_REPORT_GROSS_INPUT      = "Hàng Nhập";
+
     // Sub tab category
     // Stock
     private static final String SUB_TAB_CATEGORY_STOCK = "Kho";
@@ -61,11 +65,12 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
     private MaterialType2View materialType2View;
     private OrderTypeView orderTypeView;
     private UnitView unitView;
-    
+
     // reports
-    //InputOutputInventoryReport inputOutputInventoryReport;
     private InOutInventoryReportView inputOutputInventoryReport;
     private CustomerDebtReportView   customerDebtReport;
+    private GrossRevenueView         grossRevenueReport;
+    private GrossRevenueView         grossInputReport;
 
     public MainMenu() {
         super();
@@ -86,10 +91,10 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
         orderTypeView = new OrderTypeView();
         unitView = new UnitView();
 
-        //inputOutputInventoryReport = new InputOutputInventoryReport();
         inputOutputInventoryReport = new InOutInventoryReportView();
         customerDebtReport = new CustomerDebtReportView();
-
+        grossRevenueReport = new GrossRevenueView(GrossMode.GrossRevenue);
+        grossInputReport = new GrossRevenueView(GrossMode.GrossInput);
     }
 
     public void init() {
@@ -128,9 +133,10 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
         subTabReport.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
         subTabReport.setSizeFull();
         addTab(subTabReport, "Báo Cáo", FontAwesome.FILE_EXCEL_O);
-        subTabReport.addTab(inputOutputInventoryReport.getWrapper(), SUB_TAB_REPORT_IN_OUT_INVENTORY, FontAwesome.INDUSTRY);
+        subTabReport.addTab(inputOutputInventoryReport.getWrapper(), SUB_TAB_REPORT_IN_OUT_INVENTORY, FontAwesome.PRODUCT_HUNT);
         subTabReport.addTab(customerDebtReport.getWrapper(), SUB_TAB_REPORT_CUSTOMER_DEBT, FontAwesome.MONEY);
-        //inputOutputInventoryReport.produce();
+        subTabReport.addTab(grossRevenueReport.getWrapper(), SUB_TAB_REPORT_GROSS_REVENEU, FontAwesome.MONEY);
+        subTabReport.addTab(grossInputReport.getWrapper(), SUB_TAB_REPORT_GROSS_INPUT, FontAwesome.MONEY);
 
         TabSheet subTabCategory = new TabSheet();
         subTabCategory.addStyleName(ValoTheme.TABSHEET_FRAMED);
@@ -202,7 +208,9 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
     private void handleTabChangeEvent(String tabCaption){
         switch( tabCaption ){
         case MainMenu.SUB_TAB_REPORT_IN_OUT_INVENTORY:
-            //inputOutputInventoryReport.produce();
+        case MainMenu.SUB_TAB_REPORT_CUSTOMER_DEBT:
+        case MainMenu.SUB_TAB_REPORT_GROSS_REVENEU:
+            System.out.println("Report!");
             break;
         case MainMenu.SUB_TAB_CATEGORY_STOCK_TYPE:
             stockTypeView.initView();

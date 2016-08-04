@@ -17,18 +17,6 @@ public class CustomerDebtReportView extends AbstractReportView<DebtRecord>{
         super.init("Công Nợ Khách Hàng", DebtRecord.class);
     }
 
-    @Override
-    public String[] getProperties() {
-        return new String[] {
-                "sequence",
-                "customerCode",
-                "customerName",
-                "orgAmount",
-                "outAmount",
-                "inAmount",
-                "ivtAmount"};
-    }
-
     @SuppressWarnings("serial")
     @Override
     public Map<String, String> getHeaderNames() {
@@ -37,8 +25,10 @@ public class CustomerDebtReportView extends AbstractReportView<DebtRecord>{
             put("customerCode", "<b>Mã KH</b>");
             put("customerName", "<b>Tên KH</b>");
             put("orgAmount", "<b>Tồn Đầu Kì</b>");
-            put("outAmount", "<b>Xuất Trong Kì</b>");
-            put("inAmount", "<b>Thu Trong Kì</b>");
+            put("expectedOutAmount","<b>Chi trong kì</b>");
+            put("outAmount", "<b>Thực chi trong kì</b>");
+            put("expectedInAmount","<b>Thu trong kì</b>");
+            put("inAmount", "<b>Thực thu Trong Kì</b>");
             put("ivtAmount", "<b>Tồn cuối</b>");
         }};
     }

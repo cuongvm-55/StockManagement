@@ -15,15 +15,6 @@ public class InOutInventoryReportView extends AbstractReportView<InOutInventoryR
     }
 
     @Override
-    public String[] getProperties() {
-        return new String[] {"sequence", "code", "name", "unit",
-                "orgQuantity", "avgInputPrice", "orgAmount",
-                "inputQuantity", "inputAmount",
-                "outputQuantity", "outputAmount",
-                "invtQuantity", "invtAmount"};
-    }
-
-    @Override
     public Map<String, String> getHeaderNames() {
         return new LinkedHashMap<String, String>(){{
             put("sequence", "<b>STT</b>");

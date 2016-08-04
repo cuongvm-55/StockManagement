@@ -1,7 +1,6 @@
 package com.luvsoft.report.view;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -136,7 +135,6 @@ public abstract class AbstractReportView<T> implements ClickListener {
         // Handle events
         this.btnOk.addClickListener(this);
 
-        withTableProperties( getProperties ()   );
         withHeaderNames    ( getHeaderNames()   );
         withColumnFiltering( getFilterColumns() );
 
@@ -211,18 +209,6 @@ public abstract class AbstractReportView<T> implements ClickListener {
     }
 
     /**
-     * Function is used to set properties for table content
-     * @param properties
-     * @return
-     */
-    public AbstractReportView<T> withTableProperties(String... properties) {
-        gridContent.withProperties(properties);
-        tableProperties.clear();
-        tableProperties.addAll(Arrays.asList(properties));
-        return this;
-    }
-
-    /**
      * Function is used to set name for each column
      * @param propertyId
      * @param text
@@ -233,7 +219,20 @@ public abstract class AbstractReportView<T> implements ClickListener {
             return this;
         }
 
+        // Set properties
         Object[] fields = headers.keySet().toArray();
+        String[] headerArr = new String[fields.length];
+        tableProperties.clear();
+        for( int i=0;i< fields.length;i++ ){
+            String field = (String) fields[i];
+            headerArr[i] = field;
+            System.out.println(field);
+            tableProperties.add(field);
+        }
+
+        gridContent.withProperties(headerArr);
+
+        // Set header names
         for( Object obj : fields ){
             String key = (String) obj;
             gridContent.getDefaultHeaderRow().getCell(key).setHtml(headers.get(key));
@@ -374,7 +373,6 @@ public abstract class AbstractReportView<T> implements ClickListener {
     }
 
     // Abstract functions
-    public abstract String[] getProperties();
     public abstract Map<String, String> getHeaderNames();
     public abstract Map<String, String> getFilterColumns();
 }
