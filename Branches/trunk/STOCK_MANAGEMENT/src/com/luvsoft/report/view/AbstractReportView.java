@@ -17,8 +17,6 @@ import com.luvsoft.report.producer.AbstractReportProducer;
 import com.luvsoft.utils.Utilities;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -41,8 +39,8 @@ public abstract class AbstractReportView<T> implements ClickListener {
     protected MVerticalLayout wrapper;
 
     private Label lblTitle;
-    private DateField dfFromDate;
-    private DateField dfToDate;
+    protected DateField dfFromDate;
+    protected DateField dfToDate;
     private MHorizontalLayout hzFilter;
 
     private Button btnOk;
@@ -50,7 +48,7 @@ public abstract class AbstractReportView<T> implements ClickListener {
     protected HeaderRow filteringHeader;
     protected List<TextField> filterFields; // filter fields
     
-    private MGrid<T> gridContent;
+    protected MGrid<T> gridContent;
     private List<String> tableProperties; // headers
 
     // Backing Beans: Any changes (update, delete, create)
@@ -66,7 +64,6 @@ public abstract class AbstractReportView<T> implements ClickListener {
     AbstractReportView(){
     }
 
-    @SuppressWarnings("serial")
     protected AbstractReportView<T> init(String strTitle, Class<T> typeOfRows) {
         System.out.println("AbstractReportView::init()");
         wrapper = new MVerticalLayout();
@@ -77,11 +74,17 @@ public abstract class AbstractReportView<T> implements ClickListener {
         lblTitle.addStyleName(ValoTheme.LABEL_BOLD);
         lblTitle.addStyleName(ValoTheme.LABEL_LARGE);
 
-        dfFromDate = new DateField("Từ");
+        dfFromDate = new DateField("<b>Từ</b>");
+        dfFromDate.setCaptionAsHtml(true);
         dfFromDate.addStyleName("date-field-caption");
-        dfToDate = new DateField("Đến");
+        dfFromDate.addStyleName(ValoTheme.DATEFIELD_SMALL);
+        dfToDate = new DateField("<b>Đến</b>");
+        dfToDate.setCaptionAsHtml(true);
         dfToDate.addStyleName("date-field-caption");
+        dfToDate.addStyleName(ValoTheme.DATEFIELD_SMALL);
         btnOk = new Button("Xem báo cáo");
+        btnOk.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+        btnOk.addStyleName(ValoTheme.BUTTON_SMALL);
         // default date range is the first day of previous month to the current day
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -104,10 +107,11 @@ public abstract class AbstractReportView<T> implements ClickListener {
         HorizontalLayout hzLayoutDate = new HorizontalLayout();
         hzLayoutDate.addComponents(dfFromDate, dfToDate, btnOk);
         hzLayoutDate.setSpacing(true);
-        hzLayoutDate.addStyleName("margin-left-right-20px");
+        hzLayoutDate.addStyleName("df-report-style margin-left-right-20px");
 
         // Filter
         hzFilter = new MHorizontalLayout();
+        hzFilter.addStyleName("filter-report-style");
 
         // Grid
         gridContent = new MGrid<>(typeOfRows);
@@ -115,14 +119,6 @@ public abstract class AbstractReportView<T> implements ClickListener {
         gridContent.setEditorEnabled(false);
         gridContent.setSelectionMode(SelectionMode.NONE);
         gridContent.addStyleName("margin-left-right-20px");
-        gridContent.addItemClickListener(new ItemClickListener() {
-            @Override
-            public void itemClick(ItemClickEvent event) {
-                if( event.isDoubleClick() ){
-                    System.out.println("Item double clicked !!! " + event.getItemId().toString());
-                }
-            }
-        });
 
         groupingFooter = gridContent.prependFooterRow();
 
@@ -170,10 +166,10 @@ public abstract class AbstractReportView<T> implements ClickListener {
         }
         hzFilter.setSizeUndefined();
         Label lblFilter = new Label("Bộ lọc");
-        lblFilter.addStyleName("margin-left-20px");
         hzFilter.addComponent(lblFilter);
 
         MHorizontalLayout hz1 = new MHorizontalLayout();
+        hz1.addStyleName("margin-left-right-20px");
         hz1.setSizeFull();
         Object[] fields = properties.keySet().toArray();
         //filteringHeader = gridContent.appendHeaderRow();
@@ -181,12 +177,14 @@ public abstract class AbstractReportView<T> implements ClickListener {
             String property = (String) fields[i];
             // Create the filter TextField
             TextField filter = new TextField();
+            filter.setCaptionAsHtml(true);
             filter.setWidth("100%");
-            filter.addStyleName(ValoTheme.TEXTFIELD_TINY);
             filter.setData(property);
-            filter.setCaption(properties.get(property));
+            filter.setCaption("<b>" + properties.get(property) + "</b>");
+            filter.setInputPrompt("Tìm kiếm");
             ResetButtonForTextField.extend(filter);
             filter.setImmediate(true);
+            filter.addStyleName(ValoTheme.TEXTFIELD_TINY);
             filter.addStyleName("filter-header");
             filter.addStyleName("caption-left");
 

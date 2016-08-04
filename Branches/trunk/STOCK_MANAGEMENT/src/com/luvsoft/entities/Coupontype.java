@@ -149,7 +149,8 @@ public class Coupontype extends AbstractEntity implements java.io.Serializable {
     public enum COUPON_TYPES {
         PH_NHAPMUA,
         PH_NHAPHANGTRALAI,
-        PH_XUATTRANHACUNGCAP
+        PH_XUATTRANHACUNGCAP,
+        UNKNOWN
     }
 
     @Transient
@@ -163,6 +164,23 @@ public class Coupontype extends AbstractEntity implements java.io.Serializable {
                 return "PH_XUATTRANHACUNGCAP";
             default:
                 return "UNKNOWN";
+        }
+    }
+
+    @Transient
+    public static COUPON_TYPES GetTypeFromString(String strType)
+    {
+        if(strType.equals("PH_NHAPMUA")) {
+            return COUPON_TYPES.PH_NHAPMUA;
+        }
+        else if(strType.equals("PH_NHAPHANGTRALAI")) {
+            return COUPON_TYPES.PH_NHAPHANGTRALAI;
+        }
+        else if(strType.equals("PH_XUATTRANHACUNGCAP")) {
+            return COUPON_TYPES.PH_XUATTRANHACUNGCAP;
+        }
+        else {
+            return COUPON_TYPES.UNKNOWN;
         }
     }
 }
