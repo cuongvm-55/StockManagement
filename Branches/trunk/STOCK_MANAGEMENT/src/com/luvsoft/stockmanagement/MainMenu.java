@@ -1,6 +1,7 @@
 package com.luvsoft.stockmanagement;
 
 import com.luvsoft.report.producer.GrossRevenueProducer.GrossMode;
+import com.luvsoft.report.view.BenefitView;
 import com.luvsoft.report.view.CustomerDebtReportView;
 import com.luvsoft.report.view.GrossRevenueView;
 import com.luvsoft.report.view.InOutInventoryReportView;
@@ -32,6 +33,7 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
     private static final String SUB_TAB_REPORT_CUSTOMER_DEBT    = "Công Nợ Khách Hàng";
     private static final String SUB_TAB_REPORT_GROSS_REVENEU    = "Doanh Thu";
     private static final String SUB_TAB_REPORT_GROSS_INPUT      = "Hàng Nhập";
+    private static final String SUB_TAB_REPORT_BENEFIT          = "Lỗ-Lãi";
 
     // Sub tab category
     // Stock
@@ -71,6 +73,7 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
     private CustomerDebtReportView   customerDebtReport;
     private GrossRevenueView         grossRevenueReport;
     private GrossRevenueView         grossInputReport;
+    private BenefitView              benefitReport;
 
     public MainMenu() {
         super();
@@ -95,6 +98,7 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
         customerDebtReport = new CustomerDebtReportView();
         grossRevenueReport = new GrossRevenueView(GrossMode.GrossRevenue);
         grossInputReport = new GrossRevenueView(GrossMode.GrossInput);
+        benefitReport = new BenefitView();
     }
 
     public void init() {
@@ -137,6 +141,7 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
         subTabReport.addTab(customerDebtReport.getWrapper(), SUB_TAB_REPORT_CUSTOMER_DEBT, FontAwesome.MONEY);
         subTabReport.addTab(grossRevenueReport.getWrapper(), SUB_TAB_REPORT_GROSS_REVENEU, FontAwesome.MONEY);
         subTabReport.addTab(grossInputReport.getWrapper(), SUB_TAB_REPORT_GROSS_INPUT, FontAwesome.MONEY);
+        subTabReport.addTab(benefitReport.getWrapper(), SUB_TAB_REPORT_BENEFIT, FontAwesome.MONEY);
 
         TabSheet subTabCategory = new TabSheet();
         subTabCategory.addStyleName(ValoTheme.TABSHEET_FRAMED);
@@ -210,6 +215,8 @@ public class MainMenu extends TabSheet implements SelectedTabChangeListener{
         case MainMenu.SUB_TAB_REPORT_IN_OUT_INVENTORY:
         case MainMenu.SUB_TAB_REPORT_CUSTOMER_DEBT:
         case MainMenu.SUB_TAB_REPORT_GROSS_REVENEU:
+        case MainMenu.SUB_TAB_REPORT_GROSS_INPUT:
+        case MainMenu.SUB_TAB_REPORT_BENEFIT:
             System.out.println("Report!");
             break;
         case MainMenu.SUB_TAB_CATEGORY_STOCK_TYPE:

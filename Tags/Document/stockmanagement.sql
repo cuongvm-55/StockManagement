@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 19, 2016 at 06:54 PM
+-- Generation Time: Aug 10, 2016 at 06:27 PM
 -- Server version: 5.6.26-log
 -- PHP Version: 5.6.8
 
@@ -228,7 +228,7 @@ CREATE TABLE IF NOT EXISTS `customer` (
 --
 
 INSERT INTO `customer` (`id`, `code`, `name`, `address`, `phoneNumber`, `idArea`, `email`, `bankName`, `bankAccount`, `debt`, `idCustomerType1`, `idCustomerType2`) VALUES
-(34, 'KH1', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329830', 1, 'datnq.55@gmail.com', 'TP Bank', '21231', '5000000.0000', 1, 2),
+(34, 'KH1', 'Nguyễn Quốc Đạt', 'Mễ Trì Hạ', '01662329830', 1, 'datnq.55@gmail.com', 'TP Bank', '21231', '0.0000', 1, 2),
 (42, 'KH35', 'Vy Mạnh Cường', '63/30/84 Lê Đức Thọ', '01663724852', 3, 'cuongvm.55@gmail.com', 'Tien Phong', '00352078001', '0.0000', 3, 1);
 
 -- --------------------------------------------------------
@@ -242,7 +242,7 @@ CREATE TABLE IF NOT EXISTS `customerhistory` (
   `idCustomer` int(11) NOT NULL COMMENT 'Id khách hàng',
   `debt` decimal(19,4) NOT NULL COMMENT 'Tiền nợ của khách tính đến thời điểm tổng hợp',
   `date` datetime NOT NULL COMMENT 'Thời gian tổng hợp'
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `customerhistory`
@@ -251,7 +251,13 @@ CREATE TABLE IF NOT EXISTS `customerhistory` (
 INSERT INTO `customerhistory` (`id`, `idCustomer`, `debt`, `date`) VALUES
 (10, 34, '0.0000', '2016-05-19 23:45:51'),
 (18, 34, '0.0000', '2016-07-10 15:18:32'),
-(26, 42, '0.0000', '2016-07-10 15:37:16');
+(26, 42, '0.0000', '2016-07-10 15:37:16'),
+(27, 34, '0.0000', '2016-08-02 22:29:58'),
+(28, 42, '0.0000', '2016-08-02 22:29:58'),
+(29, 34, '0.0000', '2016-08-01 00:00:01'),
+(30, 42, '0.0000', '2016-08-01 00:00:01'),
+(31, 34, '0.0000', '2016-08-01 00:00:00'),
+(32, 42, '0.0000', '2016-08-01 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -310,16 +316,31 @@ CREATE TABLE IF NOT EXISTS `material` (
   `idUnit` int(11) DEFAULT NULL COMMENT 'Đơn vị tính',
   `quantity` int(11) NOT NULL DEFAULT '0' COMMENT 'Số lượng',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả'
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `material`
 --
 
 INSERT INTO `material` (`id`, `code`, `name`, `idMaterialType1`, `idMaterialType2`, `price`, `idStock`, `idUnit`, `quantity`, `description`) VALUES
-(1, 'VT1', 'Xích1', 1, 2, '100000.0000', 2, 6, 0, 'adasdasdas'),
-(2, 'VT2', 'Lốp', 2, 1, '200000.0000', 16, 1, 8, ''),
-(3, 'VT3', 'asdadad', 1, 2, '0.0000', 16, 6, 0, '');
+(1, 'VT1', 'Xích1', 1, 2, '100000.0000', 2, 6, 10, 'adasdasdas'),
+(2, 'VT2', 'Lốp', 2, 1, '200000.0000', 16, 1, 0, ''),
+(3, 'VT3', 'asdadad', 1, 2, '0.0000', 16, 6, 0, ''),
+(4, 'VT4', 'Xich2', 1, 1, '0.0000', 16, 1, 0, ''),
+(5, 'VT5', 'xich 3', 1, 2, '0.0000', 2, 1, 0, ''),
+(6, 'VT6', 'VT6', 1, NULL, '0.0000', 2, NULL, 0, ''),
+(7, 'VT7', 'VT7', 2, 2, '0.0000', 2, 7, 0, ''),
+(8, 'VT8', 'VT8', 1, 1, '0.0000', 2, 7, 0, ''),
+(9, 'VT9', 'VT9', 1, 2, '0.0000', 2, 7, 0, ''),
+(10, 'VT1', 'Xích1', 1, 2, '100000.0000', 2, 6, 10, 'adasdasdas'),
+(11, 'VT2', 'Lốp', 2, 1, '200000.0000', 16, 1, 0, ''),
+(12, 'VT3', 'asdadad', 1, 2, '0.0000', 16, 6, 0, ''),
+(13, 'VT4', 'Xich2', 1, 1, '0.0000', 16, 1, 0, ''),
+(14, 'VT5', 'xich 3', 1, 2, '0.0000', 2, 1, 0, ''),
+(15, 'VT6', 'VT6', 1, NULL, '0.0000', 2, NULL, 0, ''),
+(16, 'VT7', 'VT7', 2, 2, '0.0000', 2, 7, 0, ''),
+(17, 'VT8', 'VT8', 1, 1, '0.0000', 2, 7, 0, ''),
+(18, 'VT9', 'VT9', 1, 2, '0.0000', 2, 7, 0, '');
 
 -- --------------------------------------------------------
 
@@ -332,18 +353,22 @@ CREATE TABLE IF NOT EXISTS `materialhistory` (
   `idMaterial` int(11) NOT NULL COMMENT 'Mã vật tư',
   `quantity` int(11) NOT NULL DEFAULT '0' COMMENT 'Số lượng vật tư tồn tính đến thời điểm tổng hợp',
   `averageInputPrice` decimal(19,4) NOT NULL COMMENT 'Giá nhập trung bình, có cộng dồn giá trung bình của các tháng trước',
-  `date` datetime NOT NULL COMMENT 'Ngày giờ tổng hợp'
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
+  `date` datetime NOT NULL COMMENT 'Ngày giờ tổng hợp',
+  `outAmount` decimal(19,4) DEFAULT NULL,
+  `outQuantity` int(11) DEFAULT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `materialhistory`
 --
 
-INSERT INTO `materialhistory` (`id`, `idMaterial`, `quantity`, `averageInputPrice`, `date`) VALUES
-(61, 1, 0, '0.0000', '2016-05-16 23:43:17'),
-(62, 1, 0, '0.0000', '2016-07-10 14:43:27'),
-(63, 2, 0, '0.0000', '2016-07-10 14:43:27'),
-(64, 3, 0, '0.0000', '2016-07-10 14:43:27');
+INSERT INTO `materialhistory` (`id`, `idMaterial`, `quantity`, `averageInputPrice`, `date`, `outAmount`, `outQuantity`) VALUES
+(71, 1, 0, '0.0000', '2016-08-01 00:00:01', '0.0000', 0),
+(72, 2, 0, '0.0000', '2016-08-01 00:00:01', '0.0000', 0),
+(73, 3, 0, '0.0000', '2016-08-01 00:00:01', '0.0000', 0),
+(74, 1, 0, '0.0000', '2016-08-01 00:00:00', '0.0000', 0),
+(75, 2, 0, '0.0000', '2016-08-01 00:00:00', '0.0000', 0),
+(76, 3, 0, '0.0000', '2016-08-01 00:00:00', '0.0000', 0);
 
 -- --------------------------------------------------------
 
@@ -396,19 +421,14 @@ CREATE TABLE IF NOT EXISTS `money` (
   `amount` decimal(19,4) NOT NULL COMMENT 'Tổng tiền thực hiện giao dịch',
   `date` datetime NOT NULL COMMENT 'Ngày giờ thực hiện giao dịch',
   `description` text COLLATE utf8_unicode_ci COMMENT 'Mô tả giao dịch, lấy từ content (diễn giải) của Order và các loại phiếu'
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `money`
 --
 
 INSERT INTO `money` (`id`, `amount`, `date`, `description`) VALUES
-(1, '493065.1600', '2016-04-17 23:06:34', 'Mã phi?u thu PT116706 lý do Xu?t Bán Hàng Cho Khách'),
-(2, '1193160.1600', '2016-04-17 23:09:32', 'Mã phi?u thu PT938713 lý do Xu?t Bán Hàng Cho Khách'),
-(3, '1478188.6600', '2016-04-17 23:26:47', 'Mã phi?u thu PT1036311 lý do Xu?t Bán Hàng Cho Khách'),
-(4, '1978188.6600', '2016-07-10 15:22:27', 'Mã phiếu thu PT10 lý do Xuất Bán Hàng Cho Khách'),
-(5, '-8021811.3400', '2016-07-10 15:26:29', 'Mã phiếu mua hàng PC1 lý do Nhập Mua Hàng'),
-(6, '-7121811.3400', '2016-07-10 15:33:45', 'Mã phiếu thu PT12 lý do Xuất Bán Hàng Cho Khách');
+(7, '1000000.0000', '2016-07-23 23:19:57', 'Mã phiếu mua hàng PC1 lý do Nhập Mua Hàng');
 
 -- --------------------------------------------------------
 
@@ -437,15 +457,7 @@ CREATE TABLE IF NOT EXISTS `order` (
   `content` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Diễn giải: Mặc định là: Xuất bán hàng cho khách nhưng có thể sửa được',
   `date` datetime NOT NULL COMMENT 'Ngày - giờ tạo hóa đơn',
   `note` text COLLATE utf8_unicode_ci COMMENT 'Ghi chú trên hóa đơn, nếu thay đổi địa chỉ nhận hàng thì ghi vào ghi chú'
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `order`
---
-
-INSERT INTO `order` (`id`, `orderCode`, `idOrderType`, `idCustomer`, `buyer`, `content`, `date`, `note`) VALUES
-(16, 'HD1', 1, 34, '', 'Xuất Bán Hàng Cho Khách', '2016-07-10 15:21:27', ''),
-(17, 'HD17', 1, 42, '', 'Xuất Bán Hàng Cho Khách', '2016-07-10 15:31:21', '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -461,17 +473,7 @@ CREATE TABLE IF NOT EXISTS `orderdetail` (
   `quantityDelivered` int(11) NOT NULL COMMENT 'Số lượng hàng đã xuất',
   `price` decimal(19,4) NOT NULL COMMENT 'Giá chuẩn, mặc định là lấy giá vật tư nhưng có thể sửa được',
   `saleOff` float DEFAULT '0' COMMENT 'Chiết khấu, tính theo phần trăm. Là phần trăm giảm giá trên giá gốc'
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `orderdetail`
---
-
-INSERT INTO `orderdetail` (`id`, `idMaterial`, `idOrder`, `quantityNeeded`, `quantityDelivered`, `price`, `saleOff`) VALUES
-(31, 1, 16, 5, 5, '100000.0000', 0),
-(32, 2, 17, 2, 2, '200000.0000', 0),
-(33, 1, 17, 5, 5, '100000.0000', 0),
-(34, 3, 17, 5, 0, '0.0000', 0);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -508,16 +510,7 @@ CREATE TABLE IF NOT EXISTS `receivingbill` (
   `note` text COLLATE utf8_unicode_ci,
   `idOrder` int(11) DEFAULT '0' COMMENT 'FK: id của hóa đơn\\n- Phiếu chi có thể thuộc một hóa đơn',
   `idCoupon` int(11) DEFAULT '0' COMMENT 'FK: id của phiếu (phiếu xuất trả nhà cung cấp)\\n- Phiếu chi có thể thuộc một phiếu trong các loại phiếu trên'
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `receivingbill`
---
-
-INSERT INTO `receivingbill` (`id`, `code`, `idCustomer`, `content`, `date`, `note`, `idOrder`, `idCoupon`) VALUES
-(9, 'PT938713', 34, 'Xu?t Bán Hàng Cho Khách', '2016-04-17 23:08:57', '', 16, NULL),
-(11, 'PT10', 34, 'Xuất Bán Hàng Cho Khách', '2016-07-10 15:21:27', '', 16, NULL),
-(12, 'PT12', 42, 'Xuất Bán Hàng Cho Khách', '2016-07-10 15:31:21', '', 17, NULL);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -531,16 +524,7 @@ CREATE TABLE IF NOT EXISTS `receivingbilldetail` (
   `category` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Mặc định là \\"Thu tiền\\", có thể sửa được',
   `reason` text COLLATE utf8_unicode_ci COMMENT 'lý do thu tiền',
   `amount` decimal(19,4) NOT NULL COMMENT 'số thu vào'
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `receivingbilldetail`
---
-
-INSERT INTO `receivingbilldetail` (`id`, `idReceivingBill`, `category`, `reason`, `amount`) VALUES
-(6, 9, 'Thu Ti?n', 'Xu?t Bán Hàng Cho Khách', '700095.0000'),
-(8, 11, 'Thu Tiền', 'Xuất Bán Hàng Cho Khách', '500000.0000'),
-(9, 12, 'Thu Tiền', 'Xuất Bán Hàng Cho Khách', '900000.0000');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -815,7 +799,7 @@ ALTER TABLE `customer`
 -- AUTO_INCREMENT for table `customerhistory`
 --
 ALTER TABLE `customerhistory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=33;
 --
 -- AUTO_INCREMENT for table `customertype1`
 --
@@ -830,12 +814,12 @@ ALTER TABLE `customertype2`
 -- AUTO_INCREMENT for table `material`
 --
 ALTER TABLE `material`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id của vật tư',AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id của vật tư',AUTO_INCREMENT=19;
 --
 -- AUTO_INCREMENT for table `materialhistory`
 --
 ALTER TABLE `materialhistory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=65;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=77;
 --
 -- AUTO_INCREMENT for table `materialtype1`
 --
@@ -850,7 +834,7 @@ ALTER TABLE `materialtype2`
 -- AUTO_INCREMENT for table `money`
 --
 ALTER TABLE `money`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `moneyhistory`
 --
@@ -860,12 +844,12 @@ ALTER TABLE `moneyhistory`
 -- AUTO_INCREMENT for table `order`
 --
 ALTER TABLE `order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `orderdetail`
 --
 ALTER TABLE `orderdetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `ordertype`
 --
@@ -875,12 +859,12 @@ ALTER TABLE `ordertype`
 -- AUTO_INCREMENT for table `receivingbill`
 --
 ALTER TABLE `receivingbill`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `receivingbilldetail`
 --
 ALTER TABLE `receivingbilldetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `spendingbill`
 --

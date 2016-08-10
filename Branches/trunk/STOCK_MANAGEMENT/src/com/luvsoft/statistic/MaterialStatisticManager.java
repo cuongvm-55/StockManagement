@@ -136,8 +136,6 @@ public class MaterialStatisticManager {
         extractOutputStatisticInDateRange(
                 nearestMH.getDate(),
                 Utilities.addDate(datePoint, -1),
-                
-                
                 material.getId(),
                 outputRecord);
         
@@ -153,6 +151,8 @@ public class MaterialStatisticManager {
         mh.setDate(datePoint);
         mh.setAverageInputPrice(new BigDecimal(avgPrice));
         mh.setQuantity(nearestMH.getQuantity() + inputRecord.quantity - outputRecord.quantity);
+        mh.setOutAmount(new BigDecimal(outputRecord.amount));
+        mh.setOutQuantity(outputRecord.quantity);
         mh.setMaterial(material);
 
         return mh;

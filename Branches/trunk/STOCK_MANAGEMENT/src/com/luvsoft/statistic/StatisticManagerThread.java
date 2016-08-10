@@ -25,6 +25,7 @@ public class StatisticManagerThread extends Thread{
         
         while(true){
             Date datePoint = new Date(); // current date time
+            datePoint = Utilities.reachMonthBegin(datePoint); // reach the 1st day of this month
     
             System.out.println("StatisticManagerThread running...");
             /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +41,7 @@ public class StatisticManagerThread extends Thread{
                 }
                 mt.verifyObject();
                 if( MaterialStatisticManager.getInstance().isConsumMaterialHistoryNeeded(datePoint, mt.getId()) ){
-                    MaterialStatisticManager.getInstance().consumeMaterialHistory(Utilities.reachMonthBegin(datePoint), mt);
+                    MaterialStatisticManager.getInstance().consumeMaterialHistory(datePoint, mt);
                 }
                 else{
                     // Already consumed
@@ -59,7 +60,7 @@ public class StatisticManagerThread extends Thread{
                 }
                 c.verifyObject();
                 if( CustomerStatisticManager.getInstance().isConsumeCustomerHistoryNeeded(datePoint, c.getId()) ){
-                    CustomerStatisticManager.getInstance().consumeCustomerHistory(Utilities.reachMonthBegin(datePoint), c);
+                    CustomerStatisticManager.getInstance().consumeCustomerHistory(datePoint, c);
                 }
                 else{
                     // Already consumed

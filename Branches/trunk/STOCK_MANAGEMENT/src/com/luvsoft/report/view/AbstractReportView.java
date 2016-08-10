@@ -13,7 +13,9 @@ import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
 import com.luvsoft.report.producer.AbstractReportProducer;
+import com.luvsoft.utils.ErrorManager;
 import com.luvsoft.utils.Utilities;
+import com.luvsoft.utils.ErrorManager.ErrorId;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.ui.Button;
@@ -151,6 +153,14 @@ public abstract class AbstractReportView<T> implements ClickListener {
             // Build report
             Date frDate = dfFromDate.getValue();
             Date toDate = dfToDate.getValue();
+
+            // Check report contraints
+            ErrorId error = checkReportContraints(frDate, toDate);
+            if( error != ErrorId.ERROR_NONE ){
+                ErrorManager.getInstance().raiseError(error,"");
+                return;//stop here!!!
+            }
+
             if( frDate != null && toDate != null && !toDate.before(frDate) ){
                 producer.generateReport(Utilities.reachDayBegin(frDate), Utilities.reachDayEnd(toDate));
             }
@@ -368,6 +378,11 @@ public abstract class AbstractReportView<T> implements ClickListener {
 
     public void setSumDataList(Map<String, String> sumDataList) {
         this.sumDataList = sumDataList;
+    }
+
+    // Override functions
+    protected ErrorId checkReportContraints(Date frDate, Date toDate){
+        return ErrorId.ERROR_NONE; // no contraints by default
     }
 
     // Abstract functions

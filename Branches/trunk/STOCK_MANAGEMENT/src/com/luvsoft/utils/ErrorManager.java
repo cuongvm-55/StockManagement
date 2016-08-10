@@ -12,7 +12,7 @@ public class ErrorManager {
 
     public static enum ErrorId{
         // import excel
-        EXCEL_IMPORT_NOERROR, // no error
+        ERROR_NONE, // no error
         EXCEL_IMPORT_INVALID_NUMBER_OF_RECORD,
         EXCEL_IMPORT_INVALID_HEADERS,
         EXCEL_IMPORT_FAIL_TO_READ_FILE,
@@ -23,12 +23,14 @@ public class ErrorManager {
         EXCEL_EXPORT_NOERROR,
         EXCEL_EXPORT_FAIL,
 
+        // reports
+        REPORT_INVALID_YEAR_RANGE
     };
 
     @SuppressWarnings("serial")
     private static Map<ErrorId, String> errorTexts = new HashMap<ErrorId, String>(){{
         // import excel
-        put(ErrorId.EXCEL_IMPORT_NOERROR, "Nhập excel thành công"); // in fact, it's a success warning
+        put(ErrorId.ERROR_NONE, "Nhập excel thành công"); // in fact, it's a success warning
         put(ErrorId.EXCEL_IMPORT_INVALID_NUMBER_OF_RECORD, "Số lượng bản ghi không hợp lệ");
         put(ErrorId.EXCEL_IMPORT_INVALID_NUMBER_OF_HEADERS, "Số lượng thuộc tính không hợp lệ");
         put(ErrorId.EXCEL_IMPORT_INVALID_HEADERS, "Giá trị thuộc tính không hợp lệ");
@@ -38,6 +40,7 @@ public class ErrorManager {
         // export excel
         put(ErrorId.EXCEL_EXPORT_NOERROR, "Xuất excel thành công");
         put(ErrorId.EXCEL_EXPORT_FAIL, "Xuất excel lỗi");
+        put(ErrorId.REPORT_INVALID_YEAR_RANGE, "Thời gian truy suất không được vượt quá 12 năm");
     }};
 
     public static ErrorManager getInstance(){

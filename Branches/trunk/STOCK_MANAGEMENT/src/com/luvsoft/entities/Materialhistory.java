@@ -37,19 +37,25 @@ public class Materialhistory extends AbstractEntity implements java.io.Serializa
     private int quantity;
     private BigDecimal averageInputPrice;
     private Date date;
+    private BigDecimal outAmount;
+    private int outQuantity;
 
     public Materialhistory() {
         quantity = 0;
         averageInputPrice = new BigDecimal(0.0d);
         date = Utilities.StringToDate("1/1/2000 01:00:00");
+        outAmount = new BigDecimal(0.0d);
+        outQuantity = 0;
     }
 
     public Materialhistory(Material material, int quantity,
-            BigDecimal averageInputPrice, Date date) {
+            BigDecimal averageInputPrice, Date date, BigDecimal outAmount, int outQuantity) {
         this.material = material;
         this.quantity = quantity;
         this.averageInputPrice = averageInputPrice;
         this.date = date;
+        this.outAmount = outAmount;
+        this.outQuantity = outQuantity;
     }
 
     @Id
@@ -101,6 +107,24 @@ public class Materialhistory extends AbstractEntity implements java.io.Serializa
         this.date = date;
     }
 
+    @Column(name = "outAmount", nullable = false, scale = 4)
+    public BigDecimal getOutAmount() {
+        return outAmount;
+    }
+
+    public void setOutAmount(BigDecimal outAmount) {
+        this.outAmount = outAmount;
+    }
+
+    @Column(name = "outQuantity", nullable = false)
+    public int getOutQuantity() {
+        return outQuantity;
+    }
+
+    public void setOutQuantity(int outQuantity) {
+        this.outQuantity = outQuantity;
+    }
+
     @Override
     public Object getValueByPropertyName(String propertyName) {
         // TODO Auto-generated method stub
@@ -109,8 +133,6 @@ public class Materialhistory extends AbstractEntity implements java.io.Serializa
 
     @Override
     public void verifyObject() {
-        
-        
     }
 
     @Override

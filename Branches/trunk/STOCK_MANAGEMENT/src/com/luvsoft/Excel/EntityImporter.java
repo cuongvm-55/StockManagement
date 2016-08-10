@@ -40,12 +40,12 @@ public abstract class EntityImporter extends ExcelImporter{
     public ErrorId process(InputStream inputStream){
         System.out.println("Process input stream.");
         if( inputStream == null ){
-            return ErrorId.EXCEL_IMPORT_NOERROR; // just return when no data to process
+            return ErrorId.ERROR_NONE; // just return when no data to process
         }
 
         // parse file to get headers and records
         ErrorId error = super.parse(inputStream);
-        if( error != ErrorId.EXCEL_IMPORT_NOERROR ){
+        if( error != ErrorId.ERROR_NONE ){
             System.out.println("Fail to parse the input stream.");
             return error;
         }
@@ -152,6 +152,6 @@ public abstract class EntityImporter extends ExcelImporter{
             nbrOfImportedRecords++; // increase imported record
         }
 
-        return ErrorId.EXCEL_IMPORT_NOERROR;
+        return ErrorId.ERROR_NONE;
     }
 }

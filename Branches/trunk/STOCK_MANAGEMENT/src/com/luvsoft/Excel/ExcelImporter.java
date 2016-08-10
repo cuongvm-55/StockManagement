@@ -102,7 +102,7 @@ public abstract class ExcelImporter {
                     records.add(record);
                 }
             }
-            return ErrorId.EXCEL_IMPORT_NOERROR;
+            return ErrorId.ERROR_NONE;
         } catch (BiffException e) {
             return ErrorId.EXCEL_IMPORT_FAIL_TO_READ_FILE;
         } catch (IOException e) {
